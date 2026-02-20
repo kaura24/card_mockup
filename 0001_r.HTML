@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 사업자번호 입력 (0001)</title>
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+  <style>
+    /* ── 화면 전용 스타일 ── */
+    .biz-input-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .biz-input {
+      width: 100px;
+      height: var(--input-height);
+      border: var(--input-border);
+      border-radius: var(--input-radius);
+      text-align: center;
+      font-size: 18px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      outline: none;
+      transition: border-color .15s, box-shadow .15s;
+    }
+
+    .biz-input:focus {
+      border-color: var(--kb-yellow);
+      box-shadow: var(--focus-ring);
+    }
+
+    .biz-input.is-error {
+      border-color: var(--danger);
+      background: var(--danger-bg);
+    }
+
+    .biz-dash {
+      color: #bbb;
+      font-size: 20px;
+      font-weight: 300;
+      user-select: none;
+    }
+
+    @media (max-width: 860px) {
+      .biz-input {
+        width: calc(33.3% - 12px);
+        max-width: 100px;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+</head>
+
+<body>
+  <!--
+  Screen ID   : 0001
+  Screen Name : 사업자번호 입력
+  Scenarios   : 모든 시나리오 공통 진입점
+  Updated     : 2026-02-20
+-->
+
+  <div class="kb-wrap">
+
+    <!-- 헤더 -->
+    <div class="kb-page-header">
+      <h1 class="kb-page-title">카드 신청</h1>
+      <p class="kb-page-subtitle">사업자등록번호 입력</p>
+    </div>
+
+    <!-- 안내 -->
+    <div class="kb-notice" style="margin-bottom:28px;">
+      <ul>
+        <li>카드 발급 가능여부 확인을 위하여 사업자번호를 입력해 주세요.</li>
+        <li>공동대표, 지정사업자, 외국법인, 대표자가 외국인 사업자는 비대면 신규 신청이 불가합니다.</li>
+        <li>「특정 금융거래정보의 보고 및 이용 등에 관한 법률」에 따라 고객확인의무 재확인 대상의 경우 영업점 방문이 필요할 수 있습니다.</li>
+        <li>고객님의 안전한 금융거래를 위해 일정시간이 지나면 서비스가 원활하지 않을 수 있습니다.</li>
+      </ul>
+    </div>
+
+    <!-- 폼 -->
+    <div class="kb-required-note"><span class="star">*</span> 필수입력항목</div>
+    <div class="kb-form">
+      <div class="kb-form-row">
+        <div class="kb-form-label">사업자등록번호 <span class="star">*</span></div>
+        <div class="kb-form-content">
+          <div class="biz-input-group">
+            <input type="text" id="biz1" class="biz-input" data-field="bizNo_1" maxlength="3" inputmode="numeric"
+              placeholder="000" aria-label="사업자번호 앞 3자리" />
+            <span class="biz-dash" aria-hidden="true">-</span>
+            <input type="text" id="biz2" class="biz-input" data-field="bizNo_2" maxlength="2" inputmode="numeric"
+              placeholder="00" aria-label="사업자번호 가운데 2자리" />
+            <span class="biz-dash" aria-hidden="true">-</span>
+            <input type="text" id="biz3" class="biz-input" data-field="bizNo_3" maxlength="5" inputmode="numeric"
+              placeholder="00000" aria-label="사업자번호 뒤 5자리" />
+          </div>
+          <p class="kb-msg-hint">숫자만 입력 가능합니다. (예: 123-45-67890)</p>
+          <p class="kb-msg-error" id="err-biz" role="alert">사업자등록번호 10자리를 정확히 입력해 주세요.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="kb-btn-area">
+      <button type="button" id="btn-confirm" class="kb-btn">
+        <span class="kb-spinner"></span>
+        <span class="kb-btn-text">확인</span>
+      </button>
+    </div>
+
+  </div>
+
+
+
+  <!-- 공통 스크립트 -->
+  <script src="js/common.js"></script>
+  <script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0001"></script>
+
+  <!-- 화면 로직 -->
+  <script>
+    (function () {
+      const SCREEN_ID = "0001";
+
+      const biz1 = document.getElementById('biz1');
+      const biz2 = document.getElementById('biz2');
+      const biz3 = document.getElementById('biz3');
+      const bizAll = [biz1, biz2, biz3];
+      const errMsg = document.getElementById('err-biz');
+      const btn = document.getElementById('btn-confirm');
+      const toast = document.getElementById('toast');
+
+      /* ── 유틸 ─────────────────────────────────────────────────────── */
+      const onlyDigits = v => v.replace(/\D/g, '');
+      const getFullBiz = () => bizAll.map(e => e.value).join('');
+
+      function showError(msg) {
+        errMsg.textContent = msg || '사업자등록번호 10자리를 정확히 입력해 주세요.';
+        errMsg.classList.add('show');
+        bizAll.forEach(e => e.classList.add('is-error'));
+      }
+      function clearError() {
+        errMsg.classList.remove('show');
+        bizAll.forEach(e => e.classList.remove('is-error'));
+      }
+
+      function showToast(msg) {
+        toast.textContent = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+      }
+
+      /* ── 입력 바인딩 ───────────────────────────────────────────────── */
+      bizAll.forEach((el, idx) => {
+        el.addEventListener('input', () => {
+          const raw = el.value;
+          const clean = onlyDigits(raw);
+          if (raw !== clean) el.value = clean;
+          clearError();
+          if (el.value.length >= el.maxLength && idx < bizAll.length - 1) {
+            bizAll[idx + 1].focus();
+          }
+        });
+        el.addEventListener('keydown', e => {
+          if (e.key === 'Backspace' && el.value.length === 0 && idx > 0) {
+            bizAll[idx - 1].focus();
+          }
+          if (e.key === 'Enter') btn.click();
+        });
+      });
+
+      /* ── [MOCK] API 시뮬레이션 ─────────────────────────────────────── */
+      const apiCheckIssueType = bizNo => new Promise(resolve => {
+        setTimeout(() => {
+          const last = parseInt(bizNo.slice(-1));
+          resolve(last % 2 === 0 ? 'NEW' : 'ADD');
+        }, 900);
+      });
+
+      /* ── 확인 버튼 ─────────────────────────────────────────────────── */
+      btn.addEventListener('click', async () => {
+        if (btn.classList.contains('is-loading')) return;
+        const bizNo = getFullBiz();
+
+        if (bizNo.length < 10) {
+          showError();
+          showToast('사업자등록번호를 모두 입력해 주세요.');
+          const emptyIdx = bizAll.findIndex(e => e.value.length < e.maxLength);
+          if (emptyIdx !== -1) bizAll[emptyIdx].focus();
+          return;
+        }
+
+        btn.disabled = true;
+        btn.classList.add('is-loading');
+
+        try {
+          const type = await apiCheckIssueType(bizNo);
+          const next = type === 'NEW' ? '0002' : '0003';
+          showToast(`조회 완료: ${type === 'NEW' ? '신규발급' : '추가발급'} 대상입니다.`);
+
+          // 시나리오 모드면 scenario-nav.js의 '다음' 버튼을 트리거
+          // 시나리오 모드가 아니면 직접 이동
+          if (window._KB_SESSION) {
+            // 세션에 사업자번호 저장
+            SessionDB.save(SCREEN_ID, { bizNo, issueType: type }, window._KB_SESSION);
+            setTimeout(() => {
+              // 시나리오 동적 전환 (신규 <-> 추가)
+              if (window._KB_SWITCH_SCENARIO) {
+                if (window.ScenarioNav) ScenarioNav.log('SWITCH_SCENARIO', { issuance: type });
+                window._KB_SWITCH_SCENARIO({ issuance: type });
+              } else {
+                // Fallback
+                if (window.ScenarioNav) {
+                  ScenarioNav.log('NEXT', { action: 'FALLBACK_CLICK' });
+                  ScenarioNav.goNext();
+                } else {
+                  if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+                      document.getElementById('_sc-next-btn') && document.getElementById('_sc-next-btn').click();
+                    }
+                  }
+                }
+              }
+            }, 800);
+          } else {
+            // 단독 실행 시 파일 직접 이동
+            const file = next <= 9 ? `000${parseInt(next)}_r.HTML` : `${next}_r.HTML`;
+            setTimeout(() => { window.location.href = file; }, 800);
+          }
+        } catch (err) {
+          showToast('조회 중 오류가 발생했습니다.');
+          showError('서버 통신 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.');
+        } finally {
+          btn.disabled = false;
+          btn.classList.remove('is-loading');
+        }
+      });
+
+      // 초기 포커스
+      biz1.focus();
+    })();
+  </script>
+</body>
+
+</html>

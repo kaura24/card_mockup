@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>기본정보2 (0049)</title>
+
+<style>
+/* ===============================
+   0047 스타일 완전 복제
+================================*/
+:root{
+  --text:#111;
+  --muted:#666;
+  --line:#e6e6e6;
+  --bg-overlay: rgba(0,0,0,.45);
+  --kb-yellow:#ffcc00;
+  --kb-yellow-dark:#f2b800;
+  --overlay: rgba(0,0,0,.55);
+  --modal-line:#e6e6e6;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:var(--bg-overlay);
+  font-family:"Malgun Gothic", sans-serif;
+}
+
+/* ===== 모달 ===== */
+.modal{
+  width:980px;
+  max-width:calc(100vw - 24px);
+  background:#fff;
+  border-radius:14px;
+  border:1px solid rgba(0,0,0,.08);
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  padding:18px 22px 18px;
+  box-shadow:0 18px 50px rgba(0,0,0,.20);
+}
+.modal-header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.modal-title{ font-size:20px; font-weight:900; }
+.modal-title small{ color:var(--muted); font-size:13px; margin-left:6px; }
+.close-btn{
+  width:36px; height:36px;
+  display:flex; justify-content:center; align-items:center;
+  border-radius:10px;
+  cursor:pointer; color:#777;
+}
+
+/* ===== 본문 ===== */
+.content{ padding:16px 6px 8px; }
+
+/* 조회 테이블 */
+.info-table{
+  width:100%;
+  border:1px solid var(--line);
+  border-radius:10px;
+  border-collapse:collapse;
+}
+.info-table th, .info-table td{
+  padding:18px;
+  border-bottom:1px solid var(--line);
+  font-size:15px;
+}
+.info-table th{
+  width:320px;
+  background:#fff;
+  font-weight:900;
+  border-right:1px solid var(--line);
+}
+.info-table tr:last-child th,
+.info-table tr:last-child td{
+  border-bottom:none;
+}
+.info-table td{
+  font-weight:800;
+  color:#222;
+}
+
+/* footer */
+.footer{
+  display:flex; justify-content:flex-end; gap:10px;
+  padding-top:12px; margin-top:20px;
+  border-top:1px solid rgba(0,0,0,.06);
+}
+.btn{
+  height:44px; padding:0 16px;
+  border-radius:8px; font-weight:900;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.14);
+  cursor:pointer;
+}
+.btn.primary{ border:none; background:var(--kb-yellow); }
+.btn.primary:hover{ background:var(--kb-yellow-dark); }
+
+/* Toast */
+.toast{
+  position:fixed;
+  left:50%; bottom:22px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.85);
+  color:#fff;
+  padding:10px 14px;
+  opacity:0;
+  border-radius:10px;
+  transition:opacity .2s;
+}
+.toast.show{ opacity:1; }
+
+/* 요구사항 버튼 */
+.req-qmark{
+  position:fixed;
+  right:14px; bottom:14px;
+  width:44px; height:44px;
+  border-radius:99px;
+  font-weight:900; font-size:22px;
+  background:var(--kb-yellow);
+  border:1px solid rgba(0,0,0,.18);
+  cursor:pointer;
+}
+
+/* 요구사항 모달 */
+.spec-modal-root{
+  position:fixed; inset:0;
+  display:none; justify-content:center; align-items:center;
+  background:var(--overlay);
+}
+.spec-modal-root.show{ display:flex; }
+
+.spec-modal{
+  width:min(980px,100%);
+  background:#fff;
+  border-radius:12px;
+  border:1px solid rgba(0,0,0,.15);
+  max-height:min(86vh,900px);
+  overflow:auto;
+}
+.spec-modal__head{
+  display:flex; justify-content:space-between; align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid var(--modal-line);
+}
+.spec-modal__title{ font-weight:900; font-size:16px; }
+.spec-modal__body{ padding:14px 16px 20px; }
+
+/* KV */
+.kv{
+  display:grid;
+  grid-template-columns:170px 1fr;
+  border:1px solid var(--modal-line);
+  border-radius:10px;
+  margin-bottom:14px;
+}
+.kv .k, .kv .v{
+  padding:10px 12px;
+  border-bottom:1px solid var(--modal-line);
+  font-size:13px;
+}
+.kv .k{
+  font-weight:900;
+  background:#fafafa;
+  border-right:1px solid var(--modal-line);
+}
+.kv .v:last-child, .kv .k:last-child{
+  border-bottom:none;
+}
+
+/* sections */
+.section{
+  padding:12px;
+  margin-top:12px;
+  border-radius:10px;
+  border:1px solid var(--modal-line);
+}
+.section__title{
+  font-weight:900;
+  margin-bottom:6px;
+  font-size:13px;
+}
+.section ul{
+  margin:0; padding-left:18px;
+}
+
+/* json */
+.code{
+  padding:12px;
+  background:#0b0b0d;
+  color:#e9e9ef;
+  border-radius:10px;
+  white-space:pre;
+  margin-top:8px;
+}
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.chip{
+  font-size:12px;
+  border:1px solid rgba(0,0,0,.2);
+  padding:6px 10px;
+  border-radius:999px;
+  background:#fafafa;
+}
+</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<div class="modal" role="dialog" aria-modal="true">
+  <div class="modal-header">
+    <div class="modal-title">기본정보2 <small>(0049)</small></div>
+    <div class="close-btn" id="closeBtn">×</div>
+  </div>
+
+  <div class="content">
+
+    <table class="info-table">
+      <tr>
+        <th>업체(부서)명</th>
+        <td id="corpDept">영업부</td>
+      </tr>
+      <tr>
+        <th>영문업체명</th>
+        <td id="engCorpName">ADGBZ IYTZWBBZTH</td>
+      </tr>
+    </table>
+
+    <div class="footer">
+      <button class="btn" id="prevBtn">이전</button>
+      <button class="btn primary" id="nextBtn">다음</button>
+    </div>
+  </div>
+</div>
+
+
+<button id="reqBtn" class="req-qmark">?</button>
+
+<div id="specModalRoot" class="spec-modal-root">
+  <div class="spec-modal">
+    <div class="spec-modal__head">
+      <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0049)</div>
+      <button id="specModalClose" class="spec-modal__close">닫기</button>
+    </div>
+    <div id="specModalBody" class="spec-modal__body"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SCREEN_ID = "0049";
+  const SCREEN_NAME = "기본정보2";
+
+  const $ = (id)=>document.getElementById(id);
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1500);
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;");
+  }
+
+  // Mock data (조회형)
+  const mockData = {
+    corpDept:"영업부",
+    engName:"ADGBZ IYTZWBBZTH"
+  };
+  $("corpDept").textContent = mockData.corpDept;
+  $("engCorpName").textContent = mockData.engName;
+
+  // prev/next
+  $("closeBtn").onclick = ()=>showToast("닫기(모의)");
+  $("prevBtn").onclick = ()=>{ showToast("이전(모의)"); location.hash="#/0048"; };
+  $("nextBtn").onclick = ()=>{ showToast("다음(모의)"); location.hash="#/0050"; };
+
+  // ============================
+  // REQ_SPEC (기능정의서 기반)
+  // ============================
+  
+
+  // ============================
+  // spec modal rendering
+  // ============================
+  const specRoot = $("specModalRoot");
+  const specBody = $("specModalBody");
+  const specTitle = $("specModalTitle");
+
+  function renderSpec(spec){
+    specTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id})`;
+
+    const chips = [
+      `ID:${spec.screen_id}`,
+      `Action:${spec.action}`,
+      `System:${spec.backend.system}`,
+      `Purpose:${spec.backend.purpose}`
+    ];
+
+    specBody.innerHTML = `
+      <div class="kv">
+        <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+        <div class="k">기능명</div><div class="v">${escapeHtml(spec.screen_name)}</div>
+        <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+        <div class="k">처리계</div><div class="v">${escapeHtml(spec.backend.system)}</div>
+        <div class="k">거래</div><div class="v">${escapeHtml(spec.backend.txn)}</div>
+        <div class="k">업무 목적</div><div class="v">${escapeHtml(spec.backend.purpose)}</div>
+      </div>
+
+      <div class="chips">
+        ${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}
+      </div>
+
+      <div class="section">
+        <div class="section__title">진입 조건</div>
+        <ul>${spec.entry_condition.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">UI 성격</div>
+        <ul>${spec.ui_nature.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">제어 규칙</div>
+        <ul>${spec.control_rules.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">감사/로그 포인트</div>
+        <ul>${spec.audit_log_points.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">주석(개발/QA 포인트)</div>
+        <ul>${spec.notes.map(v=>`<li>${escapeHtml(v)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">REQ_SPEC 원문(JSON)</div>
+        <div class="code">${escapeHtml(JSON.stringify(spec,null,2))}</div>
+      </div>
+    `;
+  }
+
+  $("reqBtn").onclick = ()=>{ renderSpec(REQ_SPEC); specRoot.classList.add("show"); };
+  $("specModalClose").onclick = ()=> specRoot.classList.remove("show");
+  specRoot.onclick = (e)=>{ if(e.target===specRoot) specRoot.classList.remove("show"); };
+
+})();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0049"></script>
+</body>
+</html>

@@ -1,0 +1,949 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KB국민카드 | 기업카드 비대면 신청 목업</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="css/kb-theme.css" />
+    <style>
+        :root {
+            --yellow: #ffcc00;
+            --yellow-d: #f2b800;
+            --text: #111;
+            --muted: #666;
+            --line: #e0e0e0;
+            --panel: #fafafa;
+            --danger: #d64545;
+            --blue: #2563eb;
+            --radius: 12px;
+            --shadow: 0 4px 24px rgba(0, 0, 0, .10);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", sans-serif;
+            background: #f0f2f5;
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .hd {
+            background: #1a1a1a;
+            color: #fff;
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .hd-logo {
+            background: var(--yellow);
+            color: #000;
+            font-weight: 900;
+            font-size: 13px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            letter-spacing: .5px;
+        }
+
+        .hd-title {
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .hd-badge {
+            margin-left: auto;
+            background: rgba(255, 204, 0, .15);
+            border: 1px solid rgba(255, 204, 0, .35);
+            color: var(--yellow);
+            font-size: 12px;
+            font-weight: 900;
+            padding: 4px 12px;
+            border-radius: 20px;
+        }
+
+        /* Main layout */
+        .main {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 32px 20px 80px;
+        }
+
+        /* Hero stat bar */
+        .stats {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: #fff;
+            border-radius: 10px;
+            padding: 14px 20px;
+            flex: 1;
+            min-width: 140px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+
+        .stat-n {
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--text);
+        }
+
+        .stat-l {
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 700;
+            margin-top: 2px;
+        }
+
+        .stat-n .hl {
+            color: var(--blue);
+        }
+
+        /* Wizard card */
+        .card {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            margin-bottom: 24px;
+        }
+
+        .card-head {
+            padding: 18px 24px;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-num {
+            width: 28px;
+            height: 28px;
+            background: var(--yellow);
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 auto;
+        }
+
+        .step-num.done {
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .step-num.disabled-n {
+            background: #e5e5e5;
+            color: #aaa;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .card-body {
+            padding: 18px 24px;
+        }
+
+        /* Option buttons */
+        .opts {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .opt {
+            padding: 12px 24px;
+            border-radius: 10px;
+            border: 2px solid var(--line);
+            background: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all .15s;
+            color: var(--text);
+            position: relative;
+        }
+
+        .opt:hover {
+            border-color: #bbb;
+            background: #fafafa;
+        }
+
+        .opt.selected {
+            border-color: var(--yellow-d);
+            background: #fffbe6;
+            box-shadow: 0 0 0 3px rgba(255, 204, 0, .25);
+        }
+
+        .opt.disabled {
+            opacity: .38;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .opt .badge-na {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: var(--danger);
+            color: #fff;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Step disabled overlay */
+        .step-disabled {
+            opacity: .45;
+            pointer-events: none;
+        }
+
+        /* Breadcrumb path */
+        .breadcrumb {
+            padding: 14px 24px;
+            background: #fffbe6;
+            border-top: 1px solid #f0d800;
+            font-size: 13px;
+            font-weight: 800;
+            color: #555;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .bc-item {
+            color: var(--text);
+            font-weight: 900;
+        }
+
+        .bc-sep {
+            color: #bbb;
+        }
+
+        .bc-code {
+            color: #2563eb;
+            font-weight: 900;
+            font-size: 12px;
+            background: #eff6ff;
+            padding: 2px 8px;
+            border-radius: 6px;
+            margin-left: 6px;
+        }
+
+        /* Result panel */
+        #result-panel {
+            background: #fff;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .rp-head {
+            padding: 18px 24px;
+            background: #1a1a1a;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .rp-scenario {
+            font-size: 17px;
+            font-weight: 900;
+        }
+
+        .rp-code {
+            font-size: 12px;
+            background: rgba(255, 204, 0, .2);
+            color: var(--yellow);
+            padding: 3px 10px;
+            border-radius: 8px;
+            font-weight: 900;
+        }
+
+        .rp-count {
+            margin-left: auto;
+            font-size: 13px;
+            color: #aaa;
+            font-weight: 800;
+        }
+
+        /* ─── 시나리오 플로우 Flex (화살표 포함) ─── */
+        .screens-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: stretch;
+            padding: 10px 4px;
+        }
+
+        .flow-unit {
+            display: flex;
+            align-items: center;
+            /* 카드 + 화살표 묶음 */
+        }
+
+        .scr {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-left: 5px solid #ffcc00;
+            /* KB Yellow Line */
+            border-radius: 8px;
+            padding: 14px 16px;
+            text-decoration: none;
+            transition: all .2s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, .04);
+            width: 200px;
+            /* 고정 너비로 정렬감 확보 */
+            min-height: 86px;
+            justify-content: center;
+        }
+
+        .scr:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px rgba(0, 0, 0, .12);
+            border-color: #d0d0d0;
+            z-index: 2;
+        }
+
+        .scr:active {
+            transform: translateY(-1px);
+        }
+
+        .scr.na {
+            background: #fdfdfd;
+            border-left-color: #ddd;
+            border-style: solid;
+            opacity: .7;
+        }
+
+        .scr-seq {
+            font-size: 13px;
+            font-weight: 900;
+            color: #dcb000;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .scr:hover .scr-seq {
+            color: #f2b800;
+        }
+
+        .scr-id {
+            font-size: 11px;
+            color: #999;
+            font-weight: 600;
+        }
+
+        .scr-name {
+            display: block;
+            font-size: 14px;
+            color: #222;
+            font-weight: 700;
+            line-height: 1.35;
+            word-break: keep-all;
+        }
+
+        .flow-arrow {
+            margin: 0 10px;
+            color: #ddd;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .flow-unit:hover .flow-arrow {
+            color: #ffcc00;
+        }
+
+        .na-tag {
+            display: inline-block;
+            font-size: 10px;
+            background: #eee;
+            color: #777;
+            padding: 2px 5px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+            font-weight: normal;
+        }
+
+        .rp-note {
+            padding: 14px 24px;
+            background: #f8f9fa;
+            border-top: 1px solid var(--line);
+            font-size: 12px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        /* Empty / placeholder */
+        .empty {
+            padding: 48px 24px;
+            text-align: center;
+            color: #bbb;
+            font-size: 15px;
+        }
+
+        .empty svg {
+            opacity: .3;
+            margin-bottom: 12px;
+        }
+
+        /* Info bar about total */
+        .total-bar {
+            background: #1a1a1a;
+            color: #fff;
+            border-radius: 10px;
+            padding: 14px 22px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .total-bar strong {
+            color: var(--yellow);
+            font-size: 18px;
+        }
+
+        @media(max-width:600px) {
+            .opts {
+                flex-direction: column;
+            }
+
+            .opt {
+                text-align: left;
+            }
+
+            .screens-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hd">
+        <div class="hd-logo">KB국민카드</div>
+        <div class="hd-title">기업카드 비대면 신청 — 목업 테스트</div>
+        <div style="margin-left:auto; display:flex; gap:10px; align-items:center;">
+            <a href="integrated_flow.html" class="kb-btn"
+                style="background:#333; border:1px solid #555; color:#fff; font-size:13px; padding:6px 14px; text-decoration:none; border-radius:6px; display:flex; align-items:center; gap:6px;">
+                <i class="fa-solid fa-layer-group" style="color:#ffcc00"></i> 통합 시나리오로 이동
+            </a>
+            <div class="hd-badge">총 16개 시나리오</div>
+        </div>
+    </div>
+
+    <div class="main">
+
+        <!-- Stats -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-n"><span class="hl">16</span></div>
+                <div class="stat-l">전체 시나리오</div>
+            </div>
+            <div class="stat">
+                <div class="stat-n">6</div>
+                <div class="stat-l">법사자_신용</div>
+            </div>
+            <div class="stat">
+                <div class="stat-n">6</div>
+                <div class="stat-l">법사자_체크</div>
+            </div>
+            <div class="stat">
+                <div class="stat-n">2</div>
+                <div class="stat-l">개사자_신용</div>
+            </div>
+            <div class="stat">
+                <div class="stat-n">2</div>
+                <div class="stat-l">개사자_체크</div>
+            </div>
+        </div>
+
+        <!-- 분기 안내 -->
+        <div class="total-bar">
+            <span>분기 구조:</span>
+            <strong>카드종류</strong><span style="color:#aaa">→</span>
+            <strong>사업자유형</strong><span style="color:#aaa">→</span>
+            <strong>신규/추가</strong><span style="color:#aaa">→</span>
+            <strong>공용/개별 (법사자)</strong><span style="color:#aaa">→</span>
+            <strong>부서내추가/부서추가 (법사자_추가)</strong>
+        </div>
+
+        <!-- STEP 1: 카드 종류 -->
+        <div class="card" id="step1">
+            <div class="card-head">
+                <div class="step-num" id="sn1">1</div>
+                <div class="card-title">카드 종류를 선택하세요</div>
+            </div>
+            <div class="card-body">
+                <div class="opts">
+                    <button class="opt" data-step="1" data-val="신용">💳 신용카드</button>
+                    <button class="opt" data-step="1" data-val="체크">🏧 체크카드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: 사업자 유형 -->
+        <div class="card step-disabled" id="step2">
+            <div class="card-head">
+                <div class="step-num disabled-n" id="sn2">2</div>
+                <div class="card-title">사업자 유형을 선택하세요</div>
+            </div>
+            <div class="card-body">
+                <div class="opts">
+                    <button class="opt disabled" data-step="2" data-val="법사자">🏢 법인사업자</button>
+                    <button class="opt disabled" data-step="2" data-val="개사자">👤 개인사업자</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: 신규/추가 -->
+        <div class="card step-disabled" id="step3">
+            <div class="card-head">
+                <div class="step-num disabled-n" id="sn3">3</div>
+                <div class="card-title">발급 구분을 선택하세요</div>
+            </div>
+            <div class="card-body">
+                <div class="opts" id="opts3">
+                    <button class="opt disabled" data-step="3" data-val="신규">🆕 신규</button>
+                    <button class="opt disabled" data-step="3" data-val="추가">➕ 추가</button>
+                </div>
+                <div id="step3-note" style="margin-top:10px;font-size:12px;color:var(--muted);display:none;"></div>
+            </div>
+        </div>
+
+        <!-- STEP 4: 공용/개별 (법사자만) -->
+        <div class="card step-disabled" id="step4">
+            <div class="card-head">
+                <div class="step-num disabled-n" id="sn4">4</div>
+                <div class="card-title">카드 발급 방식을 선택하세요 <span
+                        style="font-size:12px;color:var(--muted);font-weight:700;">(법인사업자 전용)</span></div>
+            </div>
+            <div class="card-body">
+                <div class="opts">
+                    <button class="opt disabled" data-step="4" data-val="공용">🏢 공용카드</button>
+                    <button class="opt disabled" data-step="4" data-val="개별">👤 개별카드</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 5: 부서내추가/부서추가 (법사자_추가만) -->
+        <div class="card step-disabled" id="step5">
+            <div class="card-head">
+                <div class="step-num disabled-n" id="sn5">5</div>
+                <div class="card-title">부서 발급 방식을 선택하세요 <span
+                        style="font-size:12px;color:var(--muted);font-weight:700;">(추가발급/공용카드 전용)</span></div>
+            </div>
+            <div class="card-body">
+                <div class="opts">
+                    <button class="opt disabled" data-step="5" data-val="부서내추가">📂 부서내추가</button>
+                    <button class="opt disabled" data-step="5" data-val="부서추가">🆕 부서추가</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 선택 경로 표시 -->
+        <div id="breadcrumb" style="display:none;" class="card">
+            <div class="breadcrumb" id="bc-inner"></div>
+        </div>
+
+        <!-- 결과 패널 -->
+        <div id="result-panel" style="display:none;">
+            <div class="rp-head">
+                <div class="rp-scenario" id="rp-scenario">—</div>
+                <div class="rp-code" id="rp-code">—</div>
+                <div class="rp-count" id="rp-count">—</div>
+            </div>
+            <div class="screens-grid" id="screens-grid"></div>
+            <div class="rp-note" id="rp-note"></div>
+            <!-- 시나리오 시작 버튼 -->
+            <div
+                style="padding:20px 24px;border-top:1px solid var(--line);display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+                <button id="btn-start-scenario" type="button" class="kb-btn"
+                    style="font-size:16px;height:52px;padding:0 36px;">
+                    🚀 시나리오 시작
+                </button>
+                <span style="font-size:13px;color:#888;">첫 화면(0001)부터 순서대로 진행합니다</span>
+            </div>
+        </div>
+
+        <div id="result-empty" class="card">
+            <div class="empty">단계별로 선택하면 해당 시나리오의 화면 목록이 여기에 표시됩니다.</div>
+        </div>
+
+    </div><!-- /main -->
+
+    <script src="js/session-db.js"></script>
+    <script>
+        // ──────────────────────────────────────────────
+        // 상태
+        // ──────────────────────────────────────────────
+        const sel = { card: null, biz: null, issuance: null, cardType: null, dept: null };
+
+        // ──────────────────────────────────────────────
+        // 화면 이름 맵
+        // ──────────────────────────────────────────────
+        const NAMES = {
+            "0001": "사업자번호 입력", "0002": "신규 대상 통합 발급 안내", "0003": "추가 대상 통합 발급 안내",
+            "0004": "준비사항", "0005": "제출서류", "0006": "서류자동제출서비스", "0007": "유의사항",
+            "0008": "법인 공동인증서 이용안내", "0009": "신용카드 상품 약관동의", "0010": "신청인정보",
+            "0011": "신청자 신용정보 조회 이용 동의", "0012": "신청인 본인인증", "0013": "신청인 CDD 조건부 검증",
+            "0014": "대표자 정보", "0015": "사업자 정보", "0016": "법인 정보", "0017": "EDD정보",
+            "0018": "필수확인사항", "0019": "이용한도", "0020": "명세서 받으실 곳", "0021": "카드선택",
+            "0022": "결제일", "0023": "결제계좌", "0024": "신청매수", "0025": "발급 확인 및 약관수령",
+            "0026": "카드수령지", "0027": "추천인", "0028": "공동인증서 인증", "0029": "카드정보(확인용)",
+            "0030": "사업자정보(확인용)", "0031": "대표자정보(확인용)", "0032": "법인인증", "0033": "추가서류제출",
+            "0034": "신청완료", "0035": "개별카드 회원 동의서 작성안내", "0036": "개별카드 개인명의계좌 등록",
+            "0037": "개별카드 발급 대상 고객 정보", "0038": "개별카드 동의 조회(조회하기)",
+            "0039": "개인신용정보 동의서", "0040": "개별카드 동의 조회(신청하기)", "0041": "개별카드",
+            "0042": "법인 EDD정보", "0043": "발급 대상 부서 팝업", "0044": "개별카드 동의 조회(추가전용)",
+            "0045": "기본정보", "0046": "유의 및 준비사항(추가개별)", "0047": "대표자_사업자정보",
+            "0048": "업체(부서)정보", "0049": "기본정보2", "0050": "부서별한도(요청한도 입력)",
+            "0051": "업체(부서)정보(확인용)", "0052": "신청완료_카드신청정보(확인용)",
+            "0053": "유의 및 준비사항(개사자_신용)", "0054": "추가정보선택", "0055": "약관동의(신용)",
+            "0057": "카드신청 기본_CDD", "0058": "3종 본인인증", "0059": "설립년월일_업종분류",
+            "0060": "한도부여결과 조회", "0061": "신분증 정보", "0062": "필수확인사항(개사자)",
+            "0063": "카드정보(개사자)", "0064": "카드정보수정하기", "0065": "카드신청완료",
+            "0066": "유의 및 준비사항(개사자_체크)", "0067": "신분증진위확인 방법 선택",
+            "0068": "신분증정보 입력", "0069": "본인확인", "0070": "신청정보_CDD",
+            "0071": "신청정보_설립년월", "0072": "약관동의(개사자_체크)", "0073": "신청정보_수정하기",
+            "0074": "접수완료(개사자_체크)",
+            // 신규 추가된 체크카드 화면
+            "0009_1": "체크카드 상품 약관동의", "0011_1": "체크정보 조회 이용 동의",
+            "0039_1": "개인체크정보 동의서"
+        };
+
+        // 파일명 결정
+        function screenFile(id) {
+            if (id.startsWith("N/A")) return null;
+            if (id.includes("_1")) return id + "_r.html"; // 체크카드 전용
+            const n = parseInt(id, 10);
+            if (n === 8) return "0008_R.HTML";
+            if (n <= 24) return id + "_r.HTML";
+            return id + "_r.html";
+        }
+
+        // ──────────────────────────────────────────────
+        // 시나리오 정의
+        // ──────────────────────────────────────────────
+        const BASE_COMMON = ["0001", "0004", "0005", "0006", "0007", "0008"];
+        const BASE_NEW = ["0001", "0002", "0004", "0005", "0006", "0007", "0008"];
+        const BASE_ADD = ["0001", "0003", "0004", "0005", "0006", "0007", "0008"];
+        const TAIL_CREDIT = ["0010", "0011", "0012", "0013", "0014", "0015", "0016", "0017", "0018", "0019", "0020", "0021", "0022", "0023", "0024", "0025", "0026", "0027", "0028", "0029", "0030", "0031", "0032", "0033", "0034"];
+        const TAIL_CHECK = ["0010", "0011_1", "0012", "0013", "0014", "0015", "0016", "0017", "0018", "0020", "0021", "0022", "0023", "0024", "0025", "0026", "0027", "0028", "0029", "0030", "0031", "0032", "0033", "0034"];
+        const INDIV_NEW = ["0035", "0036", "0037", "0038", "0039", "0040", "0041"];
+        const DEPT_IN_TAIL_C = ["0009", "0043", "0010", "0011", "0012", "0013", "0018", "0045", "0021", "0024", "0025", "0026", "0042", "0027", "0028", "0029", "0051", "0032", "0052"];
+        const DEPT_ADD_TAIL_C = ["0009", "0043", "0047", "0048", "0049", "0050", "0020", "0021", "0022", "0023", "0024", "0025", "0026", "0042", "0027", "0028", "0029", "0051", "0032", "0052"];
+        const DEPT_IN_TAIL_CHK = ["0009_1", "0043", "0010", "0011_1", "0012", "0013", "0018", "0045", "0021", "0024", "0025", "0026", "0042", "0027", "0028", "0029", "0051", "0032", "0052"];
+        const DEPT_ADD_TAIL_CHK = ["0009_1", "0043", "0047", "0048", "0049", "0050", "0020", "0021", "0022", "0023", "0024", "0025", "0026", "0042", "0027", "0028", "0029", "0051", "0032", "0052"];
+        const INDIV_ADD_EXTRA = ["0035", "0036", "0037", "0038", "0039", "0044", "0046"];
+
+        const SCENARIOS = {
+            // 법사자_신용 (6)
+            "법_신_신규_공용": { code: "SC-01-A", label: "법사자_신용 | 신규 | 공용", screens: [...BASE_NEW, "0009", ...TAIL_CREDIT] },
+            "법_신_신규_개별": { code: "SC-01-B", label: "법사자_신용 | 신규 | 개별", screens: [...BASE_NEW, ...INDIV_NEW, ...TAIL_CREDIT] },
+            "법_신_추가_공용_부서내": { code: "SC-01-C", label: "법사자_신용 | 추가 | 공용 | 부서내추가", screens: [...BASE_ADD, ...DEPT_IN_TAIL_C] },
+            "법_신_추가_공용_부서추": { code: "SC-01-D", label: "법사자_신용 | 추가 | 공용 | 부서추가", screens: [...BASE_ADD, ...DEPT_ADD_TAIL_C] },
+            "법_신_추가_개별_부서내": { code: "SC-01-E", label: "법사자_신용 | 추가 | 개별 | 부서내추가", screens: [...BASE_ADD, ...INDIV_ADD_EXTRA, ...DEPT_IN_TAIL_C] },
+            "법_신_추가_개별_부서추": { code: "SC-01-F", label: "법사자_신용 | 추가 | 개별 | 부서추가", screens: [...BASE_ADD, ...INDIV_ADD_EXTRA, ...DEPT_ADD_TAIL_C] },
+            // 법사자_체크 (6)
+            "법_체_신규_공용": { code: "SC-03-A", label: "법사자_체크 | 신규 | 공용", screens: [...BASE_NEW, "0009_1", ...TAIL_CHECK] },
+            "법_체_신규_개별": { code: "SC-03-B", label: "법사자_체크 | 신규 | 개별", screens: [...BASE_NEW, ...INDIV_NEW.map(s => s === "0039" ? "0039_1" : s), ...TAIL_CHECK] },
+            "법_체_추가_공용_부서내": { code: "SC-03-C", label: "법사자_체크 | 추가 | 공용 | 부서내추가", screens: [...BASE_ADD, ...DEPT_IN_TAIL_CHK] },
+            "법_체_추가_공용_부서추": { code: "SC-03-D", label: "법사자_체크 | 추가 | 공용 | 부서추가", screens: [...BASE_ADD, ...DEPT_ADD_TAIL_CHK] },
+            "법_체_추가_개별_부서내": { code: "SC-03-E", label: "법사자_체크 | 추가 | 개별 | 부서내추가", screens: [...BASE_ADD, ...INDIV_ADD_EXTRA, ...DEPT_IN_TAIL_CHK] },
+            "법_체_추가_개별_부서추": { code: "SC-03-F", label: "법사자_체크 | 추가 | 개별 | 부서추가", screens: [...BASE_ADD, ...INDIV_ADD_EXTRA, ...DEPT_ADD_TAIL_CHK] },
+            // 개사자_신용 (2)
+            "개_신_신규": { code: "SC-02-A", label: "개사자_신용 | 신규", screens: ["0001", "0002", "0053", "0054", "0055", "0057", "0058", "0059", "0060", "0061", "0062", "0063", "0064", "0065"] },
+            "개_신_추가": { code: "SC-02-B", label: "개사자_신용 | 추가", screens: ["0001", "0003", "0053", "0054", "0055", "0057", "0058", "0059", "0060", "0061", "0062", "0063", "0064", "0065"] },
+            // 개사자_체크 (2)
+            "개_체_신규_검증완료": { code: "SC-04-A", label: "개사자_체크 | 신규 | 검증완료", screens: ["0001", "0066", "0067", "0068", "0069", "0058", "0070", "0071", "0072", "0073", "0074"] },
+            "개_체_신규_검증필요": { code: "SC-04-B", label: "개사자_체크 | 신규 | 검증필요", screens: ["0001", "0066", "0067", "0068", "0069", "0058", "0070", "0071", "0072", "0073", "0074"] },
+        };
+
+        // ──────────────────────────────────────────────
+        // 시나리오 키 찾기
+        // ──────────────────────────────────────────────
+        function getScenarioKey() {
+            const { card, biz, issuance, cardType, dept } = sel;
+            if (!card || !biz) return null;
+            if (biz === "개사자") {
+                if (card === "신용") {
+                    if (!issuance) return null;
+                    return issuance === "신규" ? "개_신_신규" : "개_신_추가";
+                } else {
+                    // 체크: 신규만, 검증완료/검증필요는 step5로
+                    if (!dept) return null;
+                    return dept === "부서내추가" ? "개_체_신규_검증완료" : "개_체_신규_검증필요";
+                }
+            }
+            // 법사자
+            const c = card === "신용" ? "신" : "체";
+            if (!issuance) return null;
+            if (issuance === "신규") {
+                if (!cardType) return null;
+                return `법_${c}_신규_${cardType === "공용" ? "공용" : "개별"}`;
+            } else {
+                if (!cardType) return null;
+                if (!dept) return null;
+                const d = dept === "부서내추가" ? "부서내" : "부서추";
+                return `법_${c}_추가_${cardType === "공용" ? "공용" : "개별"}_${d}`;
+            }
+        }
+
+        // ──────────────────────────────────────────────
+        // UI 갱신
+        // ──────────────────────────────────────────────
+        function enableStep(n, enable) {
+            const el = document.getElementById(`step${n}`);
+            el.classList.toggle("step-disabled", !enable);
+            el.querySelectorAll(".opt").forEach(b => b.classList.toggle("disabled", !enable));
+            document.getElementById(`sn${n}`).className = "step-num" + (enable ? "" : " disabled-n");
+        }
+        function markDone(n) { document.getElementById(`sn${n}`).className = "step-num done"; }
+
+        function updateStep3() {
+            const note = document.getElementById("step3-note");
+            const addBtn = document.querySelector("[data-step='3'][data-val='추가']");
+            if (sel.biz === "개사자" && sel.card === "체크") {
+                // 개사자_체크: 신규만
+                if (addBtn) { addBtn.classList.add("disabled"); addBtn.style.opacity = ".35"; }
+                note.style.display = "block";
+                note.textContent = "※ 개사자_체크는 현재 신규 발급 시나리오만 확보되어 있습니다.";
+            } else {
+                if (addBtn) { addBtn.classList.remove("disabled"); addBtn.style.opacity = ""; }
+                note.style.display = "none";
+            }
+        }
+
+        function updateStep4Step5() {
+            const { biz, card, issuance } = sel;
+            // step4: 법사자만
+            const need4 = biz === "법사자";
+            enableStep(4, need4);
+            if (!need4) { sel.cardType = null; sel.dept = null; }
+            // step5: 법사자 + 추가
+            const need5 = biz === "법사자" && issuance === "추가";
+            enableStep(5, need5);
+            if (!need5) sel.dept = null;
+
+            // 개사자_체크에서 step5를 '검증완료/검증필요'로 재라벨링
+            const s5title = document.querySelector("#step5 .card-title");
+            const s5opts = document.querySelectorAll("[data-step='5']");
+            if (biz === "개사자" && card === "체크") {
+                enableStep(5, true);
+                s5title.innerHTML = "검증 상태를 선택하세요 <span style=\"font-size:12px;color:var(--muted);font-weight:700;\">(개사자_체크 전용)</span>";
+                if (s5opts[0]) { s5opts[0].childNodes[0].textContent = "✅ 검증완료 "; s5opts[0].dataset.val = "부서내추가"; }
+                if (s5opts[1]) { s5opts[1].childNodes[0].textContent = "🔍 검증필요 "; s5opts[1].dataset.val = "부서추가"; }
+            } else {
+                s5title.innerHTML = "부서 발급 방식을 선택하세요 <span style=\"font-size:12px;color:var(--muted);font-weight:700;\">(추가발급/공용카드 전용)</span>";
+                if (s5opts[0]) { s5opts[0].childNodes[0].textContent = "📂 부서내 추가발급 "; s5opts[0].dataset.val = "부서내추가"; }
+                if (s5opts[1]) { s5opts[1].childNodes[0].textContent = "🆕 부서추가 "; s5opts[1].dataset.val = "부서추가"; }
+            }
+        }
+
+        // ──────────────────────────────────────────────
+        // 결과 렌더
+        // ──────────────────────────────────────────────
+        function renderResult() {
+            const key = getScenarioKey();
+            const sc = key ? SCENARIOS[key] : null;
+            document.getElementById("result-empty").style.display = sc ? "none" : "block";
+            document.getElementById("result-panel").style.display = sc ? "block" : "none";
+            if (!sc) return;
+
+            document.getElementById("rp-scenario").textContent = sc.label;
+            document.getElementById("rp-code").textContent = sc.code;
+
+            const naCount = sc.screens.filter(s => s.startsWith("N/A")).length;
+            document.getElementById("rp-count").textContent =
+                `총 ${sc.screens.length}개 화면${naCount ? ` (미구현 ${naCount}개 포함)` : ""}`;
+
+            const grid = document.getElementById("screens-grid");
+            grid.innerHTML = sc.screens.map((id, i) => {
+                const isNA = id.startsWith("N/A");
+                const nm = NAMES[id] || id;
+                const file = screenFile(id);
+                const href = file ? file : "#";
+
+                // 마지막 아이템은 화살표 제외
+                const arrow = i < sc.screens.length - 1
+                    ? `<div class="flow-arrow"><i class="fa-solid fa-caret-right"></i></div>`
+                    : '';
+
+                return `
+                <div class="flow-unit">
+                    <a class="scr${isNA ? " na" : ""}" href="${href}"${isNA ? "" : " target='_blank'"}>
+                        <div class="scr-seq">
+                            <span>STEP ${i + 1}</span>
+                            <span class="scr-id">${isNA ? "N/A" : id}</span>
+                        </div>
+                        <span class="scr-name">${nm}${isNA ? `<span class="na-tag">미구현</span>` : ""}</span>
+                    </a>
+                    ${arrow}
+                </div>`;
+            }).join("");
+
+            const notes = [];
+
+            // 신규/추가 흐름별 안내
+            if (sel.issuance === '신규') {
+                notes.push('🆕 <strong>신규</strong>: 해당 기업에서 KB 기업카드를 처음 신청하는 흐름입니다. 사업자번호 확인 → 상품안내 → 준비서류 → 정보입력 → 신청완료 순으로 진행됩니다.');
+            } else if (sel.issuance === '추가') {
+                notes.push('➕ <strong>추가</strong>: 이미 카드가 발급된 기업에서 카드를 추가로 발급하는 흐름입니다. 기존 계약 정보를 기반으로 간소화된 절차로 진행됩니다.');
+            }
+
+            // 부서 방식별 안내 (법사자 추가 공용)
+            if (sel.biz === '법사자' && sel.issuance === '추가' && sel.cardType === '공용') {
+                if (sel.dept === '부서내추가') {
+                    notes.push('📂 <strong>부서내추가</strong>: 기존에 등록된 부서에 카드를 추가 발급합니다. 부서 신규 생성 없이 진행됩니다.');
+                } else if (sel.dept === '부서추가') {
+                    notes.push('🆕 <strong>부서추가</strong>: 신규 부서를 생성하며 카드를 발급합니다. 업체(부서)정보와 한도를 새로 설정합니다.');
+                }
+            }
+
+            // 개사자 체크 제한 안내
+            if (sel.biz === '개사자' && sel.card === '체크') {
+                notes.push('🔍 <strong>개인사업자 체크카드</strong>: 신분증 진위확인 → 본인확인 → 정보입력 흐름으로 진행됩니다. 추가 발급 시나리오는 현재 미확보 상태입니다.');
+            }
+
+            // NA 화면 경고
+            if (naCount) notes.push(`⚠️ N/A 표시된 ${naCount}개 화면은 아직 HTML 파일이 제작되지 않았습니다.`);
+            if (sc.code.startsWith('SC-03')) notes.push('※ 체크카드 전용 약관/동의 화면(N/A)은 신용카드 버전과 별도 제작이 필요합니다.');
+
+            document.getElementById('rp-note').innerHTML = notes.length
+                ? notes.map(n => `<div style="margin-bottom:6px">${n}</div>`).join('')
+                : '✅ 모든 화면이 구현되어 있습니다. 화면을 클릭하면 해당 목업 파일이 열립니다.';
+        }
+
+        // ──────────────────────────────────────────────
+        // 브레드크럼
+        // ──────────────────────────────────────────────
+        function renderBreadcrumb() {
+            const parts = [];
+            if (sel.card) parts.push(sel.card === "신용" ? "💳 신용" : "🏦 체크");
+            if (sel.biz) parts.push(sel.biz === "법사자" ? "🏢 법인사업자" : "👤 개인사업자");
+            if (sel.issuance) parts.push(sel.issuance === "신규" ? "🆕 신규" : "➕ 추가");
+            if (sel.cardType) parts.push(sel.cardType === "공용" ? "🏢 공용" : "👤 개별");
+            if (sel.dept) {
+                const lb = sel.biz === "개사자" && sel.card === "체크"
+                    ? (sel.dept === "부서내추가" ? "✅ 검증완료" : "🔍 검증필요")
+                    : (sel.dept === "부서내추가" ? "📂 부서내추가" : "🆕 부서추가");
+                parts.push(lb);
+            }
+            const key = getScenarioKey();
+            const code = key && SCENARIOS[key] ? SCENARIOS[key].code : null;
+            const bc = document.getElementById("breadcrumb");
+            bc.style.display = parts.length ? "block" : "none";
+            document.getElementById("bc-inner").innerHTML =
+                parts.map((p, i) => `<span class="bc-item">${p}</span>${i < parts.length - 1 ? '<span class="bc-sep">›</span>' : ""}`).join("")
+                + (code ? `<span class="bc-code">${code}</span>` : "");
+        }
+
+        // ──────────────────────────────────────────────
+        // 클릭 핸들러
+        // ──────────────────────────────────────────────
+        document.querySelectorAll(".opt").forEach(btn => {
+            btn.addEventListener("click", () => {
+                const step = +btn.dataset.step;
+                const val = btn.dataset.val;
+
+                // 같은 step의 버튼 선택 해제
+                document.querySelectorAll(`[data-step="${step}"]`).forEach(b => b.classList.remove("selected"));
+                btn.classList.add("selected");
+                markDone(step);
+
+                if (step === 1) {
+                    sel.card = val; sel.biz = null; sel.issuance = null; sel.cardType = null; sel.dept = null;
+                    enableStep(2, true);
+                    // 하위 선택 리셋
+                    [3, 4, 5].forEach(s => {
+                        enableStep(s, false);
+                        document.querySelectorAll(`[data-step="${s}"]`).forEach(b => b.classList.remove("selected"));
+                        document.getElementById(`sn${s}`).className = "step-num disabled-n";
+                    });
+                }
+                else if (step === 2) {
+                    sel.biz = val; sel.issuance = null; sel.cardType = null; sel.dept = null;
+                    enableStep(3, true); updateStep3();
+                    [4, 5].forEach(s => {
+                        enableStep(s, false);
+                        document.querySelectorAll(`[data-step="${s}"]`).forEach(b => b.classList.remove("selected"));
+                        document.getElementById(`sn${s}`).className = "step-num disabled-n";
+                    });
+                }
+                else if (step === 3) {
+                    sel.issuance = val; sel.cardType = null; sel.dept = null;
+                    updateStep4Step5();
+                    document.querySelectorAll(`[data-step="4"],[data-step="5"]`).forEach(b => b.classList.remove("selected"));
+                    [4, 5].forEach(s => document.getElementById(`sn${s}`).className = "step-num disabled-n");
+                    // 개사자_신용: 단계4,5 필요없음 → 바로 결과
+                }
+                else if (step === 4) {
+                    sel.cardType = val; sel.dept = null;
+                    updateStep4Step5();
+                    document.querySelectorAll(`[data-step="5"]`).forEach(b => b.classList.remove("selected"));
+                    document.getElementById("sn5").className = "step-num disabled-n";
+                }
+                else if (step === 5) { sel.dept = val; }
+
+                renderBreadcrumb();
+                renderResult();
+            });
+        });
+
+        // 초기 상태
+        enableStep(2, false); enableStep(3, false); enableStep(4, false); enableStep(5, false);
+
+        // ── 시나리오 시작 버튼 ───────────────────────────────────────────
+        document.getElementById('btn-start-scenario').addEventListener('click', () => {
+            const key = getScenarioKey();
+            const sc = key ? SCENARIOS[key] : null;
+            if (!sc) return;
+            const sessionId = SessionDB.init(key, sc.code, sc.label);
+            const firstScreen = sc.screens.find(s => !s.startsWith('N/A'));
+            const firstFile = screenFile(firstScreen);
+            if (firstFile) {
+                window.location.href = `${firstFile}?session=${sessionId}&scenario=${sc.code}&step=0`;
+            } else {
+                alert('시작 화면 파일을 찾을 수 없습니다: ' + firstScreen);
+            }
+        });
+    </script>
+</body>
+
+</html>

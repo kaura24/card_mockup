@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>약관동의 (0055) - 개선됨</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #e6e6e6;
+      --bg: #f7f8fa;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+
+      --overlay: rgba(0, 0, 0, 0.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      --blue: #1a73e8;
+      --danger: #e53935;
+
+      --card: #fff;
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      /* 모달 오픈 시 스크롤 방지용 클래스 */
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* ====== 전체 레이아웃 ====== */
+    .wrap {
+      max-width: 720px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: transparent;
+      padding-bottom: 92px;
+      /* 하단 CTA 공간 확보 */
+    }
+
+    /* ====== 상단바 ====== */
+    .topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 20;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      padding: 0 14px;
+    }
+
+    .topbar .title {
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .topbar .title small {
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+
+    .topbar .close {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #333;
+      font-size: 24px;
+    }
+
+    .topbar .close:hover,
+    .topbar .close:focus {
+      background: #fafafa;
+      outline: none;
+    }
+
+    /* ====== 헤더 ====== */
+    .head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 14px 16px 10px;
+    }
+
+    .head .h-title {
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 11px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      background: #fff;
+      color: #999;
+    }
+
+    .step.active {
+      background: rgba(26, 115, 232, 0.1);
+      border-color: rgba(26, 115, 232, 0.3);
+      color: var(--blue);
+    }
+
+    /* ====== 카드(컨테이너) ====== */
+    .card {
+      margin: 0 16px 14px;
+      background: var(--card);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    /* ====== 전체동의 영역 ====== */
+    .all-agree {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--line);
+      background: #f8f9fa;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .all-agree:active {
+      background: #eff1f3;
+    }
+
+    .chk {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid #ccc;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff;
+      flex: 0 0 auto;
+      transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .chk.on {
+      background: var(--blue);
+      border-color: var(--blue);
+    }
+
+    .chk svg {
+      width: 14px;
+      height: 14px;
+      stroke: #fff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.2s;
+    }
+
+    .chk.on svg {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .all-agree .label {
+      font-weight: 800;
+      font-size: 15px;
+      letter-spacing: -0.3px;
+    }
+
+    .all-agree .sub {
+      margin-left: auto;
+      font-size: 13px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* ====== 리스트 공통 ====== */
+    .list {
+      padding: 6px 0;
+    }
+
+    /* 포커스 접근성 */
+    .row:focus,
+    .group-head:focus,
+    .child:focus,
+    .all-agree:focus {
+      outline: 2px solid var(--blue);
+      outline-offset: -2px;
+      background-color: rgba(26, 115, 232, 0.05);
+    }
+
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+    }
+
+    .row:active {
+      background: #fafafa;
+    }
+
+    .row+.row {
+      border-top: 1px solid #f1f1f1;
+    }
+
+    .row .text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: #222;
+      letter-spacing: -0.3px;
+      line-height: 1.4;
+    }
+
+    .chev {
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid #999;
+      border-bottom: 1.5px solid #999;
+      transform: rotate(-45deg);
+      opacity: 0.7;
+    }
+
+    /* ====== 그룹(아코디언) ====== */
+    .group-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .group-head:active {
+      background: #fafafa;
+    }
+
+    .group-head .text {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    /* 아코디언 화살표 */
+    .caret-wrap {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .caret {
+      width: 8px;
+      height: 8px;
+      border-right: 1.5px solid #666;
+      border-bottom: 1.5px solid #666;
+      transform: rotate(45deg);
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      margin-bottom: 2px;
+    }
+
+    .group.open .caret {
+      transform: rotate(-135deg);
+      margin-bottom: -2px;
+    }
+
+    .children {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.3s ease-out;
+      background: #fcfcfc;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .group.open .children {
+      grid-template-rows: 1fr;
+      border-top: 1px solid #f1f1f1;
+    }
+
+    .children-inner {
+      overflow: hidden;
+    }
+
+    .child {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 18px 12px 42px;
+      /* 들여쓰기 */
+      cursor: pointer;
+    }
+
+    .child:active {
+      background: #f5f5f5;
+    }
+
+    .child+.child {
+      border-top: 1px solid #f5f5f5;
+    }
+
+    .child .text {
+      flex: 1;
+      font-size: 13.5px;
+      color: #333;
+      letter-spacing: -0.2px;
+    }
+
+    .req {
+      color: var(--danger);
+      font-weight: 700;
+      font-size: 12px;
+      margin-left: 4px;
+      white-space: nowrap;
+    }
+
+    /* ====== 하단 CTA (Sticky) ====== */
+    .bottom-cta {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(720px, 100%);
+      background: #fff;
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      padding: 12px 16px env(safe-area-inset-bottom, 20px);
+      z-index: 30;
+    }
+
+    .cta-btn {
+      width: 100%;
+      height: 52px;
+      border-radius: 14px;
+      border: none;
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 800;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .cta-btn:not(:disabled):active {
+      transform: scale(0.98);
+      background: var(--kb-yellow-dark);
+    }
+
+    .cta-btn:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+    }
+
+    /* ====== 토스트 ====== */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 90px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(30, 30, 30, 0.9);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      z-index: 60;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      font-weight: 500;
+      width: max-content;
+      max-width: 80%;
+      text-align: center;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ====== 우하단 퀵 버튼 ====== */
+    .req-qmark {
+      position: fixed;
+      right: 20px;
+      bottom: 100px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 20px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ====== 공통 모달 스타일 ====== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 1100;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.25s, visibility 0.25s;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-container {
+      width: min(720px, 100%);
+      max-height: 85vh;
+      background: #fff;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      transform: translateY(20px);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      overflow: hidden;
+    }
+
+    .modal-overlay.show .modal-container {
+      transform: translateY(0);
+    }
+
+    .modal-head {
+      padding: 18px 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #fff;
+    }
+
+    .modal-title {
+      font-weight: 800;
+      font-size: 16px;
+    }
+
+    .modal-close-btn {
+      background: #f5f5f5;
+      border: none;
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #333;
+    }
+
+    /* 개발용 JSON 스타일 */
+    .kv-grid {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      overflow: hidden;
+      font-size: 13px;
+      margin-bottom: 12px;
+    }
+
+    .kv-grid div {
+      padding: 8px 12px;
+      border-bottom: 1px solid #eee;
+    }
+
+    .kv-k {
+      background: #f9f9f9;
+      font-weight: 700;
+      border-right: 1px solid #eee;
+    }
+
+    .kv-v {
+      background: #fff;
+    }
+
+    .code-block {
+      background: #222;
+      color: #eee;
+      padding: 12px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
+
+    /* 상세 약관 내부 버튼 */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-full {
+      flex: 1;
+      height: 48px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 15px;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background: var(--kb-yellow);
+      color: #000;
+    }
+
+    .btn-secondary {
+      background: #fff;
+      border: 1px solid #ddd;
+      color: #333;
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body id="appBody">
+  <!-- 스크린 리더용: 모달 열릴 때 aria-hidden 처리될 영역 -->
+  <div class="wrap" id="mainContent" role="application" aria-label="약관동의 화면">
+
+    <!-- 상단바 -->
+    <header class="topbar" role="banner">
+      <div class="title" id="pageTitle">카드신청 <small>(0055)</small></div>
+      <button class="close" id="closeBtn" aria-label="닫기">×</button>
+    </header>
+
+    <!-- 진행 단계 표시 -->
+    <div class="head">
+      <div class="h-title">약관동의</div>
+      <div class="steps" aria-label="진행 단계">
+        <span class="step active" aria-current="step">1</span>
+        <span class="step">2</span>
+        <span class="step">3</span>
+        <span class="step">4</span>
+      </div>
+    </div>
+
+    <!-- 메인 컨텐츠 영역 -->
+    <main class="card" role="group" aria-label="약관 동의 목록">
+
+      <!-- 전체 동의 -->
+      <div class="all-agree" id="allAgreeRow" role="checkbox" aria-checked="false" tabindex="0">
+        <div class="chk" id="allAgreeChk">
+          <svg viewBox="0 0 24 24">
+            <path d="M20 6L9 17l-5-5"></path>
+          </svg>
+        </div>
+        <div class="label">필수항목 전체동의</div>
+        <div class="sub"><span id="agreeCount">0</span>/<span id="agreeTotal">0</span></div>
+      </div>
+
+      <!-- 약관 리스트 -->
+      <div class="list" id="listRoot">
+
+        <!-- 개별 항목 1 -->
+        <div class="row" data-item="t01" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="chk" data-chk="t01">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5"></path>
+            </svg>
+          </div>
+          <div class="text">KB국민카드 기업회원 약관 <span class="req">(필수)</span></div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+
+        <!-- 개별 항목 2 -->
+        <div class="row" data-item="t02" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="chk" data-chk="t02">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5"></path>
+            </svg>
+          </div>
+          <div class="text">신용카드 법인회원 표준약관 <span class="req">(필수)</span></div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+
+        <!-- 개별 항목 3 -->
+        <div class="row" data-item="t03" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="chk" data-chk="t03">
+            <svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5"></path>
+            </svg>
+          </div>
+          <div class="text">표준 전자금융거래기본약관 <span class="req">(필수)</span></div>
+          <div class="chev" aria-hidden="true"></div>
+        </div>
+
+        <!-- 그룹 1 -->
+        <div class="group" data-group="g01">
+          <div class="group-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="chk" data-chk="g01" role="checkbox" aria-checked="false" aria-label="기업 신용정보 그룹 전체선택">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <div class="text">기업(신용)정보 필수적 동의서 <span class="req">(필수)</span></div>
+            <div class="caret-wrap">
+              <div class="caret"></div>
+            </div>
+          </div>
+          <div class="children">
+            <div class="children-inner">
+              <div class="child" data-item="g01_1" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g01_1"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">수집·이용 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+              <div class="child" data-item="g01_2" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g01_2"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">조회 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+              <div class="child" data-item="g01_3" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g01_3"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">제공 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 그룹 2 -->
+        <div class="group" data-group="g02">
+          <div class="group-head" tabindex="0" role="button" aria-expanded="false">
+            <div class="chk" data-chk="g02" role="checkbox" aria-checked="false">
+              <svg viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5"></path>
+              </svg>
+            </div>
+            <div class="text">기업(신용)정보 필수적 동의서(대표자) <span class="req">(필수)</span></div>
+            <div class="caret-wrap">
+              <div class="caret"></div>
+            </div>
+          </div>
+          <div class="children">
+            <div class="children-inner">
+              <div class="child" data-item="g02_1" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g02_1"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">수집·이용 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+              <div class="child" data-item="g02_2" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g02_2"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">조회 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+              <div class="child" data-item="g02_3" role="checkbox" aria-checked="false" tabindex="0">
+                <div class="chk" data-chk="g02_3"><svg viewBox="0 0 24 24">
+                    <path d="M20 6L9 17l-5-5"></path>
+                  </svg></div>
+                <div class="text">제공 동의 <span class="req">(필수)</span></div>
+                <div class="chev"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 기타 단일 항목들 -->
+        <div class="row" data-item="t04" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="chk" data-chk="t04"><svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5"></path>
+            </svg></div>
+          <div class="text">카드발급에 관한 약관승인 <span class="req">(필수)</span></div>
+          <div class="chev"></div>
+        </div>
+        <div class="row" data-item="t05" role="checkbox" aria-checked="false" tabindex="0">
+          <div class="chk" data-chk="t05"><svg viewBox="0 0 24 24">
+              <path d="M20 6L9 17l-5-5"></path>
+            </svg></div>
+          <div class="text">접속기기정보 수집·이용 동의 <span class="req">(필수)</span></div>
+          <div class="chev"></div>
+        </div>
+
+      </div>
+    </main>
+
+    <!-- 하단 고정 CTA -->
+    <footer class="bottom-cta" role="contentinfo">
+      <button class="cta-btn" id="nextBtn" type="button" disabled>다음</button>
+    </footer>
+
+    <button id="reqBtn" class="req-qmark" aria-label="개발 스펙 보기">?</button>
+  </div> <!-- //wrap -->
+
+  <!-- 토스트 메시지 -->
+
+
+  <!-- 약관 상세 모달 -->
+  <div id="detailModal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-container">
+      <div class="modal-head">
+        <div id="detailTitle" class="modal-title">약관 상세</div>
+        <button id="detailClose" class="modal-close-btn">닫기</button>
+      </div>
+      <div id="detailBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 스펙 모달 -->
+  <div id="specModal" class="modal-overlay" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="modal-container">
+      <div class="modal-head">
+        <div class="modal-title">개발 스펙 (0055)</div>
+        <button id="specClose" class="modal-close-btn">닫기</button>
+      </div>
+      <div id="specBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    /**
+     * 0055_terms.js
+     * * [개선 사항]
+     * 1. 보안: innerHTML 사용 최소화 (XSS 방지)
+     * 2. 접근성: Modal Open시 Focus Trap 적용, ARIA 속성 실시간 업데이트
+     * 3. 로직: Checkbox 양방향 동기화 (Parent <-> Child) 완벽 구현
+     * 4. 캡슐화: IIFE 패턴으로 전역 변수 보호
+     */
+
+    (function () {
+      "use strict";
+
+      // --- Constants & Config ---
+      const SCREEN_ID = "0055";
+
+      // 필수 동의 항목 키 (DB/API 연동 시 동적으로 받아와야 함)
+      const REQUIRED_ITEMS = [
+        "t01", "t02", "t03",
+        "g01_1", "g01_2", "g01_3",
+        "g02_1", "g02_2", "g02_3",
+        "t04", "t05"
+      ];
+
+      // 그룹 정의 (부모 : 자식들)
+      const GROUP_MAP = {
+        "g01": ["g01_1", "g01_2", "g01_3"],
+        "g02": ["g02_1", "g02_2", "g02_3"]
+      };
+
+      // 타이틀 매핑 (실제로는 약관 본문과 함께 관리됨)
+      const TERMS_TITLES = {
+        t01: "KB국민카드 기업회원 약관",
+        t02: "신용카드 법인회원 표준약관",
+        t03: "표준 전자금융거래기본약관",
+        g01_1: "기업(신용)정보 수집·이용 동의",
+        g01_2: "기업(신용)정보 조회 동의",
+        g01_3: "기업(신용)정보 제공 동의",
+        g02_1: "대표자 정보 수집·이용 동의",
+        g02_2: "대표자 정보 조회 동의",
+        g02_3: "대표자 정보 제공 동의",
+        t04: "카드발급 약관승인",
+        t05: "접속기기정보 수집 동의"
+      };
+
+      // State
+      const state = {};
+      REQUIRED_ITEMS.forEach(k => state[k] = false);
+
+      // --- DOM Elements ---
+      const $ = (selector) => document.querySelector(selector);
+      const $$ = (selector) => document.querySelectorAll(selector);
+
+      const els = {
+        body: document.body,
+        mainContent: $("#mainContent"),
+        toast: $("#toast"),
+        allAgreeRow: $("#allAgreeRow"),
+        allAgreeChk: $("#allAgreeChk"),
+        agreeCount: $("#agreeCount"),
+        agreeTotal: $("#agreeTotal"),
+        nextBtn: $("#nextBtn"),
+
+        // Modals
+        detailModal: $("#detailModal"),
+        detailTitle: $("#detailTitle"),
+        detailBody: $("#detailBody"),
+        detailClose: $("#detailClose"),
+
+        specModal: $("#specModal"),
+        specBody: $("#specBody"),
+        specClose: $("#specClose"),
+        reqBtn: $("#reqBtn")
+      };
+
+      // --- UI Utilities ---
+
+      function showToast(msg) {
+        els.toast.textContent = msg;
+        els.toast.classList.add("show");
+        setTimeout(() => els.toast.classList.remove("show"), 2000);
+      }
+
+      // Focus Trap: 모달 내부에서만 포커스 이동
+      function trapFocus(modalEl) {
+        const focusableEls = modalEl.querySelectorAll('a[href], button, textarea, input, select, [tabindex]:not([tabindex="-1"])');
+        const first = focusableEls[0];
+        const last = focusableEls[focusableEls.length - 1];
+
+        modalEl.addEventListener('keydown', function (e) {
+          if (e.key === 'Tab') {
+            if (e.shiftKey) { // Shift + Tab
+              if (document.activeElement === first) {
+                e.preventDefault();
+                last.focus();
+              }
+            } else { // Tab
+              if (document.activeElement === last) {
+                e.preventDefault();
+                first.focus();
+              }
+            }
+          }
+        });
+        // 모달 열릴 때 첫 요소 포커스
+        setTimeout(() => first && first.focus(), 50);
+      }
+
+      // --- Modal Control ---
+      let lastFocusedEl = null;
+
+      function openModal(modalEl) {
+        lastFocusedEl = document.activeElement;
+        modalEl.classList.add("show");
+        modalEl.setAttribute("aria-hidden", "false");
+        els.body.classList.add("modal-open");
+        els.mainContent.setAttribute("aria-hidden", "true"); // 배경 스크린리더 숨김
+        trapFocus(modalEl);
+      }
+
+      function closeModal(modalEl) {
+        modalEl.classList.remove("show");
+        modalEl.setAttribute("aria-hidden", "true");
+        els.body.classList.remove("modal-open");
+        els.mainContent.setAttribute("aria-hidden", "false");
+        if (lastFocusedEl) lastFocusedEl.focus();
+      }
+
+      // --- Logic Core ---
+
+      /**
+       * 상태 업데이트 및 UI 렌더링
+       * 1. 개별 상태 -> UI 반영
+       * 2. 자식들 상태 -> 그룹 UI 반영
+       * 3. 전체 상태 -> 전체동의 UI & 버튼 활성화
+       */
+      function updateUI() {
+        // 1. 개별 Row UI
+        REQUIRED_ITEMS.forEach(key => {
+          const chk = $(`[data-chk="${key}"]`);
+          const row = $(`[data-item="${key}"]`);
+          const isChecked = state[key];
+
+          if (chk) {
+            chk.classList.toggle("on", isChecked);
+            if (row) row.setAttribute("aria-checked", isChecked);
+          }
+        });
+
+        // 2. 그룹(Parent) UI 동기화
+        Object.keys(GROUP_MAP).forEach(groupKey => {
+          const children = GROUP_MAP[groupKey];
+          const allChildChecked = children.every(childKey => state[childKey]);
+
+          const groupChk = $(`[data-chk="${groupKey}"]`);
+          if (groupChk) {
+            groupChk.classList.toggle("on", allChildChecked);
+            groupChk.setAttribute("aria-checked", allChildChecked);
+          }
+        });
+
+        // 3. 전체 동의 UI
+        const totalCount = REQUIRED_ITEMS.length;
+        const checkedCount = REQUIRED_ITEMS.filter(k => state[k]).length;
+        const isAll = totalCount > 0 && totalCount === checkedCount;
+
+        els.agreeTotal.textContent = totalCount;
+        els.agreeCount.textContent = checkedCount;
+
+        els.allAgreeChk.classList.toggle("on", isAll);
+        els.allAgreeRow.setAttribute("aria-checked", isAll);
+
+        // 버튼 활성화
+        els.nextBtn.disabled = !isAll;
+      }
+
+      /**
+       * 개별 아이템 토글
+       * @param {string} key - t01, g01_1 등
+       * @param {boolean|null} forceVal - 강제 설정 값 (null이면 toggle)
+       */
+      function setItemState(key, forceVal = null) {
+        if (forceVal === null) {
+          state[key] = !state[key];
+        } else {
+          state[key] = !!forceVal;
+        }
+        updateUI();
+      }
+
+      /**
+       * 그룹 일괄 토글
+       */
+      function toggleGroup(groupKey) {
+        const children = GROUP_MAP[groupKey];
+        // 현재 하나라도 꺼져있으면 -> 모두 켬, 모두 켜져있으면 -> 모두 끔
+        const isAnyUnchecked = children.some(k => !state[k]);
+        children.forEach(k => state[k] = isAnyUnchecked);
+        updateUI();
+      }
+
+      /**
+       * 전체 일괄 토글
+       */
+      function toggleAll() {
+        const isAnyUnchecked = REQUIRED_ITEMS.some(k => !state[k]);
+        REQUIRED_ITEMS.forEach(k => state[k] = isAnyUnchecked);
+        updateUI();
+        showToast(isAnyUnchecked ? "모두 동의하였습니다." : "동의가 해제되었습니다.");
+      }
+
+      // --- Event Bindings ---
+
+      function initEvents() {
+        // 1. 전체 동의 클릭
+        els.allAgreeRow.addEventListener("click", toggleAll);
+        els.allAgreeRow.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleAll(); }
+        });
+
+        // 2. 리스트 아이템 (이벤트 위임)
+        $("#listRoot").addEventListener("click", (e) => {
+          // A. 체크박스 영역 클릭 시 -> 토글만 수행
+          const chkEl = e.target.closest(".chk");
+          if (chkEl) {
+            e.stopPropagation();
+            const groupKey = chkEl.dataset.chk;
+            // 그룹 헤더의 체크박스인 경우
+            if (GROUP_MAP[groupKey]) {
+              toggleGroup(groupKey);
+              return;
+            }
+            // 개별 아이템의 체크박스인 경우
+            // (data-chk가 t01, g01_1 형태일 때, 상위 row나 child의 data-item과 일치)
+            // 하지만 DOM 구조상 row/child가 감싸고 있으므로 bubbling으로 처리 가능하지만
+            // 명시적으로 찾아서 처리
+            const parentRow = chkEl.closest("[data-item]");
+            if (parentRow) {
+              const key = parentRow.dataset.item;
+              setItemState(key);
+              return;
+            }
+          }
+
+          // B. 그룹 헤더(텍스트 부분) 클릭 -> 아코디언 펼치기
+          const groupHead = e.target.closest(".group-head");
+          if (groupHead && !chkEl) {
+            const group = groupHead.closest(".group");
+            const isOpen = group.classList.contains("open");
+            group.classList.toggle("open");
+            groupHead.setAttribute("aria-expanded", !isOpen);
+            return;
+          }
+
+          // C. 행(Row/Child) 전체 클릭 -> 약관 상세 팝업 호출
+          const row = e.target.closest("[data-item]");
+          if (row && !chkEl) {
+            const key = row.dataset.item;
+            openTermsDetail(key);
+          }
+        });
+
+        // 3. 키보드 접근성 (리스트 내부 Enter/Space)
+        $("#listRoot").addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            const target = e.target;
+            // 그룹 헤더에서 엔터 -> 아코디언 토글
+            if (target.classList.contains("group-head")) {
+              e.preventDefault();
+              target.click();
+            }
+            // 개별 항목에서 엔터 -> 상세 팝업 (Row Click 트리거)
+            if (target.hasAttribute("data-item")) {
+              e.preventDefault();
+              target.click();
+            }
+          }
+        });
+
+        // 4. 상단 닫기, CTA
+        $("#closeBtn").addEventListener("click", () => showToast("닫기 버튼 동작"));
+        els.nextBtn.addEventListener("click", () => {
+          if (!els.nextBtn.disabled) {
+            showToast("다음 단계로 이동합니다.");
+            if (window.ScenarioNav) {
+              ScenarioNav.log('NEXT_CLICK', { msg: 'All terms agreed' });
+              ScenarioNav.goNext();
+            } else {
+              if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+                  location.hash = "#/0056";
+                }
+              } // Assuming 0056 is next
+            }
+          }
+        });
+
+        // 5. 모달 닫기 버튼들
+        els.detailClose.addEventListener("click", () => closeModal(els.detailModal));
+        els.specClose.addEventListener("click", () => closeModal(els.specModal));
+        els.reqBtn.addEventListener("click", openSpecModal);
+
+        // ESC 닫기
+        document.addEventListener("keydown", (e) => {
+          if (e.key === "Escape") {
+            if (els.detailModal.classList.contains("show")) closeModal(els.detailModal);
+            if (els.specModal.classList.contains("show")) closeModal(els.specModal);
+          }
+        });
+      }
+
+      // --- Detail Modal Logic ---
+
+      function openTermsDetail(key) {
+        const title = TERMS_TITLES[key] || "약관 상세";
+        els.detailTitle.textContent = title;
+
+        // 안전한 DOM 생성 (innerHTML 대체)
+        els.detailBody.innerHTML = ""; // 초기화
+
+        // 1. 설명 텍스트
+        const p = document.createElement("p");
+        p.textContent = "본 화면은 약관 상세 내용을 표시하는 영역입니다. 실제 서비스에서는 서버로부터 약관 전문을 받아와 표시합니다.";
+        els.detailBody.appendChild(p);
+
+        // 2. 키 정보 (디버깅용)
+        const code = document.createElement("div");
+        code.className = "code-block";
+        code.style.marginTop = "12px";
+        code.textContent = `Terms Key: ${key}`;
+        els.detailBody.appendChild(code);
+
+        // 3. 하단 동의/해제 버튼
+        const btnContainer = document.createElement("div");
+        btnContainer.className = "btn-row";
+
+        const btnAgree = document.createElement("button");
+        btnAgree.className = "btn-full btn-primary";
+        btnAgree.textContent = "동의하기";
+        btnAgree.onclick = () => {
+          setItemState(key, true);
+          closeModal(els.detailModal);
+          showToast("동의하였습니다.");
+        };
+
+        const btnUnagree = document.createElement("button");
+        btnUnagree.className = "btn-full btn-secondary";
+        btnUnagree.textContent = "동의 안 함";
+        btnUnagree.onclick = () => {
+          setItemState(key, false);
+          closeModal(els.detailModal);
+          showToast("동의를 해제했습니다.");
+        };
+
+        btnContainer.appendChild(btnAgree);
+        btnContainer.appendChild(btnUnagree);
+        els.detailBody.appendChild(btnContainer);
+
+        openModal(els.detailModal);
+      }
+
+      // --- Spec Modal Logic (JSON View) ---
+
+      function openSpecModal() {
+        const specData = {
+          screenId: SCREEN_ID,
+          desc: "약관동의 화면 (Refactored)",
+          improvements: [
+            "Focus Trap 적용으로 웹 접근성 준수",
+            "XSS 방지를 위한 innerHTML 사용 지양",
+            "체크박스 로직 양방향 바인딩 구현"
+          ]
+        };
+
+        // DOM 생성
+        els.specBody.innerHTML = "";
+
+        const kv = document.createElement("div");
+        kv.className = "kv-grid";
+
+        Object.entries(specData).forEach(([k, v]) => {
+          if (k === 'improvements') return;
+          const kd = document.createElement("div"); kd.className = "kv-k"; kd.textContent = k;
+          const vd = document.createElement("div"); vd.className = "kv-v"; vd.textContent = v;
+          kv.appendChild(kd); kv.appendChild(vd);
+        });
+        els.specBody.appendChild(kv);
+
+        const impTitle = document.createElement("strong");
+        impTitle.textContent = "개선사항 목록";
+        els.specBody.appendChild(impTitle);
+
+        const ul = document.createElement("ul");
+        ul.style.marginTop = "8px";
+        ul.style.paddingLeft = "20px";
+        specData.improvements.forEach(txt => {
+          const li = document.createElement("li");
+          li.textContent = txt;
+          ul.appendChild(li);
+        });
+        els.specBody.appendChild(ul);
+
+        openModal(els.specModal);
+      }
+
+      // --- Initialization ---
+      initEvents();
+      updateUI();
+
+    })();
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0055"></script>
+</body>
+
+</html>

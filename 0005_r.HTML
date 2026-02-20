@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 제출서류 (0005)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --panel: #f4f6f9;
+      --req: #d64545;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+      --white: #fff;
+
+      --modal-bg: rgba(0, 0, 0, .6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 24px 90px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header-group {
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .screen-id {
+      font-size: .78em;
+      font-weight: 900;
+      color: #666;
+      letter-spacing: -.2px;
+      white-space: nowrap;
+    }
+
+    .subnote {
+      margin: 10px 0 0;
+      color: #555;
+      font-size: 14px;
+      font-weight: 750;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .subnote .hot {
+      color: var(--req);
+      font-weight: 950;
+    }
+
+    /* ===== Content panel ===== */
+    .panel {
+      margin-top: 18px;
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      background: #fff;
+      overflow: hidden;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, .06);
+    }
+
+    .panel-head {
+      padding: 18px 20px;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .panel-head .h {
+      font-size: 16px;
+      font-weight: 950;
+      color: #222;
+      letter-spacing: -.2px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #fff2f2;
+      border: 1px solid #ffd6d6;
+      color: #a82a2a;
+      font-size: 12.5px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .panel-body {
+      padding: 22px 22px 18px;
+    }
+
+    /* Docs list */
+    .docs {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .doc {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      color: #333;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: -.1px;
+    }
+
+    .dash {
+      width: 10px;
+      height: 2px;
+      margin-top: 11px;
+      background: #777;
+      flex: 0 0 auto;
+      border-radius: 2px;
+      opacity: .75;
+    }
+
+    .doc .meta {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1 1 auto;
+    }
+
+    .doc .name {
+      line-height: 1.45;
+      word-break: keep-all;
+    }
+
+    .doc .hint {
+      font-size: 13px;
+      font-weight: 750;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .doc .hint .em {
+      color: var(--req);
+      font-weight: 950;
+    }
+
+    .note {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border-radius: 12px;
+      background: #f7f7f7;
+      border: 1px solid #ececec;
+      color: #555;
+      font-size: 13px;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .note .mark {
+      color: var(--req);
+      font-weight: 950;
+      margin-right: 6px;
+    }
+
+    /* bottom buttons */
+    .btn-area {
+      margin-top: 28px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn-secondary {
+      width: 180px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #fff;
+      color: #333;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #fafafa;
+    }
+
+    .btn-secondary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      width: 260px;
+      height: 56px;
+      border: none;
+      border-radius: 10px;
+      background: var(--kb-yellow);
+      color: #222;
+      font-size: 18px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(33, 33, 33, .92);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .28s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #222;
+      color: var(--kb-yellow);
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      z-index: 2900;
+      transition: transform .2s;
+    }
+
+    .req-trigger:hover {
+      transform: rotate(15deg) scale(1.08);
+    }
+
+    .req-trigger:active {
+      transform: scale(.98);
+    }
+
+    /* ===== Spec modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 4000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, .4);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #eee;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      background: #f9f9f9;
+      width: 160px;
+      font-weight: 850;
+    }
+
+    .spec-section {
+      margin-top: 24px;
+    }
+
+    .spec-section h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--kb-yellow);
+      padding-left: 10px;
+      font-weight: 900;
+    }
+
+    .spec-section ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .title {
+        font-size: 26px;
+      }
+
+      .panel-head {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn-area {
+        flex-direction: column;
+      }
+
+      .btn-secondary,
+      .btn-primary {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆에 화면번호 실제 렌더 + 탭 타이틀도 JS에서 SSOT로 동기화 -->
+      <h1 class="title">
+        <span id="title-text">제출서류</span>
+        <span id="title-id" class="screen-id">(0005)</span>
+      </h1>
+      <div class="subnote">
+        <span>카드 신청 진행을 위해 제출이 필요한 서류 목록입니다.</span>
+        <span class="hot">최종 3개월 이내 발급분</span>
+      </div>
+    </div>
+
+    <section class="panel" aria-label="제출서류 안내">
+      <div class="panel-head">
+        <div class="h">제출서류</div>
+        <div class="badge" aria-label="최근 3개월 이내 발급분">
+          최근 3개월 이내 발급분
+        </div>
+      </div>
+
+      <div class="panel-body">
+        <ul id="doc-list" class="docs" aria-label="제출서류 목록">
+          <!-- JS 렌더 -->
+        </ul>
+
+        <div class="note">
+          <span class="mark">※</span>
+          법인등록번호가 없는 법인(예: 비영리법인) 또는 임의단체의 경우, 대표자 개인인감증명서 제출
+        </div>
+      </div>
+    </section>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary">다음</button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCREEN_ID = "0005";
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0005
+     * 제출서류 화면(단순 안내)
+     *
+     * 핵심 리팩토링 포인트(0033 샘플 규칙 준수)
+     * 1) 타이틀/화면번호/탭타이틀: SSOT(META) 기반으로 1회 정의 후 동기화
+     * 2) 요구사항/주석: ? FAB 버튼으로 모달 표시(요건정의서 + JSON)
+     * 3) 본 화면은 "단순안내" 성격(입력값 없음) — 목록/주의문구 정확성에 집중
+     */
+    (function () {
+      // =========================
+      // 0) SSOT: 화면 메타
+      // =========================
+      const META = {
+        id: "0005",
+        title: "제출서류",
+        name: "제출서류",
+        prevTarget: "0004", // 준비사항
+        nextTarget: "0006"  // 서류자동제출서비스
+      };
+
+      // 탭/제목 동기화
+      document.title = `KB국민카드 | ${META.title} (${META.id})`;
+      document.getElementById("title-text").textContent = META.title;
+      document.getElementById("title-id").textContent = `(${META.id})`;
+
+      // =========================
+      // 1) DOM
+      // =========================
+      const toast = document.getElementById("toast");
+      const docListEl = document.getElementById("doc-list");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      const specBtn = document.getElementById("btn-spec");
+      const modal = document.getElementById("modal-spec");
+      const modalClose = document.getElementById("btn-modal-close");
+
+      // =========================
+      // 2) Data (이미지/컨텍스트 기반)
+      // =========================
+      // 이미지에 보이는 제출서류 목록 + 주석(조건/예외)
+      const DOCS = [
+        { name: "사업자등록증 사본 또는 사업자등록증명원" },
+        { name: "법인인감증명서", hint: "대표자 휴대폰인증 시 생략 가능" },
+        { name: "법인등기사항전부증명서" },
+        { name: "표준재무제표증명" },
+        { name: "부가세과세표준증명원" },
+        { name: "주주명부 및 (정관)" }
+      ];
+
+      // =========================
+      // 3) Utils
+      // =========================
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2200);
+      };
+
+      const goTo = (id) => { location.hash = `#/${id}`; };
+
+      // =========================
+      // 4) Render
+      // =========================
+      const renderDocs = () => {
+        docListEl.innerHTML = "";
+        DOCS.forEach(d => {
+          const li = document.createElement("li");
+          li.className = "doc";
+          li.innerHTML = `
+        <span class="dash" aria-hidden="true"></span>
+        <div class="meta">
+          <div class="name">${d.name}</div>
+          ${d.hint ? `<div class="hint"><span class="em">(${d.hint})</span></div>` : ""}
+        </div>
+      `;
+          docListEl.appendChild(li);
+        });
+      };
+
+      // =========================
+      // 5) Navigation (mock)
+      // =========================
+      btnPrev.addEventListener("click", () => {
+        showToast("이전 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          if (window.ScenarioNav) {
+            ScenarioNav.goPrev();
+          } else {
+            setTimeout(() => goTo(META.prevTarget), 220);
+          }
+        }
+      });
+
+      btnNext.addEventListener("click", () => {
+        showToast("다음 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+        ScenarioNav.goNext();
+      } else {
+        setTimeout(() => {
+          const nb = document.getElementById('_sc-next-btn');
+          if (nb) nb.click();
+          else goTo(META.nextTarget);
+        }, 220);
+      }
+      });
+
+      // =========================
+      // 6) Spec modal (요건정의서/주석)
+      // =========================
+      const REQ_SPEC = {
+        screen_id: META.id,
+        screen_name: META.name,
+        title: META.title,
+        segment: { corp: true, sole_prop: false }, // 법인 Y / 개인 N
+        action_type: "SIMPLE_GUIDE",
+        input_spec: "N (단순안내)",
+        purpose: "카드 신청 진행 전 제출 서류(최근 3개월 이내 발급분) 목록을 고객에게 안내",
+        business_rule_source: "화면기능목록 ID:0005 (제출서류)",
+        rules: [
+          "제출서류는 '최종 3개월 이내 발급분' 기준으로 안내",
+          "법인인감증명서는 대표자 휴대폰인증 시 생략 가능",
+          "법인등록번호가 없는 법인(예: 비영리법인) 또는 임의단체는 대표자 개인인감증명서 제출",
+          "다음 단계(0006)는 외부 KoDATA 기반 '서류자동제출서비스' 동의/이동 화면(연계 화면)"
+        ],
+        docs: DOCS.map(d => d.hint ? `${d.name} (${d.hint})` : d.name),
+        navigation: {
+          prev: `${META.prevTarget}(목업)`,
+          next: `${META.nextTarget}(목업)`
+        },
+        qa_points: [
+          "목록 문구가 기준 문서/이미지와 정확히 일치하는지(띄어쓰기/괄호 포함)",
+          "‘최종 3개월 이내 발급분’ 강조 표기(색/배지) 가독성",
+          "예외 문구(법인등록번호 없는 법인/임의단체) 누락 여부",
+          "모바일에서 패널/텍스트 줄바꿈이 깨지지 않는지"
+        ],
+        data_spec: {
+          ssot_meta: META,
+          docs_shape: "Array<{ name: string, hint?: string }>"
+        }
+      };
+
+      const renderSpec = () => {
+        const body = document.getElementById("modal-body");
+        const title = document.getElementById("modal-title");
+        if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+        body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action_type}</td></tr>
+        <tr><th>대상</th><td>법인사업자: ${REQ_SPEC.segment.corp ? "Y" : "N"} / 개인사업자: ${REQ_SPEC.segment.sole_prop ? "Y" : "N"}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>안내 문구(제출서류 목록)</h3>
+        <ul>${REQ_SPEC.docs.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>네비게이션</h3>
+        <ul>
+          <li>이전: ${REQ_SPEC.navigation.prev}</li>
+          <li>다음: ${REQ_SPEC.navigation.next}</li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+      };
+
+      const openModal = () => {
+        renderSpec();
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        modalClose.focus();
+      };
+
+      const closeModal = () => {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        specBtn.focus();
+      };
+
+      specBtn.addEventListener("click", openModal);
+      modalClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (modal.classList.contains("show")) closeModal();
+      });
+
+      // init
+      renderDocs();
+    })();
+  </script>
+  <script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0005"></script>
+</body>
+
+</html>

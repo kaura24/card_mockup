@@ -1,0 +1,32 @@
+[
+    {
+        "biz_no": "1111111111",
+        "corp_no": "1111111111111",
+        "company_name_ko": "(주)기존회원사",
+        "company_name_en": "EXISTING MEMBER CORP",
+        "rep_name_ko": "김기존",
+        "rep_name_en": "KIM GI JON",
+        "biz_tel": "02-1234-5678",
+        "biz_zip": "03123",
+        "biz_addr1": "서울 종로구",
+        "biz_addr2": "광화문빌딩 10층",
+        "founded_date": "20100101",
+        "member_type": "CORP",
+        "is_existing_member": true
+    },
+    {
+        "biz_no": "2222222222",
+        "corp_no": "2222222222222",
+        "company_name_ko": "(주)신규신청사",
+        "company_name_en": "NEW APPLICANT CORP",
+        "rep_name_ko": "이신규",
+        "rep_name_en": "LEE SIN GYU",
+        "biz_tel": "031-111-2222",
+        "biz_zip": "13529",
+        "biz_addr1": "경기도 성남시",
+        "biz_addr2": "판교테크노밸리",
+        "founded_date": "20230505",
+        "member_type": "CORP",
+        "is_existing_member": false
+    }
+]

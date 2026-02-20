@@ -1,0 +1,55 @@
+{
+  "screen_id": "0074",
+  "screen_name": "접수완료(개사자_체크)",
+  "channel": "mobile web (개인사업자_체크)",
+  "targets": "개인사업자(체크)",
+  "action": "단순안내",
+  "processing_core_call": false,
+  "processing_domain": "N/A",
+  "processing_purpose": "접수완료 안내",
+  "purpose": "체크카드 발급 신청 접수 완료 안내 및 신청내역 조회 경로 제공",
+  "fields": [
+    {
+      "key": "상품명",
+      "required": false,
+      "type": "text(display)",
+      "note": "예: MyBiz 사장님든든 기업체크카드"
+    },
+    {
+      "key": "카드이미지",
+      "required": false,
+      "type": "image(display)",
+      "note": "img_0074_card"
+    },
+    {
+      "key": "완료문구",
+      "required": false,
+      "type": "text(display)"
+    },
+    {
+      "key": "진행상황 안내",
+      "required": false,
+      "type": "text(display)",
+      "note": "메뉴 경로 안내"
+    }
+  ],
+  "control_rules": [
+    "‘체크카드 신청 내역 조회’ 버튼 클릭 시 신청내역 화면으로 이동(딥링크/라우팅)",
+    "‘확인’ 클릭 시 종료/홈 이동(정책에 따라 다름)",
+    "처리계 호출 없이 결과 안내만 표시"
+  ],
+  "backend": {
+    "domain": "N/A",
+    "txn": "N/A",
+    "notes": "표시 데이터는 이전 세션/플랫폼 저장값 기반"
+  },
+  "audit_log_points": [
+    "완료 화면 노출 이벤트(선택)",
+    "신청내역 조회 버튼 클릭",
+    "확인 버튼 클릭"
+  ],
+  "notes": [
+    "스크린샷 구성 반영: 상단 타이틀/닫기, 상품명/카드 이미지, 접수 완료 문구, 회색 버튼, 하단 노란 확인 버튼",
+    "이미지 제공 시 IMG_MAP에 img_0074_card 경로만 추가하면 자동 적용"
+  ]
+}

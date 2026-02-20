@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB국민카드 | 기업카드 비대면 신청 목업</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="css/kb-theme.css" />
+    <style>
+        body {
+            background-color: #f5f7fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 40px;
+            color: #111;
+            display: inline-block;
+            background: #ffcc00;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-decoration: none;
+            color: #333;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+            border-color: #ffcc00;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: #ddd;
+            transition: background 0.3s;
+        }
+
+        .card.primary:hover::before {
+            background: #ffcc00;
+        }
+
+        .card.secondary:hover::before {
+            background: #666;
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+            color: #ffcc00;
+        }
+
+        .card.secondary .icon {
+            color: #888;
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .desc {
+            font-size: 15px;
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            margin-top: auto;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .card.primary .btn {
+            background: #ffcc00;
+            color: #111;
+        }
+
+        .card.secondary .btn {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #ffecb3;
+            color: #ff6f00;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="logo">KB국민카드 기업비대면</div>
+
+        <h1 style="font-size: 32px; font-weight: 900; margin-bottom: 10px;">시나리오 선택</h1>
+        <p style="color:#666; margin-bottom: 40px;">진행할 시나리오 유형을 선택해주세요.</p>
+
+        <div class="grid">
+            <!-- Unified Scenario -->
+            <a href="integrated_flow.html" class="card primary">
+                <span class="badge">New (v2)</span>
+                <div class="icon"><i class="fa-solid fa-layer-group"></i></div>
+                <div class="title">통합 슈퍼 시나리오</div>
+                <div class="desc">
+                    단일 화면에서 모든 케이스를 처리하는<br>
+                    <strong>반응형 통합 플로우</strong>입니다.<br>
+                    (자동 판별 & 조건부 렌더링)
+                </div>
+                <div class="btn">시나리오 시작하기 <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+
+            <!-- General Scenarios -->
+            <a href="general_flow.html" class="card secondary">
+                <div class="icon"><i class="fa-solid fa-list-check"></i></div>
+                <div class="title">일반 시나리오 목록</div>
+                <div class="desc">
+                    16개 케이스별 정적 플로우를<br>
+                    <strong>개별 선택</strong>하여 진행합니다.<br>
+                    (Legacy Static Flows)
+                </div>
+                <div class="btn">목록 보기 <i class="fa-solid fa-arrow-right"></i></div>
+            </a>
+        </div>
+
+        <div style="margin-top: 60px; color: #999; font-size: 12px;">
+            KB Kookmin Card Corp. Business Card Mockup System v2.0
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 약관동의 (0009)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#d9d9d9;
+      --panel:#f4f6f9;
+      --req:#d64545;
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+      --white:#fff;
+
+      --modal-bg:rgba(0,0,0,.6);
+      --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+      color:var(--text);
+      background:var(--white);
+      line-height:1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:34px 24px 90px;
+    }
+
+    /* Header */
+    .header-group{margin-bottom:18px;}
+    .title{
+      margin:0;
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.7px;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .screen-id{
+      font-size:.78em;
+      font-weight:900;
+      color:#666;
+      letter-spacing:-.2px;
+      white-space:nowrap;
+    }
+    .subnote{
+      margin:8px 0 0;
+      color:#555;
+      font-size:14px;
+      font-weight:650;
+    }
+
+    /* ===== Agreement panel ===== */
+    .panel{
+      margin-top:18px;
+      border:1px solid #e6e6e6;
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:0 10px 26px rgba(0,0,0,.06);
+    }
+
+    .panel-head{
+      display:grid;
+      grid-template-columns:1fr 160px;
+      gap:10px;
+      align-items:center;
+      padding:14px 18px;
+      border-bottom:1px solid #efefef;
+      background:#fff;
+    }
+    .panel-head-left{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:950;
+      color:#222;
+    }
+    .panel-badge{
+      width:30px;height:30px;
+      border-radius:9px;
+      background:#f5f5f5;
+      border:1px solid #ededed;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      color:#444;
+      user-select:none;
+    }
+    .panel-head-right{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:10px;
+    }
+
+    .all-label{
+      font-size:13px;
+      font-weight:900;
+      color:#333;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      user-select:none;
+      cursor:pointer;
+    }
+
+    /* Toggle (checkbox styled) */
+    .chk{
+      width:18px;height:18px;
+      accent-color: #222;
+      cursor:pointer;
+    }
+
+    .panel-body{padding:0;}
+    .row{
+      display:grid;
+      grid-template-columns: 1fr 140px 90px;
+      gap:12px;
+      align-items:center;
+      padding:12px 18px;
+      border-bottom:1px solid #f0f0f0;
+      background:#fff;
+    }
+    .row:last-child{border-bottom:none;}
+
+    .row-title{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      min-width:0;
+    }
+    .row-title .txt{
+      font-size:14px;
+      font-weight:800;
+      color:#333;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .req-badge{
+      color:var(--req);
+      font-weight:950;
+      font-size:12px;
+      white-space:nowrap;
+    }
+
+    .btn-detail{
+      height:34px;
+      border-radius:8px;
+      border:1px solid #cfcfcf;
+      background:#fff;
+      color:#333;
+      font-size:13px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .btn-detail:hover{background:#fafafa;}
+    .btn-detail:active{transform:scale(.98);}
+
+    .agree-cell{
+      display:flex;
+      justify-content:flex-end;
+      align-items:center;
+      gap:8px;
+      font-size:13px;
+      font-weight:900;
+      color:#444;
+      white-space:nowrap;
+    }
+
+    /* Group row (expand) */
+    .row.group{
+      background:#fcfcfc;
+    }
+    .expander{
+      width:22px;height:22px;
+      border-radius:6px;
+      border:1px solid #e2e2e2;
+      background:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      color:#666;
+      cursor:pointer;
+      user-select:none;
+    }
+    .subwrap{
+      display:none;
+      background:#fff;
+    }
+    .subwrap.show{display:block;}
+    .subrow{
+      display:grid;
+      grid-template-columns: 1fr 140px 90px;
+      gap:12px;
+      align-items:center;
+      padding:10px 18px 10px 44px;
+      border-bottom:1px solid #f4f4f4;
+      background:#fff;
+    }
+    .subrow .txt{font-size:13.5px;font-weight:750;color:#444;}
+
+    .hint{
+      padding:12px 18px 16px;
+      color:#777;
+      font-size:13px;
+      font-weight:700;
+      border-top:1px solid #efefef;
+      background:#fff;
+      line-height:1.6;
+    }
+    .hint .hl{font-weight:950;color:#333;}
+
+    /* bottom buttons */
+    .btn-area{
+      margin-top:34px;
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .btn-secondary{
+      width:180px;height:56px;
+      border-radius:10px;
+      border:1px solid #cfcfcf;
+      background:#fff;
+      color:#333;
+      font-size:17px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .btn-secondary:hover{background:#fafafa;}
+    .btn-secondary:active{transform:scale(.98);}
+
+    .btn-primary{
+      width:260px;height:56px;
+      border:none;
+      border-radius:10px;
+      background:var(--kb-yellow);
+      color:#222;
+      font-size:18px;
+      font-weight:950;
+      cursor:pointer;
+      transition:.15s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn-primary:hover{background:var(--kb-yellow-dark);}
+    .btn-primary:active{transform:scale(.98);}
+    .btn-primary:disabled{
+      background:#eee;
+      color:#aaa;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:40px;
+      transform:translateX(-50%) translateY(20px);
+      background:rgba(33,33,33,.92);
+      color:#fff;
+      padding:12px 22px;
+      border-radius:30px;
+      font-size:14px;
+      font-weight:650;
+      opacity:0;
+      pointer-events:none;
+      transition:all .28s cubic-bezier(.175,.885,.32,1.275);
+      z-index:3000;
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      max-width:calc(100vw - 40px);
+      text-align:center;
+      line-height:1.35;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      width:56px;height:56px;
+      border-radius:50%;
+      background:#222;
+      color:var(--kb-yellow);
+      border:none;
+      font-size:26px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+      z-index:2900;
+      transition:transform .2s;
+    }
+    .req-trigger:hover{transform:rotate(15deg) scale(1.08);}
+    .req-trigger:active{transform:scale(.98);}
+
+    /* ===== Modal (Spec + Detail 공용 스타일) ===== */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:var(--modal-bg);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:4000;
+      backdrop-filter:blur(4px);
+    }
+    .modal-overlay.show{display:flex;}
+    .modal-content{
+      width:100%;
+      max-width:900px;
+      background:#fff;
+      border-radius:16px;
+      max-height:90vh;
+      overflow-y:auto;
+      box-shadow:0 24px 48px rgba(0,0,0,.4);
+    }
+    .modal-header{
+      padding:20px 24px;
+      border-bottom:1px solid #eee;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      background:#fff;
+    }
+    .modal-header h2{margin:0;font-size:18px;font-weight:900;}
+    .modal-close{
+      background:#f5f5f5;
+      border:none;
+      padding:8px 16px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:850;
+    }
+    .modal-body{padding:24px;}
+    .spec-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;}
+    .spec-table th,.spec-table td{border:1px solid #eee;padding:12px;text-align:left;vertical-align:top;}
+    .spec-table th{background:#f9f9f9;width:160px;font-weight:850;}
+    .spec-section{margin-top:24px;}
+    .spec-section h3{font-size:15px;margin-bottom:12px;border-left:4px solid var(--kb-yellow);padding-left:10px;font-weight:900;}
+    .spec-section ul{margin:0;padding-left:20px;font-size:14px;line-height:1.6;}
+    .json-code{
+      background:#1e1e1e;color:#d4d4d4;
+      padding:16px;border-radius:8px;
+      font-family:var(--mono);
+      font-size:12px;overflow-x:auto;margin-top:12px;
+    }
+
+    /* Detail modal content */
+    .detail-title{
+      margin:0 0 10px;
+      font-size:16px;
+      font-weight:950;
+      color:#222;
+      letter-spacing:-.2px;
+    }
+    .detail-desc{
+      margin:0;
+      font-size:14px;
+      font-weight:750;
+      color:#444;
+      line-height:1.75;
+    }
+    .detail-note{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:10px;
+      background:#fafafa;
+      border:1px solid #eee;
+      color:#555;
+      font-size:13px;
+      font-weight:750;
+      line-height:1.65;
+    }
+
+    @media (max-width: 920px){
+      .row,.subrow{grid-template-columns:1fr 120px 86px;}
+    }
+    @media (max-width: 860px){
+      .panel-head{grid-template-columns:1fr;}
+      .panel-head-right{justify-content:flex-start;}
+      .row,.subrow{grid-template-columns:1fr;}
+      .agree-cell{justify-content:flex-start;}
+      .btn-area{flex-direction:column;}
+      .btn-secondary,.btn-primary{width:100%;}
+      .row-title .txt{white-space:normal;}
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆 화면번호 실제 렌더 + 탭 타이틀 SSOT 동기화 -->
+      <h1 id="page-title" class="title">
+        <span id="title-text">약관동의</span>
+        <span id="title-id" class="screen-id">(0009)</span>
+      </h1>
+      <p class="subnote">이용약관 및 필수 동의사항에 동의해 주세요. (필수 미동의 시 진행 불가)</p>
+    </div>
+
+    <section class="panel" aria-label="약관동의 목록">
+      <div class="panel-head">
+        <div class="panel-head-left">
+          <span class="panel-badge" aria-hidden="true">≡</span>
+          <span>이용약관 및 필수 동의사항</span>
+        </div>
+
+        <div class="panel-head-right">
+          <label class="all-label" for="chk-all">
+            <input id="chk-all" class="chk" type="checkbox" />
+            <span>전체동의</span>
+          </label>
+        </div>
+      </div>
+
+      <div id="agree-list" class="panel-body">
+        <!-- JS Render -->
+      </div>
+
+      <div class="hint">
+        <div id="status-line" class="hl">필수 동의 0 / 0 완료</div>
+        <div>※ 필수 동의 미완료 시 <span class="hl">다음</span> 단계로 진행할 수 없습니다.</div>
+        <div>※ 공공 마이데이터(소기업 확인) 동의 정보는 <span class="hl">당사 회원 탈회 시까지 유효</span>합니다.</div>
+      </div>
+    </section>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary" disabled>다음</button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 스펙 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 약관 상세 모달 -->
+  <div id="modal-detail" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="detail-modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="detail-modal-title">약관 상세</h2>
+        <button type="button" id="btn-detail-close" class="modal-close">닫기</button>
+      </div>
+      <div id="detail-body" class="modal-body"></div>
+    </div>
+  </div>
+
+<script>
+    const SCREEN_ID = "0009";
+/**
+ * KB국민카드 기업카드 신청 프로세스 - Step 0009
+ * 신용카드 상품 약관동의 화면
+ *
+ * 컨텍스트 매핑(사용자 제공 기능목록)
+ * - 화면기능목록 ID:0009 신용카드 상품 약관동의
+ * - Action: 고객동의
+ * - 입력값 형태: 동의여부
+ *
+ * 핵심 규칙(요건 반영)
+ * 1) 필수 약관/동의 미동의 시 다음 단계 진행 불가
+ * 2) '소기업' 등 공공 마이데이터 동의 항목 반드시 포함
+ * 3) 공공 마이데이터 동의 정보는 당사 회원 탈회 시까지 유효
+ */
+(function(){
+  // =========================
+  // 0) SSOT: 화면 메타
+  // =========================
+  const META = {
+    id: "0009",
+    title: "약관동의",
+    name: "신용카드 상품 약관동의",
+    prevTarget: "0008",
+    nextTarget: "0010"
+  };
+
+  // 탭/제목 동기화
+  document.title = `KB국민카드 | ${META.title} (${META.id})`;
+  document.getElementById("title-text").textContent = META.title;
+  document.getElementById("title-id").textContent = `(${META.id})`;
+
+  // =========================
+  // 1) DOM
+  // =========================
+  const toast = document.getElementById("toast");
+  const listEl = document.getElementById("agree-list");
+  const statusLine = document.getElementById("status-line");
+
+  const chkAll = document.getElementById("chk-all");
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+
+  // Spec modal
+  const specBtn = document.getElementById("btn-spec");
+  const specModal = document.getElementById("modal-spec");
+  const specClose = document.getElementById("btn-modal-close");
+
+  // Detail modal
+  const detailModal = document.getElementById("modal-detail");
+  const detailClose = document.getElementById("btn-detail-close");
+  const detailBody = document.getElementById("detail-body");
+
+  // =========================
+  // 2) Data (목업)
+  // =========================
+  // NOTE: 실제 서비스에서는 약관 목록/전문 링크/필수여부를 서버에서 내려받아야 함.
+  const AGREES = [
+    { type:"item", key:"t_corp_member", label:"KB국민카드 기업회원 약관", required:true, detail:"KB국민카드 기업회원 약관 전문(목업). 실제 구현 시 약관 전문/링크/버전정보 연동 필요." },
+    { type:"item", key:"t_annual_fee_std", label:"신용카드 법인회원 연회비 부과 등에 관한 표준약관", required:true, detail:"연회비/부과/환급/면제 등 표준약관(목업)." },
+    { type:"item", key:"t_eft_std", label:"표준 전자금융거래기본약관", required:true, detail:"전자금융거래 기본약관(목업)." },
+
+    {
+      type:"group",
+      key:"g_corp_credit",
+      label:"기업(신용)정보 필수적 동의서",
+      required:true,
+      children: [
+        { key:"g_corp_credit_1", label:"기업(신용)정보 필수적 수집·이용 동의", required:true, detail:"기업(신용)정보 수집·이용 동의(목업)." },
+        { key:"g_corp_credit_2", label:"기업(신용)정보 필수적 조회 동의", required:true, detail:"기업(신용)정보 조회 동의(목업)." },
+        { key:"g_corp_credit_3", label:"기업(신용)정보 필수적 제공 동의", required:true, detail:"기업(신용)정보 제공 동의(목업)." }
+      ]
+    },
+
+    {
+      type:"group",
+      key:"g_corp_credit_rep",
+      label:"기업(신용)정보 필수적 동의서(대표자)",
+      required:true,
+      children: [
+        { key:"g_corp_credit_rep_1", label:"기업(신용)정보 필수적 수집·이용 동의(대표자)", required:true, detail:"대표자 관련 수집·이용 동의(목업)." },
+        { key:"g_corp_credit_rep_2", label:"기업(신용)정보 필수적 조회 동의(대표자)", required:true, detail:"대표자 관련 조회 동의(목업)." },
+        { key:"g_corp_credit_rep_3", label:"기업(신용)정보 필수적 제공 동의(대표자)", required:true, detail:"대표자 관련 제공 동의(목업)." }
+      ]
+    },
+
+    { type:"item", key:"t_issue_terms", label:"카드발급에 관한 약관승인", required:true, detail:"카드발급 관련 약관승인(목업)." },
+    { type:"item", key:"t_device_collect", label:"개인(신용)정보 필수적 수집·이용동의(접속기기정보)", required:true, detail:"접속기기정보 수집·이용(목업)." },
+    { type:"item", key:"t_device_provide", label:"개인(신용)정보 필수적 제공 동의서(접속기기정보)", required:true, detail:"접속기기정보 제공(목업)." },
+
+    // ✅ 요건: 공공 마이데이터(소기업 등) 동의 항목 반드시 포함
+    { type:"item", key:"t_public_mydata_smallbiz", label:"공공 마이데이터 동의(소기업 확인 등)", required:true,
+      detail:"공공 마이데이터(소기업 확인 등) 동의(목업).\n- 본 동의 정보는 당사 회원 탈회 시까지 유효\n- 실제 구현 시 동의 범위/유효기간/철회 정책 및 증적 저장 필요" }
+  ];
+
+  // =========================
+  // 3) State
+  // =========================
+  // state[key] = boolean
+  const state = {};
+  const groupOpen = {}; // group key -> boolean
+
+  const initState = () => {
+    const flatKeys = [];
+    AGREES.forEach(a => {
+      if (a.type === "item") flatKeys.push(a.key);
+      if (a.type === "group") {
+        flatKeys.push(a.key); // 그룹 자체도 "대표 동의" 체크를 갖게 처리(자식 all)
+        a.children.forEach(c => flatKeys.push(c.key));
+        groupOpen[a.key] = true; // 기본 펼침(스크린샷 유사)
+      }
+    });
+    flatKeys.forEach(k => state[k] = false);
+  };
+
+  // =========================
+  // 4) Utils
+  // =========================
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2300);
+  };
+
+  const goTo = (id) => { location.hash = `#/${id}`; };
+
+  const getRequiredKeys = () => {
+    const req = [];
+    AGREES.forEach(a => {
+      if (a.type === "item" && a.required) req.push(a.key);
+      if (a.type === "group") {
+        // 그룹은 자식이 실제 동의 단위(스크린샷 구조)
+        a.children.forEach(c => { if (c.required) req.push(c.key); });
+      }
+    });
+    return req;
+  };
+
+  const getAllLeafKeys = () => {
+    const keys = [];
+    AGREES.forEach(a => {
+      if (a.type === "item") keys.push(a.key);
+      if (a.type === "group") a.children.forEach(c => keys.push(c.key));
+    });
+    return keys;
+  };
+
+  const requiredKeys = () => getRequiredKeys();
+
+  const requiredDoneCount = () => {
+    const req = requiredKeys();
+    let done = 0;
+    req.forEach(k => { if (state[k]) done++; });
+    return { done, total: req.length };
+  };
+
+  const canProceed = () => {
+    const req = requiredKeys();
+    return req.every(k => !!state[k]);
+  };
+
+  const syncGroupHeaderChecks = () => {
+    // 그룹 체크박스는 "자식 전체 동의" 여부로 표시
+    AGREES.forEach(a => {
+      if (a.type !== "group") return;
+      const allChild = a.children.every(c => !!state[c.key]);
+      state[a.key] = allChild;
+    });
+  };
+
+  const syncAllCheck = () => {
+    const keys = getAllLeafKeys();
+    const all = keys.length > 0 && keys.every(k => !!state[k]);
+    chkAll.checked = all;
+  };
+
+  const updateUIState = () => {
+    syncGroupHeaderChecks();
+    syncAllCheck();
+
+    const { done, total } = requiredDoneCount();
+    statusLine.textContent = `필수 동의 ${done} / ${total} 완료`;
+    btnNext.disabled = !canProceed();
+  };
+
+  // =========================
+  // 5) Render
+  // =========================
+  const render = () => {
+    listEl.innerHTML = "";
+
+    AGREES.forEach(a => {
+      if (a.type === "item") {
+        listEl.appendChild(renderItemRow(a));
+        return;
+      }
+      if (a.type === "group") {
+        listEl.appendChild(renderGroupRow(a));
+        listEl.appendChild(renderSubwrap(a));
+        return;
+      }
+    });
+
+    updateUIState();
+  };
+
+  const renderItemRow = (a) => {
+    const row = document.createElement("div");
+    row.className = "row";
+    row.dataset.key = a.key;
+
+    const left = document.createElement("div");
+    left.className = "row-title";
+    left.innerHTML = `
+      <span class="txt">${escapeHtml(a.label)}</span>
+      ${a.required ? `<span class="req-badge">(필수)</span>` : ``}
+    `;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-detail";
+    btn.textContent = "자세히보기";
+    btn.addEventListener("click", () => openDetail(a.label, a.detail));
+
+    const right = document.createElement("div");
+    right.className = "agree-cell";
+    right.innerHTML = `<span>동의</span>`;
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.className = "chk";
+    chk.checked = !!state[a.key];
+    chk.addEventListener("change", () => {
+      state[a.key] = chk.checked;
+      updateUIState();
+    });
+    right.appendChild(chk);
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    row.appendChild(right);
+    return row;
+  };
+
+  const renderGroupRow = (g) => {
+    const row = document.createElement("div");
+    row.className = "row group";
+    row.dataset.key = g.key;
+
+    const left = document.createElement("div");
+    left.className = "row-title";
+
+    const exp = document.createElement("span");
+    exp.className = "expander";
+    exp.textContent = groupOpen[g.key] ? "−" : "+";
+    exp.title = "펼치기/접기";
+    exp.setAttribute("role","button");
+    exp.setAttribute("tabindex","0");
+
+    const toggleExpand = () => {
+      groupOpen[g.key] = !groupOpen[g.key];
+      exp.textContent = groupOpen[g.key] ? "−" : "+";
+      const sw = listEl.querySelector(`[data-subwrap="${g.key}"]`);
+      if (sw) sw.classList.toggle("show", groupOpen[g.key]);
+    };
+
+    exp.addEventListener("click", toggleExpand);
+    exp.addEventListener("keydown", (e) => { if (e.key === "Enter") toggleExpand(); });
+
+    const txt = document.createElement("span");
+    txt.className = "txt";
+    txt.textContent = g.label;
+
+    left.appendChild(exp);
+    left.appendChild(txt);
+    if (g.required) {
+      const rb = document.createElement("span");
+      rb.className = "req-badge";
+      rb.textContent = "(필수)";
+      left.appendChild(rb);
+    }
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "btn-detail";
+    btn.textContent = "자세히보기";
+    btn.addEventListener("click", () => {
+      openDetail(
+        g.label,
+        "본 동의서는 하위 항목(수집·이용/조회/제공) 동의로 구성됩니다.\n각 하위 항목을 확인 후 동의해 주세요. (목업)"
+      );
+    });
+
+    const right = document.createElement("div");
+    right.className = "agree-cell";
+    right.innerHTML = `<span>동의</span>`;
+
+    const chk = document.createElement("input");
+    chk.type = "checkbox";
+    chk.className = "chk";
+    chk.checked = !!state[g.key];
+    chk.addEventListener("change", () => {
+      // 그룹 체크 = 자식 전체 on/off
+      g.children.forEach(c => state[c.key] = chk.checked);
+      updateUIState();
+      // 자식 체크 UI도 동기화
+      g.children.forEach(c => {
+        const el = listEl.querySelector(`input[data-chk="${c.key}"]`);
+        if (el) el.checked = chk.checked;
+      });
+      chk.checked = chk.checked; // keep
+    });
+
+    right.appendChild(chk);
+
+    row.appendChild(left);
+    row.appendChild(btn);
+    row.appendChild(right);
+    return row;
+  };
+
+  const renderSubwrap = (g) => {
+    const wrap = document.createElement("div");
+    wrap.className = "subwrap";
+    wrap.dataset.subwrap = g.key;
+    wrap.classList.toggle("show", !!groupOpen[g.key]);
+
+    g.children.forEach(c => {
+      const r = document.createElement("div");
+      r.className = "subrow";
+      r.dataset.key = c.key;
+
+      const left = document.createElement("div");
+      left.className = "row-title";
+      left.innerHTML = `
+        <span class="txt">${escapeHtml(c.label)}</span>
+        ${c.required ? `<span class="req-badge">(필수)</span>` : ``}
+      `;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn-detail";
+      btn.textContent = "자세히보기";
+      btn.addEventListener("click", () => openDetail(c.label, c.detail));
+
+      const right = document.createElement("div");
+      right.className = "agree-cell";
+      right.innerHTML = `<span>동의</span>`;
+
+      const chk = document.createElement("input");
+      chk.type = "checkbox";
+      chk.className = "chk";
+      chk.dataset.chk = c.key;
+      chk.checked = !!state[c.key];
+      chk.addEventListener("change", () => {
+        state[c.key] = chk.checked;
+        updateUIState();
+
+        // 그룹 체크박스 UI 동기화
+        const gRow = listEl.querySelector(`.row.group[data-key="${g.key}"] input.chk`);
+        if (gRow) gRow.checked = !!state[g.key];
+      });
+
+      right.appendChild(chk);
+
+      r.appendChild(left);
+      r.appendChild(btn);
+      r.appendChild(right);
+      wrap.appendChild(r);
+    });
+
+    return wrap;
+  };
+
+  const escapeHtml = (s) => String(s)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+  // =========================
+  // 6) 전체동의
+  // =========================
+  chkAll.addEventListener("change", () => {
+    const keys = getAllLeafKeys();
+    keys.forEach(k => state[k] = chkAll.checked);
+    updateUIState();
+    // 체크 UI 동기화
+    keys.forEach(k => {
+      const el = listEl.querySelector(`input[data-chk="${k}"]`);
+      if (el) el.checked = chkAll.checked;
+    });
+    // item row 체크박스(leaf지만 data-chk 없는 것들)까지 동기화
+    listEl.querySelectorAll(".row:not(.group) input.chk").forEach(el => el.checked = chkAll.checked);
+    // group row 체크박스
+    listEl.querySelectorAll(".row.group input.chk").forEach(el => el.checked = chkAll.checked);
+  });
+
+  // =========================
+  // 7) Navigation
+  // =========================
+  btnPrev.addEventListener("click", () => {
+    showToast("이전 단계로 이동합니다.");
+    if (window.ScenarioNav) {
+      ScenarioNav.goPrev();
+    } else {
+      if (window.ScenarioNav) {
+        ScenarioNav.goPrev();
+      } else {
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          setTimeout(() => goTo(META.prevTarget), 200);
+        }
+      }
+    }
+  });
+
+  btnNext.addEventListener("click", () => {
+    if (!canProceed()) {
+      showToast("필수 약관/동의에 모두 동의해 주세요.");
+      return;
+    }
+    showToast("다음 단계로 이동합니다.");
+    if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+          setTimeout(() => goTo(META.nextTarget), 200);
+        }
+      }
+    }
+  });
+
+  // =========================
+  // 8) Detail modal
+  // =========================
+  const openDetail = (title, detail) => {
+    const safe = escapeHtml(detail || "약관 전문(목업). 실제 구현 시 전문/링크/버전정보 연동 필요.");
+    detailBody.innerHTML = `
+      <h3 class="detail-title">${escapeHtml(title)}</h3>
+      <p class="detail-desc">${safe.replaceAll("\n","<br/>")}</p>
+      <div class="detail-note">
+        • 이 화면은 UI 샘플입니다.<br/>
+        • 실제 서비스에서는 “자세히보기”가 약관 전문(페이지/팝업/웹뷰)로 연결되어야 합니다.<br/>
+        • 필수 동의는 로그/증적 저장(동의버전/일시/채널/고객키)까지 포함하여 설계하는 것을 권장합니다.
+      </div>
+    `;
+    detailModal.classList.add("show");
+    detailModal.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    detailClose.focus();
+  };
+
+  const closeDetail = () => {
+    detailModal.classList.remove("show");
+    detailModal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+  };
+
+  detailClose.addEventListener("click", closeDetail);
+  detailModal.addEventListener("click", (e) => { if (e.target === detailModal) closeDetail(); });
+
+  // =========================
+  // 9) Spec modal (요건정의서/주석)
+  // =========================
+  const REQ_SPEC = {
+    screen_id: META.id,
+    screen_name: META.name,
+    purpose: "상품/회원 약관 및 필수 동의사항 동의 수집 후 다음 단계 진행",
+    business_rule_source: "화면기능목록 ID:0009 (신용카드 상품 약관동의)",
+    action: "고객동의",
+    input: "동의여부",
+    host_processing: "N(동의 수집 자체는 UI/플랫폼 처리, 필요 시 동의 증적 저장/전문 호출은 별도)",
+    rules: [
+      "필수 약관/동의 미동의 시 다음 단계 진행 불가",
+      "화면에 '소기업' 등 공공 마이데이터 동의 항목 반드시 포함",
+      "공공 마이데이터 동의 정보는 당사 회원 탈회 시까지 유효(정책 기준)",
+      "전체동의 제공(필수/전체 범위는 정책에 맞게 확정 필요)",
+      "동의 증적(버전/일시/채널/고객키) 저장 및 재현 가능성 확보 권장"
+    ],
+    required_agreements: requiredKeys(),
+    flow: { prev: META.prevTarget, next: META.nextTarget },
+    qa_points: [
+      "필수 동의 누락 시 Next disabled + 클릭 방어",
+      "전체동의 on/off 시 개별 체크 상태/카운트 일관성",
+      "그룹(아코디언) 펼침/접힘 상태에서 체크 동기화",
+      "자세히보기(전문) 이동/닫기 UX(모바일 포함)",
+      "공공 마이데이터 동의 항목 노출 및 문구(유효기간) 확인"
+    ],
+    data_spec: {
+      state_shape: "{ [agreeKey]: boolean }",
+      note: "실서비스는 약관 목록/필수여부/전문URL/버전정보를 서버에서 내려받는 구조 권장"
+    }
+  };
+
+  const renderSpec = () => {
+    const body = document.getElementById("modal-body");
+    const title = document.getElementById("modal-title");
+    if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+    body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action}</td></tr>
+        <tr><th>입력</th><td>${REQ_SPEC.input}</td></tr>
+        <tr><th>처리계</th><td>${REQ_SPEC.host_processing}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+        <tr><th>플로우</th><td>이전: ${REQ_SPEC.flow.prev} / 다음: ${REQ_SPEC.flow.next}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>필수 동의 키</h3>
+        <ul>${REQ_SPEC.required_agreements.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${escapeHtml(JSON.stringify(REQ_SPEC, null, 2))}</div>
+      </div>
+    `;
+  };
+
+  const openSpec = () => {
+    renderSpec();
+    specModal.classList.add("show");
+    specModal.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    specClose.focus();
+  };
+
+  const closeSpec = () => {
+    specModal.classList.remove("show");
+    specModal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    specBtn.focus();
+  };
+
+  specBtn.addEventListener("click", openSpec);
+  specClose.addEventListener("click", closeSpec);
+  specModal.addEventListener("click", (e) => { if (e.target === specModal) closeSpec(); });
+
+  // ESC: detail 우선, 그 다음 spec
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (detailModal.classList.contains("show")) return closeDetail();
+    if (specModal.classList.contains("show")) return closeSpec();
+  });
+
+  // =========================
+  // init
+  // =========================
+  initState();
+  render();
+})();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0009"></script>
+</body>
+</html>

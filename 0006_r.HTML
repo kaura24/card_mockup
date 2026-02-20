@@ -1,0 +1,880 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 서류자동제출서비스 (0006)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --panel: #f4f6f9;
+      --req: #d64545;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+      --white: #fff;
+
+      --modal-bg: rgba(0, 0, 0, .6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 24px 90px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header-group {
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .screen-id {
+      font-size: .78em;
+      font-weight: 900;
+      color: #666;
+      letter-spacing: -.2px;
+      white-space: nowrap;
+    }
+
+    /* ===== Agreement Box (screenshot-like) ===== */
+    .agree-box {
+      margin-top: 18px;
+      border: 1px solid #e6e6e6;
+      border-radius: 4px;
+      overflow: hidden;
+      background: #fff;
+    }
+
+    .agree-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border-bottom: 1px solid #ededed;
+      background: #fafafa;
+      gap: 12px;
+    }
+
+    .agree-title {
+      font-size: 15px;
+      font-weight: 850;
+      color: #333;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .agree-title .req-badge {
+      color: #666;
+      font-weight: 850;
+    }
+
+    .agree-toggle {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      user-select: none;
+    }
+
+    .toggle-label {
+      font-size: 14px;
+      font-weight: 850;
+      color: #444;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chk {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #cfcfcf;
+      display: inline-grid;
+      place-items: center;
+      background: #fff;
+      transition: .15s ease;
+    }
+
+    .chk svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0;
+      transform: scale(.9);
+      transition: .15s ease;
+    }
+
+    #agree:checked+.toggle-label .chk {
+      border-color: #b9b9b9;
+      background: #f5f5f5;
+    }
+
+    #agree:checked+.toggle-label .chk svg {
+      opacity: .95;
+      transform: scale(1);
+    }
+
+    #agree {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .agree-body {
+      padding: 18px 18px 16px;
+      background: #fff;
+    }
+
+    .agree-body .to {
+      font-size: 14px;
+      font-weight: 900;
+      color: #333;
+      margin: 0 0 10px;
+    }
+
+    .agree-body ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #444;
+      font-size: 13.5px;
+      line-height: 1.7;
+      font-weight: 650;
+    }
+
+    .agree-body li {
+      margin: 6px 0;
+    }
+
+    .agree-note {
+      margin: 10px 0 0;
+      font-size: 13px;
+      color: #666;
+      font-weight: 650;
+    }
+
+    .agree-note .mark {
+      font-weight: 900;
+    }
+
+    /* ===== Center actions ===== */
+    .center-actions {
+      margin-top: 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      text-align: center;
+    }
+
+    .btn-outline {
+      height: 52px;
+      padding: 0 26px;
+      border-radius: 8px;
+      border: 2px solid #bbb;
+      background: #fff;
+      color: #333;
+      font-size: 15px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-outline:hover {
+      background: #fafafa;
+    }
+
+    .btn-outline:active {
+      transform: scale(.98);
+    }
+
+    .btn-outline:disabled {
+      border-color: #ddd;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+      background: #fff;
+    }
+
+    .hint {
+      margin-top: 6px;
+      color: #777;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    /* bottom buttons (prev/next) */
+    .btn-area {
+      margin-top: 18px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn-secondary {
+      width: 180px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #fff;
+      color: #333;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #fafafa;
+    }
+
+    .btn-secondary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      width: 260px;
+      height: 56px;
+      border: none;
+      border-radius: 10px;
+      background: var(--kb-yellow);
+      color: #222;
+      font-size: 18px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #f5f5f5;
+      border: 1px solid #e9e9e9;
+      color: #555;
+      font-size: 12.5px;
+      font-weight: 800;
+      margin-top: 6px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #bbb;
+    }
+
+    .status-pill.done .dot {
+      background: #2fb344;
+    }
+
+    .status-pill.done {
+      background: #f2fbf4;
+      border-color: #d9f2df;
+      color: #2b7a36;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(33, 33, 33, .92);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .28s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #222;
+      color: var(--kb-yellow);
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      z-index: 2900;
+      transition: transform .2s;
+    }
+
+    .req-trigger:hover {
+      transform: rotate(15deg) scale(1.08);
+    }
+
+    .req-trigger:active {
+      transform: scale(.98);
+    }
+
+    /* ===== Spec modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 4000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, .4);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #eee;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      background: #f9f9f9;
+      width: 160px;
+      font-weight: 850;
+    }
+
+    .spec-section {
+      margin-top: 24px;
+    }
+
+    .spec-section h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--kb-yellow);
+      padding-left: 10px;
+      font-weight: 900;
+    }
+
+    .spec-section ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .title {
+        font-size: 26px;
+      }
+
+      .agree-head {
+        padding: 12px 14px;
+      }
+
+      .agree-body {
+        padding: 16px 14px 14px;
+      }
+
+      .btn-area {
+        flex-direction: column;
+      }
+
+      .btn-secondary,
+      .btn-primary {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆에 화면번호 실제 렌더 + 탭 타이틀도 JS에서 SSOT로 동기화 -->
+      <h1 class="title">
+        <span id="title-text">서류자동제출서비스</span>
+        <span id="title-id" class="screen-id">(0006)</span>
+      </h1>
+    </div>
+
+    <section class="agree-box" aria-label="서류 자동제출 서비스 이용 동의">
+      <div class="agree-head">
+        <div class="agree-title">
+          <span>서류 자동제출 서비스 이용 동의</span>
+          <span class="req-badge">(필수)</span>
+        </div>
+
+        <div class="agree-toggle">
+          <input type="checkbox" id="agree" />
+          <label class="toggle-label" for="agree" aria-label="동의">
+            <span class="chk" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 12.5L10 16.2L18 8.6" stroke="#111" stroke-width="2.6" stroke-linecap="round"
+                  stroke-linejoin="round" />
+              </svg>
+            </span>
+            동의
+          </label>
+        </div>
+      </div>
+
+      <div class="agree-body">
+        <p class="to">KB국민카드 귀중</p>
+        <ul>
+          <li>본 법인의 카드 신청 및 이용한도 부여 등의 카드 업무를 위한 원활한 진행을 위해 서류자동제출서비스를 이용하는 것에 동의합니다.</li>
+          <li>법인카드 심사에 필요한 필수서류 및 정보를 법인등기인증서를 통해 자동으로 제출하는 서비스로 해당 서류 제출 완료 후 카드신청 가능합니다.</li>
+          <li>본 서비스를 통해 제출받은 정보는 기업카드 발급 및 이용한도 부여를 위한 심사자료로만 이용됩니다.</li>
+          <li>수행업체 : 한국평가데이터(KoDATA, 구 한국기업데이터)</li>
+          <li>자동 제출 대상 서류 : 사업자등록증명, 법인등기사항전부증명서, 표준재무제표증명, 부가가치세과세표준증명원</li>
+        </ul>
+        <p class="agree-note">
+          <span class="mark">※</span>
+          주주명부(제출 필수) 및 정관(비영리법인, 임의단체 등)은 자동제출 불가하여, 직접 등록 대상입니다.
+        </p>
+      </div>
+    </section>
+
+    <div class="center-actions">
+      <button type="button" id="btn-go" class="btn-outline">서류 자동제출 서비스 바로가기</button>
+
+      <div id="svc-status" class="status-pill" aria-live="polite">
+        <span class="dot" aria-hidden="true"></span>
+        <span id="svc-text">서비스 미완료</span>
+      </div>
+
+      <div class="hint">서류 자동제출 서비스 완료 후 '다음' 버튼을 눌러 주세요.</div>
+    </div>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary" disabled>다음</button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCREEN_ID = "0006";
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0006
+     * 서류자동제출서비스(외부 서비스 KoDATA 연계)
+     *
+     * 핵심 리팩토링 포인트(0033 샘플 규칙 준수)
+     * 1) 타이틀/화면번호/탭타이틀: SSOT(META) 기반으로 1회 정의 후 동기화
+     * 2) 요구사항/주석: ? FAB 버튼으로 모달 표시(요건정의서 + JSON)
+     * 3) 진행조건: (필수) 동의 체크 + (권장) 외부 서비스 완료 상태 확인 후 Next 활성
+     *
+     * 기능목록(원문 요약)
+     * - 외부 서비스 KoDATA를 이용하여 제출 서류 대행 웹 서비스를 신청하고 복귀
+     * - 배치 작업으로 당사 제공(실시간 아님)
+     * - 자동 제출 대상: 사업자등록증명, 법인등기사항전부증명서, 표준재무제표증명, 부가가치세과세표준증명원
+     * - 주주명부(제출 필수) 및 정관(비영리법인, 임의단체 등)은 자동제출 불가 → 직접 등록
+     */
+    (function () {
+      // =========================
+      // 0) SSOT: 화면 메타
+      // =========================
+      const META = {
+        id: "0006",
+        title: "서류자동제출서비스",
+        name: "서류자동제출서비스",
+        prevTarget: "0005", // 제출서류
+        nextTarget: "0007", // 유의사항
+        externalVendor: "KoDATA",
+        externalUrl: "https://example.com/kodata" // 실제 URL로 교체
+      };
+
+      // 탭/제목 동기화
+      document.title = `KB국민카드 | ${META.title} (${META.id})`;
+      document.getElementById("title-text").textContent = META.title;
+      document.getElementById("title-id").textContent = `(${META.id})`;
+
+      // =========================
+      // 1) DOM
+      // =========================
+      const toast = document.getElementById("toast");
+      const agree = document.getElementById("agree");
+      const btnGo = document.getElementById("btn-go");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      const statusPill = document.getElementById("svc-status");
+      const statusText = document.getElementById("svc-text");
+
+      const specBtn = document.getElementById("btn-spec");
+      const modal = document.getElementById("modal-spec");
+      const modalClose = document.getElementById("btn-modal-close");
+
+      // =========================
+      // 2) State
+      // =========================
+      // 실서비스 권장: 서버 조회 기반(증빙ID/상태값)으로 serviceDone 판정
+      let serviceDone = false;
+
+      // =========================
+      // 3) Utils
+      // =========================
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+      };
+
+      const goTo = (id) => { location.hash = `#/${id}`; };
+
+      const refreshNext = () => {
+        btnNext.disabled = !(agree.checked && serviceDone);
+      };
+
+      const setServiceDone = (done) => {
+        serviceDone = done;
+        statusPill.classList.toggle("done", done);
+        statusText.textContent = done ? "서비스 완료" : "서비스 미완료";
+        refreshNext();
+      };
+
+      // =========================
+      // 4) Events
+      // =========================
+      agree.addEventListener("change", () => {
+        if (!agree.checked) showToast("동의 후 진행할 수 있습니다.");
+        refreshNext();
+      });
+
+      btnGo.addEventListener("click", () => {
+        if (!agree.checked) {
+          showToast("서류 자동제출 서비스 이용 동의(필수)를 체크해 주세요.");
+          return;
+        }
+
+        // 실제: 외부 서비스 이동 → 신청/제출대행 → 복귀 → 서버상태조회로 완료판정
+        showToast(`${META.externalVendor} 서류 자동제출 서비스로 이동합니다.`);
+        try { window.open(META.externalUrl, "_blank", "noopener,noreferrer"); } catch (e) { }
+
+        // ===== 목업(완료 시뮬레이션) =====
+        // 실서비스에서는 setServiceDone(true)를 "복귀 후 상태조회 성공" 시점에만 수행
+        setServiceDone(false);
+        setTimeout(() => {
+          setServiceDone(true);
+          showToast("서류 자동제출 서비스 완료로 처리되었습니다(목업).");
+        }, 900);
+      });
+
+      btnPrev.addEventListener("click", () => {
+        showToast("이전 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          if (window.ScenarioNav) {
+            ScenarioNav.goPrev();
+          } else {
+            setTimeout(() => goTo(META.prevTarget), 250);
+          }
+        }
+      });
+
+      btnNext.addEventListener("click", () => {
+        if (btnNext.disabled) {
+          showToast("동의 및 서류 자동제출 서비스 완료 후 진행해 주세요.");
+          return;
+        }
+
+        // 세션 저장 (동의여부, 서비스완료여부)
+        if (window.SessionDB && window._KB_SESSION) {
+          SessionDB.save(META.id, {
+            agree: agree.checked,
+            serviceDone: serviceDone
+          }, window._KB_SESSION);
+        }
+
+        showToast("다음 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+        ScenarioNav.goNext();
+      } else {
+        setTimeout(() => {
+          const nb = document.getElementById('_sc-next-btn');
+          if (nb) nb.click();
+          else goTo(META.nextTarget);
+        }, 250);
+      }
+      });
+
+      // =========================
+      // 5) Spec modal (요건정의서/주석)
+      // =========================
+      const REQ_SPEC = {
+        screen_id: META.id,
+        screen_name: META.name,
+        title: META.title,
+        segment: { corp: true, sole_prop: false },
+        action_type: "EXTERNAL_LOOKUP",
+        input_spec: {
+          consent_required: true,
+          consent_field: "agree:boolean"
+        },
+        external_integration: {
+          vendor: "한국평가데이터(KoDATA, 구 한국기업데이터)",
+          type: "web redirect / return",
+          realtime: false,
+          note: "배치 작업으로 당사 제공(실시간 아님)"
+        },
+        purpose: "외부 서비스(KoDATA)로 제출 서류 대행 신청 후 복귀, 완료 상태 확인 후 다음 단계 진행",
+        rules: [
+          "동의(필수) 없이는 외부 서비스 이동/다음 단계 진행 불가",
+          "서류 자동제출 서비스 완료 후에만 '다음' 버튼 활성(권장: 서버 검증 기반)",
+          "자동 제출 대상 서류: 사업자등록증명, 법인등기사항전부증명서, 표준재무제표증명, 부가가치세과세표준증명원",
+          "주주명부(제출 필수) 및 정관(비영리법인, 임의단체 등)은 자동제출 불가 → 직접 등록 대상"
+        ],
+        navigation: {
+          prev: `${META.prevTarget}(목업)`,
+          external: `${META.externalUrl}(목업) - 실제 외부 URL/연동 방식으로 교체`,
+          next: `${META.nextTarget}(목업)`
+        },
+        qa_points: [
+          "동의 미체크 상태에서 '바로가기' 클릭 시 방어(토스트/포커스) 되는지",
+          "외부 서비스 완료 전 Next 비활성 유지되는지",
+          "복귀 후 완료 상태를 서버 검증으로 판정 가능한지(증빙ID/상태조회)",
+          "배치(비실시간) 특성 안내 문구/가이드가 필요한지",
+          "모바일에서 동의 토글/버튼 영역 터치가 쉬운지"
+        ],
+        data_spec: {
+          ssot_meta: META,
+          state: "{ agree:boolean, serviceDone:boolean }",
+          completion_source: "server-verified recommended"
+        },
+        business_rule_source: "화면기능목록 ID:0006 (서류자동제출서비스)"
+      };
+
+      const renderSpec = () => {
+        const body = document.getElementById("modal-body");
+        const title = document.getElementById("modal-title");
+        if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+        body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action_type}</td></tr>
+        <tr><th>대상</th><td>법인사업자: ${REQ_SPEC.segment.corp ? "Y" : "N"} / 개인사업자: ${REQ_SPEC.segment.sole_prop ? "Y" : "N"}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>외부 연계</h3>
+        <ul>
+          <li>수행업체: ${REQ_SPEC.external_integration.vendor}</li>
+          <li>연계유형: ${REQ_SPEC.external_integration.type}</li>
+          <li>실시간 여부: ${REQ_SPEC.external_integration.realtime ? "Y" : "N"} (${REQ_SPEC.external_integration.note})</li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>네비게이션</h3>
+        <ul>
+          <li>이전: ${REQ_SPEC.navigation.prev}</li>
+          <li>바로가기: ${REQ_SPEC.navigation.external}</li>
+          <li>다음: ${REQ_SPEC.navigation.next}</li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+      };
+
+      const openModal = () => {
+        renderSpec();
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        modalClose.focus();
+      };
+
+      const closeModal = () => {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        specBtn.focus();
+      };
+
+      specBtn.addEventListener("click", openModal);
+      modalClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (modal.classList.contains("show")) closeModal();
+      });
+
+      // init
+      setServiceDone(false);
+      refreshNext();
+    })();
+  </script>
+  <script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0006"></script>
+</body>
+
+</html>

@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KB국민카드 | 통합 슈퍼 시나리오 (Unified Reactive Flow)</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="css/kb-theme.css" />
+    <style>
+        :root {
+            --kb-yellow: #ffcc00;
+            --kb-gray: #666;
+            --kb-light: #f8f8f8;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            padding: 40px 20px;
+            font-family: 'Pretendard', sans-serif;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .header-nav {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+
+        .nav-btn {
+            background: #fff;
+            border: 1px solid #ddd;
+            padding: 8px 16px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #333;
+            font-weight: 700;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn:hover {
+            background: #f8f8f8;
+            border-color: #ccc;
+            transform: translateY(-2px);
+        }
+
+        /* Controls */
+        .controls {
+            background: #fff;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-bottom: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .control-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .control-sub {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 24px;
+            background: #f8f9fa;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: 1px dashed #ddd;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .control-sep {
+            width: 100%;
+            height: 1px;
+            background: #eee;
+        }
+
+        .control-label {
+            font-weight: 900;
+            font-size: 16px;
+            color: #222;
+        }
+
+        .control-label-sub {
+            font-weight: 700;
+            font-size: 14px;
+            color: #555;
+            margin-right: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* Input Mock */
+        .input-mock {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-mock input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 140px;
+            font-family: monospace;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .input-mock input:focus {
+            outline: none;
+            border-color: var(--kb-yellow);
+            box-shadow: 0 0 0 2px rgba(255, 204, 0, 0.2);
+        }
+
+        /* Result Badges */
+        .result-badges {
+            display: flex;
+            gap: 8px;
+        }
+
+        .badge-sim {
+            font-size: 12px;
+            font-weight: 800;
+            padding: 4px 10px;
+            border-radius: 20px;
+            background: #eee;
+            color: #999;
+            transition: all 0.2s;
+        }
+
+        .badge-sim.active {
+            background: #2563eb;
+            color: #fff;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.3);
+        }
+
+        .badge-sim.corp {
+            background: #7c4dff;
+            color: #fff;
+        }
+
+        .badge-sim.indiv {
+            background: #aa00ff;
+            color: #fff;
+        }
+
+        .toggle-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .toggle-btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 2px solid #ddd;
+            background: #fff;
+            color: #888;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn:hover {
+            background: #f8f8f8;
+            border-color: #ccc;
+        }
+
+        .toggle-btn.active {
+            background: var(--kb-yellow);
+            border-color: var(--kb-yellow);
+            color: #000;
+            box-shadow: 0 4px 12px rgba(255, 204, 0, 0.3);
+        }
+
+        /* Flow Grid */
+        .flow-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            padding-bottom: 60px;
+        }
+
+        .screen-card {
+            background: #fff;
+            border: 1px solid #eee;
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            transition: all 0.3s ease;
+            opacity: 0.4;
+            /* Default dimmed */
+            filter: grayscale(100%);
+            transform: scale(0.98);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        .screen-card.active-node {
+            opacity: 1;
+            filter: grayscale(0%);
+            transform: scale(1);
+            border-left: 5px solid var(--kb-yellow);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+        }
+
+        .screen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .screen-id {
+            font-family: monospace;
+            font-size: 12px;
+            color: #888;
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+        }
+
+        .auto-badge {
+            font-size: 11px;
+            color: #2563eb;
+            background: #eff6ff;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .screen-title {
+            font-size: 16px;
+            font-weight: 800;
+            color: #222;
+            line-height: 1.4;
+            margin-bottom: auto;
+        }
+
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-top: 8px;
+        }
+
+        .tag {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 700;
+            text-transform: uppercase;
+            border: 1px solid transparent;
+        }
+
+        /* Tag Colors */
+        .tag.common {
+            background: #eee;
+            color: #555;
+        }
+
+        .tag.new {
+            background: #e3f2fd;
+            color: #1565c0;
+            border-color: #bbdefb;
+        }
+
+        .tag.add {
+            background: #fce4ec;
+            color: #c2185b;
+            border-color: #f8bbd0;
+        }
+
+        .tag.credit {
+            background: #fff3e0;
+            color: #ef6c00;
+            border-color: #ffe0b2;
+        }
+
+        .tag.check {
+            background: #e8f5e9;
+            color: #2e7d32;
+            border-color: #c8e6c9;
+        }
+
+        .tag.corp {
+            background: #ede7f6;
+            color: #4527a0;
+            border-color: #d1c4e9;
+        }
+
+        .tag.indiv {
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-color: #e1bee7;
+        }
+
+        .action-link {
+            display: inline-block;
+            margin-top: 12px;
+            color: #dcb000;
+            font-weight: 800;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        #empty-msg {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-size: 16px;
+            display: none;
+        }
+
+        /* Tooltip hint */
+        .hint {
+            font-size: 12px;
+            color: #888;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="header">
+            <div class="header-nav">
+                <a href="general_flow.html" class="nav-btn">
+                    <i class="fa-solid fa-list-check" style="color:#888"></i> 일반 시나리오 목록
+                </a>
+            </div>
+            <h1>통합 슈퍼 시나리오 (Unified Reactive Flow)</h1>
+            <p>상품 선택 외의 조건은 <strong>자동 판별</strong>(Mock Input + Member Ledger)됩니다.<br>
+                <code>111-81-11111</code> 입력 시 <strong>기존 회원(추가발급)</strong>으로 자동 전환됩니다.
+            </p>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-main">
+                <span class="control-label"><i class="fa-solid fa-credit-card"></i> 상품 선택</span>
+                <div class="toggle-group">
+                    <button class="toggle-btn active" onclick="setCard('CREDIT')">신용카드</button>
+                    <button class="toggle-btn" onclick="setCard('CHECK')">체크카드</button>
+                </div>
+            </div>
+
+            <div class="control-sep"></div>
+
+            <div class="control-sub">
+                <span class="control-label-sub"><i class="fa-solid fa-robot"></i> 자동 판별 시뮬레이션</span>
+
+                <div class="input-mock">
+                    <span class="control-label-sub">사업자번호 입력:</span>
+                    <input type="text" id="bizNoInput" value="123-01-12345" placeholder="XXX-XX-XXXXX">
+                    <div style="display:flex; gap:6px;">
+                        <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
+                            onclick="applyTestCase('111-81-11111')">법인(기존)</button>
+                        <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
+                            onclick="applyTestCase('123-01-12345')">개인(신규)</button>
+                        <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
+                            onclick="applyTestCase('111-11-11111')">개인(기존)</button>
+                    </div>
+                </div>
+
+                <div class="result-badges">
+                    <span class="badge-sim" id="badge-issuance">신규 (NEW)</span>
+                    <span class="badge-sim active" id="badge-biz">법인 (CORP)</span>
+                </div>
+
+                <!-- Test Case Guide -->
+                <div class="test-case-guide">
+                    <div class="guide-title"><i class="fa-solid fa-book-open"></i> 테스트 케이스 (Test Cases)</div>
+                    <ul class="guide-list">
+                        <li onclick="applyTestCase('111-81-11111')">
+                            <span class="code">111-81-11111</span>
+                            <span class="desc">법인 / 추가 (Corp+Add) <span
+                                    style="color:#aaa;font-size:11px;">(기존)</span></span>
+                            <i class="fa-solid fa-arrow-pointer"></i>
+                        </li>
+                        <li onclick="applyTestCase('111-11-11111')">
+                            <span class="code">111-11-11111</span>
+                            <span class="desc">개인 / 추가 (Indiv+Add) <span
+                                    style="color:#aaa;font-size:11px;">(기존)</span></span>
+                            <i class="fa-solid fa-arrow-pointer"></i>
+                        </li>
+                        <li onclick="applyTestCase('123-81-12345')">
+                            <span class="code">123-81-12345</span>
+                            <span class="desc">법인 / 신규 (Corp+New) <span
+                                    style="color:#2563eb;font-size:11px;">(자동판별)</span></span>
+                            <i class="fa-solid fa-arrow-pointer"></i>
+                        </li>
+                        <li onclick="applyTestCase('123-01-12345')">
+                            <span class="code">123-01-12345</span>
+                            <span class="desc">개인 / 신규 (Indiv+New) <span
+                                    style="color:#2563eb;font-size:11px;">(자동판별)</span></span>
+                            <i class="fa-solid fa-arrow-pointer"></i>
+                        </li>
+                    </ul>
+                </div>
+
+                <button class="start-btn" onclick="startScenario()">
+                    <i class="fa-solid fa-play"></i> 이 조건으로 시나리오 시작
+                </button>
+            </div>
+        </div>
+
+        <style>
+            .test-case-guide {
+                width: 100%;
+                background: #fff;
+                border: 1px solid #eee;
+                border-radius: 8px;
+                padding: 12px;
+                margin-top: 12px;
+            }
+
+            .guide-title {
+                font-size: 12px;
+                font-weight: 700;
+                color: #555;
+                margin-bottom: 8px;
+                border-bottom: 1px solid #f0f0f0;
+                padding-bottom: 4px;
+            }
+
+            .guide-list {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .guide-list li {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                font-size: 12px;
+                padding: 6px 8px;
+                cursor: pointer;
+                border-radius: 4px;
+                transition: background 0.2s;
+            }
+
+            .guide-list li:hover {
+                background: #f0f8ff;
+            }
+
+            .guide-list li .code {
+                font-family: monospace;
+                font-weight: 700;
+                color: #2563eb;
+            }
+
+            .guide-list li .desc {
+                color: #666;
+                margin-left: 8px;
+                flex: 1;
+            }
+
+            .guide-list li i {
+                color: #ccc;
+                font-size: 10px;
+            }
+
+            .start-btn {
+                margin-top: 16px;
+                background: #222;
+                color: #ffcc00;
+                border: none;
+                padding: 12px 32px;
+                border-radius: 8px;
+                font-weight: 800;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.2s;
+                width: 100%;
+            }
+
+            .start-btn:hover {
+                background: #000;
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            }
+        </style>
+
+        <!-- Flow Visualization -->
+        <div id="flow-container" class="flow-container">
+            <!-- Rendered by JS -->
+        </div>
+        <div id="empty-msg">표시할 화면이 없습니다.</div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/session-db.js"></script>
+    <script src="js/member-ledger.js"></script>
+    <script>
+        // Configuration: Unified Super Scenario
+        const SCREENS = [
+            // --- Intro ---
+            { id: "0001", name: "사업자번호 입력", tags: ["COMMON"], desc: "사업자번호 10자리 입력 → 자동 판별" }, // Always logic start
+
+            // --- Branch: Issuance Type (New/Add) ---
+            { id: "0002", name: "신규 대상 통합 발급 안내", tags: ["NEW"], cond: s => s.issuance === 'NEW', desc: "판별결과: 신규" },
+            { id: "0003", name: "추가 대상 통합 발급 안내", tags: ["ADD"], cond: s => s.issuance === 'ADD', desc: "판별결과: 추가" },
+
+            // --- Common Prep ---
+            { id: "0004", name: "준비사항", tags: ["COMMON"] },
+            { id: "0005", name: "제출서류", tags: ["COMMON"] },
+            { id: "0006", name: "서류자동제출서비스", tags: ["COMMON"] },
+            { id: "0007", name: "유의사항", tags: ["COMMON"] },
+            { id: "0008", name: "법인 공동인증서 이용안내", tags: ["COMMON"] },
+
+            // --- Branch: Card Type (Credit/Check) ---
+            { id: "0009", name: "신용카드 상품 약관동의", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
+            { id: "0009_1", name: "체크카드 약관동의", tags: ["CHECK"], cond: s => s.card === 'CHECK' },
+
+            // --- Branch: Add & Dept Logic ---
+            { id: "0043", name: "발급 대상 부서 선택", tags: ["ADD", "CORP"], cond: s => s.issuance === 'ADD' && s.biz === 'CORP', desc: "법인+추가 시 부서 선택" },
+
+            // --- Core Info ---
+            { id: "0010", name: "신청인 정보(공통)", tags: ["COMMON"] },
+            { id: "0011", name: "신용정보 조회 동의", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
+            { id: "0011_1", name: "체크정보 조회 동의", tags: ["CHECK"], cond: s => s.card === 'CHECK' },
+            { id: "0012", name: "신청인 본인인증", tags: ["COMMON"] },
+            { id: "0013", name: "고객확인(CDD) 조건부", tags: ["COMMON"] },
+            { id: "0014", name: "대표자 정보", tags: ["COMMON"] },
+            { id: "0015", name: "사업자 정보", tags: ["COMMON"] },
+            { id: "0016", name: "법인 정보", tags: ["CORP"], cond: s => s.biz === 'CORP' },
+            { id: "0017", name: "EDD 정보", tags: ["COMMON"] },
+            { id: "0018", name: "필수확인사항 (적합성)", tags: ["COMMON"] },
+
+            // --- Branch: Indiv Biz Specific ---
+            { id: "0035", name: "개별카드 회원 동의서 안내", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            { id: "0036", name: "개별카드 계좌 등록", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            { id: "0037", name: "개별카드 고객 정보", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            { id: "0038", name: "개별카드 동의 조회", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            { id: "0039", name: "개인신용정보 동의서", tags: ["INDIV", "NEW", "CREDIT"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' && s.card === 'CREDIT' },
+            { id: "0039_1", name: "개인체크정보 동의서", tags: ["INDIV", "NEW", "CHECK"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' && s.card === 'CHECK' },
+            { id: "0040", name: "개별카드 신청하기", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            { id: "0041", name: "개별카드", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+
+            // --- Branch: Additional Specific ---
+            { id: "0045", name: "기본정보(추가)", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
+            { id: "0046", name: "유의 및 준비사항(추가)", tags: ["ADD", "INDIV"], cond: s => s.issuance === 'ADD' && s.biz === 'INDIV' },
+            { id: "0047", name: "대표자_사업자정보", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
+            { id: "0048", name: "업체(부서)정보", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
+            { id: "0049", name: "기본정보2", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
+            { id: "0050", name: "부서별 한도 설정", tags: ["ADD", "CREDIT"], cond: s => s.issuance === 'ADD' && s.card === 'CREDIT' },
+
+            // --- Branch: Credit Specific ---
+            { id: "0019", name: "이용한도(신용)", tags: ["CREDIT", "NEW"], cond: s => s.card === 'CREDIT' && s.issuance === 'NEW' },
+            { id: "0022", name: "결제일", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
+
+            // --- Final Steps ---
+            { id: "0020", name: "명세서 수령지", tags: ["COMMON"] },
+            { id: "0021", name: "카드 선택", tags: ["COMMON"] },
+            { id: "0023", name: "결제계좌", tags: ["COMMON"] },
+            { id: "0024", name: "신청매수", tags: ["COMMON"] },
+            { id: "0025", name: "발급확인 및 동의", tags: ["COMMON"] },
+            { id: "0026", name: "카드 수령지", tags: ["COMMON"] },
+            { id: "0027", name: "추천인", tags: ["COMMON"] },
+            { id: "0028", name: "공동인증서 인증", tags: ["COMMON"] },
+            { id: "0029", name: "카드정보(확인용)", tags: ["COMMON"] },
+            { id: "0032", name: "법인인증", tags: ["CORP"], cond: s => s.biz === 'CORP' },
+            { id: "0034", name: "신청 완료", tags: ["COMMON"], cond: s => s.biz === 'CORP' },
+
+            // --- Individual Business (개사자) - Credit ---
+            { id: "0053", name: "유의 및 준비사항", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0054", name: "추가정보선택", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0055", name: "약관동의", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0057", name: "카드신청 기본_CDD", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0058", name: "3종 본인인증", tags: ["INDIV"], cond: s => s.biz === 'INDIV' },
+            { id: "0059", name: "설립년월일_업종분류", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0060", name: "한도부여결과 조회", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0061", name: "신분증 정보", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0062", name: "필수확인사항", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0063", name: "카드정보", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0064", name: "카드정보수정하기", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0065", name: "카드신청완료", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+
+            // --- Individual Business (개사자) - Check ---
+            { id: "0066", name: "유의 및 준비사항", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0067", name: "신분증진위확인 선택", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0068", name: "신분증정보 입력", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0069", name: "본인확인", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0070", name: "신청정보_CDD", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0071", name: "신청정보_설립년월", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0072", name: "약관동의", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0073", name: "신청정보_수정하기", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0074", name: "접수완료", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' }
+        ];
+
+        // Current State
+        const state = {
+            issuance: 'NEW', // NEW | ADD
+            card: 'CREDIT',  // CREDIT | CHECK
+            biz: 'CORP'      // CORP | INDIV
+        };
+
+        function setCard(val) {
+            state.card = val;
+            updateUI();
+        }
+
+        // Auto-detection Logic
+        function checkBizNo(val) {
+            const result = MemberLedger.check(val);
+            console.log("Member Check:", result);
+
+            // Update State based on Result
+            if (result.status === "EXISTING") {
+                state.issuance = "ADD";
+            } else {
+                state.issuance = "NEW";
+            }
+            state.biz = result.type; // MemberLedger에서 판별한 결과 적용 (CORP or INDIV)
+            updateUI();
+        }
+
+        // UI Update
+        function updateUI() {
+            // Active buttons
+            document.querySelectorAll('.toggle-btn').forEach(btn => {
+                const onClick = btn.getAttribute('onclick');
+                if (onClick && onClick.includes(state.card)) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            // Badges Update
+            const bIssu = document.getElementById('badge-issuance');
+            const bBiz = document.getElementById('badge-biz');
+
+            bIssu.textContent = state.issuance === "NEW" ? "신규 (NEW)" : "기존회원 (ADD)";
+            bIssu.className = `badge-sim ${state.issuance === "NEW" ? "" : "active"}`;
+
+            bBiz.textContent = state.biz === "CORP" ? "법인 (CORP)" : "개인사업자 (INDIV)";
+            bBiz.className = `badge-sim ${state.biz === "CORP" ? "corp" : "indiv"}`;
+
+
+            // Flow Grid
+            const container = document.getElementById('flow-container');
+            container.innerHTML = '';
+
+            let activeCount = 0;
+            SCREENS.forEach((scr, idx) => {
+                // Check condition
+                let isActive = true;
+                if (scr.cond && !scr.cond(state)) {
+                    isActive = false;
+                }
+                if (isActive) activeCount++;
+
+                // Create Card
+                const card = document.createElement('div');
+                card.className = `screen-card ${isActive ? 'active-node' : ''}`;
+
+                // Tags
+                const tagHTML = (scr.tags || []).map(t => {
+                    let cls = t.toLowerCase();
+                    return `<span class="tag ${cls}">${t}</span>`;
+                }).join('');
+
+                // File path logic
+                let file = "#";
+                if (!scr.id.startsWith("N/A")) {
+                    if (scr.id.includes("_1")) file = scr.id + "_r.html";
+                    else {
+                        const n = parseInt(scr.id, 10);
+                        if (n === 8) file = "0008_R.HTML";
+                        else if (n <= 24) file = scr.id + "_r.HTML";
+                        else file = scr.id + "_r.html";
+                    }
+                }
+
+                card.innerHTML = `
+                <div class="screen-header">
+                    <span class="screen-id">${scr.id}</span>
+                    ${scr.desc ? `<span class="auto-badge">${scr.desc}</span>` : ''}
+                </div>
+                <div class="screen-title">${scr.name}</div>
+                
+                <div class="tags">${tagHTML}</div>
+
+                ${!isActive
+                        ? '<div style="font-size:12px;color:#aaa;margin-top:12px;">(Simulated: Skip)</div>'
+                        : `<a href="${file}" target="_blank" class="action-link">화면 보기 <i class="fa-solid fa-arrow-up-right-from-square"></i></a>`
+                    }
+            `;
+
+                container.appendChild(card);
+            });
+
+            document.getElementById('empty-msg').style.display = activeCount === 0 ? 'block' : 'none';
+        }
+
+        // Event Listeners
+        const bizInput = document.getElementById('bizNoInput');
+        bizInput.addEventListener('input', (e) => {
+            checkBizNo(e.target.value);
+        });
+
+        // Init with initial value
+        checkBizNo(bizInput.value);
+
+        // Test Case Helper
+        function applyTestCase(val) {
+            const input = document.getElementById('bizNoInput');
+            input.value = val;
+            checkBizNo(val);
+        }
+
+        // Start Scenario Logic
+        function startScenario() {
+            if (!window.SessionDB) {
+                alert('SessionDB module not loaded.');
+                return;
+            }
+
+            // 1. Generate Scenario Code (Dynamic)
+            // Format: UNIFIED-{BIZ}-{CARD}-{ISSUANCE}
+            const scCode = `UNIFIED-${state.biz}-${state.card}-${state.issuance}`;
+            const scLabel = `통합신청 | ${state.biz} | ${state.card} | ${state.issuance}`;
+
+            // 2. Init Session
+            const sessionId = SessionDB.init('UNIFIED_FLOW', scCode, scLabel);
+
+            // 3. Pre-fill Data (Mock Logic)
+            // We simulate that 0001 (BizNo) is already entered
+            SessionDB.save('0001', {
+                bizNo: document.getElementById('bizNoInput').value
+            }, sessionId);
+
+            // 4. Navigate to First Step
+            // In this flow, 0001 is "Intro", but since we already entered it here,
+            // we might want to skip to 0002 or just go to 0001 to confirm.
+            // Let's go to 0001 for consistency, but with data pre-filled.
+            // Or if it's "New/Add" branch, we might go to 0002/0003 directly.
+            // Let's go to 0002(New) or 0003(Add) based on Issuance to show the branching immediately.
+
+            let nextScreen = '0001_r.HTML'; // Default
+            if (state.biz === 'INDIV' && state.card === 'CHECK') {
+                nextScreen = '0066_r.html';
+            } else {
+                if (state.issuance === 'NEW') nextScreen = '0002_r.HTML';
+                else nextScreen = '0003_r.HTML';
+            }
+
+            // Open in new tab or same tab? User asked for "Landing Page" so maybe same tab.
+            // But for mock, let's use same tab to simulate flow.
+            window.location.href = `${nextScreen}?session=${sessionId}&scenario=${scCode}&step=0`;
+        }
+    </script>
+</body>
+
+</html>

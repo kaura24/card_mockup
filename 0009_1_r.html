@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KB국민카드 | 체크카드 약관동의 (0009_1)</title>
+
+    <style>
+        /* Styling copied from 0009_r.html */
+        :root {
+            --text: #111;
+            --muted: #666;
+            --line: #d9d9d9;
+            --panel: #f4f6f9;
+            --req: #d64545;
+            --kb-yellow: #ffcc00;
+            --kb-yellow-dark: #f2b800;
+            --white: #fff;
+            --modal-bg: rgba(0, 0, 0, .6);
+            --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+            color: var(--text);
+            background: var(--white);
+            line-height: 1.5;
+        }
+
+        .wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 34px 24px 90px;
+        }
+
+        .header-group {
+            margin-bottom: 18px;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 900;
+            letter-spacing: -.7px;
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .screen-id {
+            font-size: .78em;
+            font-weight: 900;
+            color: #666;
+            letter-spacing: -.2px;
+            white-space: nowrap;
+        }
+
+        .subnote {
+            margin: 8px 0 0;
+            color: #555;
+            font-size: 14px;
+            font-weight: 650;
+        }
+
+        .panel {
+            margin-top: 18px;
+            border: 1px solid #e6e6e6;
+            border-radius: 14px;
+            overflow: hidden;
+            background: #fff;
+            box-shadow: 0 10px 26px rgba(0, 0, 0, .06);
+        }
+
+        .panel-head {
+            display: grid;
+            grid-template-columns: 1fr 160px;
+            gap: 10px;
+            align-items: center;
+            padding: 14px 18px;
+            border-bottom: 1px solid #efefef;
+            background: #fff;
+        }
+
+        .panel-head-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 950;
+            color: #222;
+        }
+
+        .panel-head-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .all-label {
+            font-size: 13px;
+            font-weight: 900;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            user-select: none;
+            cursor: pointer;
+        }
+
+        .chk {
+            width: 18px;
+            height: 18px;
+            accent-color: #222;
+            cursor: pointer;
+        }
+
+        .row {
+            display: grid;
+            grid-template-columns: 1fr 140px 90px;
+            gap: 12px;
+            align-items: center;
+            padding: 12px 18px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fff;
+        }
+
+        .row-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+        }
+
+        .row-title .txt {
+            font-size: 14px;
+            font-weight: 800;
+            color: #333;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .req-badge {
+            color: var(--req);
+            font-weight: 950;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+
+        .btn-detail {
+            height: 34px;
+            border-radius: 8px;
+            border: 1px solid #cfcfcf;
+            background: #fff;
+            color: #333;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .agree-cell {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 900;
+            color: #444;
+        }
+
+        .hint {
+            padding: 12px 18px 16px;
+            color: #777;
+            font-size: 13px;
+            font-weight: 700;
+            border-top: 1px solid #efefef;
+            background: #fff;
+            line-height: 1.6;
+        }
+
+        .btn-area {
+            margin-top: 34px;
+            display: flex;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .btn-secondary,
+        .btn-primary {
+            height: 56px;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        .btn-secondary {
+            width: 180px;
+            border: 1px solid #cfcfcf;
+            background: #fff;
+        }
+
+        .btn-primary {
+            width: 260px;
+            border: none;
+            background: var(--kb-yellow);
+        }
+
+        .btn-primary:disabled {
+            background: #eee;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="header-group">
+            <h1 class="title">
+                <span>체크카드 약관동의</span>
+                <span class="screen-id">(0009_1)</span>
+            </h1>
+            <p class="subnote">체크카드 이용약관 및 필수 동의사항에 동의해 주세요.</p>
+        </div>
+
+        <section class="panel">
+            <div class="panel-head">
+                <div class="panel-head-left"><span>이용약관 및 필수 동의사항</span></div>
+                <div class="panel-head-right">
+                    <label class="all-label"><input type="checkbox" id="chk-all" class="chk"> 전체동의</label>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="row-title"><span class="txt">KB국민 체크카드 기본약관</span><span class="req-badge">(필수)</span>
+                    </div>
+                    <button class="btn-detail">자세히보기</button>
+                    <div class="agree-cell"><span>동의</span><input type="checkbox" class="chk item-chk"></div>
+                </div>
+                <div class="row">
+                    <div class="row-title"><span class="txt">기업(신용)정보 필수적 수집·이용 동의</span><span
+                            class="req-badge">(필수)</span></div>
+                    <button class="btn-detail">자세히보기</button>
+                    <div class="agree-cell"><span>동의</span><input type="checkbox" class="chk item-chk"></div>
+                </div>
+            </div>
+            <div class="hint">※ 필수 동의 미완료 시 다음 단계로 진행할 수 없습니다.</div>
+        </section>
+
+        <div class="btn-area">
+            <button class="btn-secondary" onclick="history.back()">이전</button>
+            <button class="btn-primary" id="btn-next" disabled>다음</button>
+        </div>
+    </div>
+
+    <script>
+        const SCREEN_ID = "0009_1";
+        const chkAll = document.getElementById('chk-all');
+        const itemChks = document.querySelectorAll('.item-chk');
+        const btnNext = document.getElementById('btn-next');
+
+        chkAll.addEventListener('change', () => {
+            itemChks.forEach(c => c.checked = chkAll.checked);
+            updateBtn();
+        });
+
+        itemChks.forEach(c => c.addEventListener('change', () => {
+            chkAll.checked = Array.from(itemChks).every(i => i.checked);
+            updateBtn();
+        }));
+
+        function updateBtn() {
+            btnNext.disabled = !Array.from(itemChks).every(i => i.checked);
+        }
+
+        btnNext.addEventListener('click', () => {
+            if (window.ScenarioNav) {
+                ScenarioNav.log('AGREE_TERMS', { msg: 'Check Card Terms Agreed' });
+                ScenarioNav.goNext();
+            } else {
+                alert('다음 단계로 이동합니다.');
+            }
+        });
+    </script>
+    <script src="js/common.js"></script>
+    <script src="js/session-db.js"></script>
+    <script src="js/scenario-nav.js"></script>
+</body>
+
+</html>

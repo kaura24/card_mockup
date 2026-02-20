@@ -1,0 +1,54 @@
+{
+  "screen_id": "0065",
+  "screen_name": "카드신청완료(개사자전용)",
+  "channel": "mobile web (개인사업자)",
+  "targets": "개인사업자",
+  "action": "정보조회",
+  "processing_core_call": false,
+  "processing_domain": "N/A",
+  "processing_purpose": "카드신청결과 안내",
+  "purpose": "카드 신청 접수 결과(정상 접수)를 고객에게 안내",
+  "fields": [
+    {
+      "key": "상품명",
+      "required": false,
+      "type": "text(display)",
+      "note": "예: MyBiz 사장님든든 기업카드"
+    },
+    {
+      "key": "고객명",
+      "required": false,
+      "type": "text(display)",
+      "note": "예: 고객님"
+    },
+    {
+      "key": "카드이미지",
+      "required": false,
+      "type": "image(display)",
+      "note": "img_0065_card"
+    },
+    {
+      "key": "안내문구",
+      "required": false,
+      "type": "text(display)",
+      "note": "정상 접수 안내"
+    }
+  ],
+  "control_rules": [
+    "확인 버튼 클릭 시 종료/홈 이동(정책에 따라 앱딥링크/웹 라우팅)",
+    "표시 데이터는 이전 세션/플랫폼 저장값 기반(목업)"
+  ],
+  "backend": {
+    "domain": "N/A",
+    "txn": "N/A",
+    "notes": "처리계 호출 없이 결과 화면 표시"
+  },
+  "audit_log_points": [
+    "확인 버튼 클릭 시점",
+    "완료 화면 노출 이벤트(선택)"
+  ],
+  "notes": [
+    "스크린샷 구조 반영: 상단 타이틀/닫기, 중앙 카드 이미지, 안내문구, 하단 노란 확인 버튼",
+    "이미지 제공 시 IMG_MAP에 img_0065_card 경로만 추가하면 자동 적용"
+  ]
+}

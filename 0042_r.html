@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>법인 EDD정보 (0042)</title>
+
+<style>
+/* ====== (샘플 0025 CSS 그대로 재사용) ====== */
+:root{
+  --text:#111; --muted:#666; --line:#e6e6e6;
+  --bg-overlay: rgba(0,0,0,.45);
+  --kb-yellow:#ffcc00; --kb-yellow-dark:#f2b800;
+  --overlay: rgba(0,0,0,.55);
+  --modal-line:#e6e6e6;
+  --mono: ui-monospace,Monaco,Consolas,monospace;
+  --danger:#e53935;
+  --field-bg:#fff; --field-line:#d9d9d9;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0; font-family:"Malgun Gothic",Arial,sans-serif;
+  background:var(--bg-overlay); color:var(--text);
+}
+/* 메인 모달 */
+.modal{
+  width:980px; max-width:calc(100vw - 24px);
+  background:#fff; border-radius:14px;
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%, -50%);
+  padding:18px 22px 18px;
+  border:1px solid rgba(0,0,0,.08);
+  box-shadow:0 18px 50px rgba(0,0,0,.20);
+}
+.modal-header{
+  display:flex; justify-content:space-between; align-items:center;
+  padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,.06);
+}
+.modal-title{ font-size:20px; font-weight:900; }
+.modal-title small{ font-size:13px; font-weight:800; color:var(--muted); margin-left:6px; }
+.close-btn{
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; color:#777; border:1px solid transparent;
+}
+.close-btn:hover{ border-color:rgba(0,0,0,.12); background:#fafafa; }
+
+/* ====== 본문 ====== */
+.content{ padding:14px 6px 8px; }
+.grid-row{
+  display:grid; grid-template-columns:260px 1fr;
+  border:1px solid var(--line); border-radius:10px;
+  overflow:hidden; background:#fff; margin-bottom:12px;
+}
+.cell-left{
+  padding:18px; border-right:1px solid var(--line);
+  font-weight:900; display:flex; align-items:center;
+}
+.req-star{ color:var(--danger); margin-left:6px; }
+.cell-right{ padding:14px 16px 16px; }
+.select{
+  height:44px; padding:0 36px 0 12px;
+  border:1px solid var(--field-line);
+  border-radius:8px; background:#fff;
+  cursor:pointer; font-size:14px; font-weight:800;
+  appearance:none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #555 50%),
+    linear-gradient(135deg, #555 50%, transparent 50%),
+    linear-gradient(to right, transparent, transparent);
+  background-position:
+    calc(100% - 18px) 18px,
+    calc(100% - 13px) 18px,
+    0 0;
+  background-size:5px 5px, 5px 5px, 100% 100%;
+  background-repeat:no-repeat;
+}
+.select:focus{
+  outline:none; border-color:rgba(0,0,0,.35);
+  box-shadow:0 0 0 3px rgba(255,204,0,.18);
+}
+
+/* 버튼 영역 */
+.footer{
+  display:flex; justify-content:flex-end; gap:10px;
+  margin-top:14px; padding-top:12px;
+  border-top:1px solid rgba(0,0,0,.06);
+}
+.btn{
+  height:44px; padding:0 16px; border-radius:8px;
+  cursor:pointer; font-weight:900; font-size:14px;
+  background:#fff; border:1px solid rgba(0,0,0,.14);
+}
+.btn.primary{ border:none; background:var(--kb-yellow); }
+.btn.primary:hover{ background:var(--kb-yellow-dark); }
+
+/* 토스트 */
+.toast{
+  position:fixed; left:50%; bottom:22px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.85); color:#fff;
+  padding:10px 14px; border-radius:10px;
+  opacity:0; pointer-events:none;
+  transition:opacity .18s ease; z-index:50;
+}
+.toast.show{ opacity:1; }
+
+/* 요구사항 버튼 */
+.req-qmark{
+  position:fixed; right:14px; bottom:14px;
+  width:44px; height:44px; border-radius:999px;
+  background:var(--kb-yellow); cursor:pointer;
+  font-size:22px; font-weight:900;
+  box-shadow:0 10px 22px rgba(0,0,0,.14);
+}
+
+/* 요구사항 모달 */
+.spec-modal-root{
+  position:fixed; inset:0;
+  background:var(--overlay);
+  display:none; align-items:center; justify-content:center;
+  z-index:1200; padding:18px;
+}
+.spec-modal-root.show{ display:flex; }
+.spec-modal{
+  width:min(980px, 100%);
+  max-height:min(86vh, 900px);
+  overflow:auto; background:#fff;
+  border-radius:12px; border:1px solid rgba(0,0,0,.15);
+}
+.spec-modal__head{
+  display:flex; justify-content:space-between; padding:14px 16px;
+  border-bottom:1px solid var(--modal-line); background:#fff;
+  position:sticky; top:0;
+}
+.spec-modal__title{ font-size:16px; font-weight:900; }
+.spec-modal__body{ padding:14px 16px 18px; }
+.kv{
+  display:grid; grid-template-columns:170px 1fr;
+  border:1px solid var(--modal-line);
+  border-radius:10px; overflow:hidden; margin-bottom:12px;
+}
+.kv .k, .kv .v{
+  padding:10px 12px; border-bottom:1px solid var(--modal-line);
+  font-size:13px;
+}
+.kv .k{
+  background:#fafafa; font-weight:900; border-right:1px solid var(--modal-line);
+}
+.section{
+  margin-top:12px; padding:12px;
+  border:1px solid var(--modal-line); border-radius:10px;
+}
+.section__title{ font-weight:900; font-size:13px; margin-bottom:8px; }
+.section ul{ padding-left:18px; line-height:1.6; font-size:13px;}
+.code{
+  margin-top:10px; padding:10px 12px; background:#0b0b0d;
+  color:#e9e9ef; font-family:var(--mono); font-size:12px;
+  border-radius:10px; overflow:auto; white-space:pre;
+}
+</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<!-- 0042 메인 모달 -->
+<div class="modal" role="dialog" aria-modal="true" aria-label="법인 EDD정보 (0042)">
+  <div class="modal-header">
+    <div class="modal-title">법인 EDD정보 <small>(0042)</small></div>
+    <div id="closeBtn" class="close-btn">×</div>
+  </div>
+
+  <div class="content">
+
+    <!-- 거래목적 -->
+    <div class="grid-row">
+      <div class="cell-left">거래목적 <span class="req-star">*</span></div>
+      <div class="cell-right">
+        <select id="eddPurpose" class="select">
+          <option value="">거래목적 선택</option>
+          <option>운영자금</option>
+          <option>투자</option>
+          <option>구매/매입</option>
+          <option>기타</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 거래자금의 원천 -->
+    <div class="grid-row">
+      <div class="cell-left">거래자금의 원천 <span class="req-star">*</span></div>
+      <div class="cell-right">
+        <select id="eddSource" class="select">
+          <option value="">거래자금의 원천 선택</option>
+          <option>사업수익</option>
+          <option>대출금</option>
+          <option>투자자금</option>
+          <option>기타</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 버튼 -->
+    <div class="footer">
+      <button class="btn" id="prevBtn">이전</button>
+      <button class="btn primary" id="nextBtn">다음</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- 토스트 -->
+
+
+<!-- 요건 버튼 -->
+<button id="reqBtn" class="req-qmark">?</button>
+
+<!-- 요건 모달 -->
+<div id="specModalRoot" class="spec-modal-root">
+  <div class="spec-modal">
+    <div class="spec-modal__head">
+      <div id="specModalTitle" class="spec-modal__title"></div>
+      <button id="specModalClose" class="btn">닫기</button>
+    </div>
+    <div id="specModalBody" class="spec-modal__body"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0042";
+// ===== 기본 함수 =====
+const $ = id => document.getElementById(id);
+const toast = $("toast");
+
+function showToast(msg){
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(()=> toast.classList.remove("show"), 1500);
+}
+
+// ===== 검증 =====
+function validate(){
+  if(!$("eddPurpose").value){
+    showToast("거래목적을 선택해 주세요."); return false;
+  }
+  if(!$("eddSource").value){
+    showToast("거래자금의 원천을 선택해 주세요."); return false;
+  }
+  return true;
+}
+
+// ===== 네비게이션(목업) =====
+$("prevBtn").addEventListener("click", ()=> showToast("이전(모의)"));
+$("nextBtn").addEventListener("click", ()=>{
+  if(!validate()) return;
+  showToast("다음(모의)");
+});
+
+// ===== 요구사항 정의 =====
+
+
+// ===== 요구사항 모달 렌더 =====
+function escapeHtml(s){
+  return String(s)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;");
+}
+
+function renderSpec(spec){
+  $("specModalTitle").textContent = `요구사항 / 주석 (${spec.screen_id})`;
+
+  $("specModalBody").innerHTML = `
+    <div class="kv">
+      <div class="k">기능 ID</div><div class="v"><b>${spec.screen_id}</b></div>
+      <div class="k">기능명</div><div class="v">${escapeHtml(spec.screen_name)}</div>
+      <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+      <div class="k">도메인</div><div class="v">${escapeHtml(spec.backend.domain)}</div>
+    </div>
+
+    <div class="section">
+      <div class="section__title">진입 조건</div>
+      <ul>${spec.entry_condition.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    </div>
+
+    <div class="section">
+      <div class="section__title">제어 규칙</div>
+      <ul>${spec.control_rules.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    </div>
+
+    <div class="section">
+      <div class="section__title">로그 포인트</div>
+      <ul>${spec.audit_log_points.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    </div>
+
+    <div class="section">
+      <div class="section__title">개발/QA 주석</div>
+      <ul>${spec.notes.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    </div>
+
+    <div class="section">
+      <div class="section__title">REQ_SPEC(JSON)</div>
+      <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+    </div>
+  `;
+}
+
+// ===== 모달 이벤트 =====
+$("reqBtn").addEventListener("click", ()=>{
+  renderSpec(REQ_SPEC);
+  $("specModalRoot").classList.add("show");
+});
+$("specModalClose").addEventListener("click", ()=>{
+  $("specModalRoot").classList.remove("show");
+});
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0042"></script>
+</body>
+</html>
+``

@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>설립년월일_업종분류 (0059)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#e6e6e6;
+      --bg:#f7f8fa;
+
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --card:#fff;
+      --panel:#fafafa;
+      --danger:#e53935;
+
+      --field-bg:#fff;
+      --field-line:#d9d9d9;
+      --focus-ring: rgba(255,204,0,.18);
+
+      --accent-blue:#4f7cff;
+      --chip:#eef1f6;
+
+      --soft:#f1f3f6;
+      --soft2:#eef0f2;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: "Malgun Gothic", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ====== 풀페이지(모바일) ====== */
+    .wrap{
+      max-width: 560px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background:#fff;
+      padding-bottom: 86px; /* 하단 버튼 */
+      border-left: 1px solid rgba(0,0,0,.06);
+      border-right: 1px solid rgba(0,0,0,.06);
+    }
+
+    /* ====== 상단바(모바일) ====== */
+    .topbar{
+      height: 56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: sticky;
+      top: 0;
+      background:#fff;
+      z-index: 30;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      padding: 0 14px;
+    }
+    .topbar .title{
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: -.2px;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+    }
+    .topbar .title small{
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+    .topbar .close{
+      position:absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      color:#333;
+      user-select:none;
+    }
+    .topbar .close:hover{
+      background:#fafafa;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    /* ====== 진행 뱃지(1~4) ====== */
+    .stepbar{
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      padding: 10px 16px 10px;
+      background:#fff;
+      border-bottom: 1px solid rgba(0,0,0,.06);
+    }
+    .stepbar .label{
+      font-weight: 900;
+      color:#222;
+      font-size: 14px;
+    }
+    .steps{
+      margin-left:auto;
+      display:flex;
+      align-items:center;
+      gap: 8px;
+    }
+    .step{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      background: #e9eaee;
+      color:#666;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-size: 12px;
+      user-select:none;
+    }
+    .step.done{
+      background:#eef1f6;
+      color:#7d8796;
+      position: relative;
+    }
+    .step.done::after{
+      content:"✓";
+      font-weight: 900;
+      font-size: 12px;
+      color:#7d8796;
+    }
+    .step.done span{ display:none; }
+    .step.on{
+      background: var(--accent-blue);
+      color:#fff;
+    }
+
+    .content{ padding: 12px 16px 14px; }
+
+    /* ====== 프로모 카드(좌측 이미지 느낌) ====== */
+    .hero{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 14px;
+      overflow:hidden;
+      background: #fff;
+    }
+    .hero-top{
+      padding: 14px 14px 10px;
+      background: #eef1f3;
+      display:flex;
+      align-items:flex-start;
+      gap: 12px;
+    }
+    .cardthumb{
+      width: 92px;
+      height: 56px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #5e89ff, #2747b8);
+      position: relative;
+      flex: 0 0 auto;
+      box-shadow: 0 10px 18px rgba(0,0,0,.12);
+      overflow:hidden;
+    }
+    .cardthumb::after{
+      content:"";
+      position:absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,.28), rgba(255,255,255,0) 60%),
+        radial-gradient(circle at 30% 30%, rgba(255,255,255,.18), rgba(255,255,255,0) 60%);
+      opacity:.8;
+    }
+    .hero-copy{
+      min-width: 0;
+    }
+    .hero-copy .small{
+      font-size: 12.5px;
+      color:#444;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+    .hero-copy .big{
+      font-size: 20px;
+      font-weight: 900;
+      line-height: 1.15;
+      letter-spacing: -.4px;
+    }
+    .hero-copy .big b{
+      font-weight: 900;
+    }
+
+    /* ====== 섹션 타이틀 ====== */
+    .section-title{
+      margin: 14px 0 8px;
+      font-weight: 900;
+      font-size: 14px;
+      color:#222;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+    }
+    .section-title .hint{
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    /* ====== 표(정보입력) ====== */
+    .table{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .tr{
+      display:grid;
+      grid-template-columns: 150px 1fr;
+      border-bottom: 1px solid var(--line);
+      align-items:center;
+      min-height: 46px;
+    }
+    .tr:last-child{ border-bottom:none; }
+    .th{
+      padding: 12px 12px;
+      background: #f3f4f6;
+      font-weight: 900;
+      color:#444;
+      font-size: 13px;
+    }
+    .td{
+      padding: 10px 12px;
+      font-size: 13.5px;
+      color:#222;
+    }
+    .td.muted{ color:#777; font-weight: 800; }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: var(--chip);
+      font-family: var(--mono);
+      font-size: 12px;
+      font-weight: 900;
+      color:#334;
+    }
+
+    /* ====== 입력 필드 ====== */
+    .field{
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--field-line);
+      border-radius: 10px;
+      padding: 0 12px;
+      background: var(--field-bg);
+      outline: none;
+      font-size: 14px;
+    }
+    .field:focus{
+      border-color: rgba(0,0,0,.35);
+      box-shadow: 0 0 0 3px var(--focus-ring);
+    }
+    .field[disabled]{
+      background: #f5f6f8;
+      color:#666;
+    }
+    .row-inline{
+      display:flex;
+      gap:10px;
+      align-items:center;
+    }
+
+    .select{
+      height: 44px;
+      border: 1px solid var(--field-line);
+      border-radius: 10px;
+      padding: 0 36px 0 12px;
+      background: var(--field-bg);
+      font-size: 14px;
+      font-weight: 800;
+      cursor:pointer;
+      appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #555 50%),
+        linear-gradient(135deg, #555 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+      background-position:
+        calc(100% - 18px) 18px,
+        calc(100% - 13px) 18px,
+        0 0;
+      background-size:
+        5px 5px,
+        5px 5px,
+        100% 100%;
+      background-repeat:no-repeat;
+      width: 100%;
+    }
+    .select:focus{
+      outline:none;
+      box-shadow: 0 0 0 3px var(--focus-ring);
+      border-color: rgba(0,0,0,.35);
+    }
+
+    .focus-yellow{
+      border: 2px solid var(--kb-yellow-dark) !important;
+      box-shadow: 0 0 0 3px rgba(255,204,0,.10);
+    }
+
+    .btn-mini{
+      height: 40px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.14);
+      background:#4b4f57;
+      color:#fff;
+      font-weight: 900;
+      cursor:pointer;
+      flex: 0 0 auto;
+    }
+    .btn-mini:active{ transform: translateY(1px); }
+
+    .note{
+      margin-top: 8px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    /* ====== 하단 버튼(다음) ====== */
+    .bottom{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(560px, 100vw);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background:#fff;
+      z-index: 40;
+      padding: 10px 12px;
+    }
+    .primary{
+      width: 100%;
+      height: 56px;
+      border: none;
+      border-radius: 12px;
+      background: var(--kb-yellow);
+      color:#111;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      letter-spacing: -.2px;
+    }
+    .primary:hover{ background: var(--kb-yellow-dark); }
+    .primary:active{ transform: translateY(1px); }
+
+    /* ====== 토스트 ====== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.86);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(520px, calc(100vw - 24px));
+      text-align:center;
+      z-index: 60;
+    }
+    .toast.show{ opacity: 1; }
+
+    /* ====== (공통) 우하단 히든 버튼: 컬러 + 물음표 ====== */
+    .req-qmark{
+      position: fixed;
+      right: 14px;
+      bottom: 94px;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      opacity: .82;
+      transition: opacity .15s ease, transform .05s ease, background .15s ease;
+      z-index: 1000;
+    }
+    .req-qmark:hover{ opacity: 1; background: var(--kb-yellow-dark); }
+    .req-qmark:active{ transform: translateY(1px); }
+
+    /* ====== (공통) 요구사항 모달 ====== */
+    .spec-modal-root{
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1200;
+    }
+    .spec-modal-root.show{ display:flex; }
+
+    .spec-modal{
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .spec-modal__head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--modal-line);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .spec-modal__title{
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .spec-modal__close{
+      border: 1px solid rgba(0,0,0,.18);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .spec-modal__body{ padding: 14px 16px 18px; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    .kv .k, .kv .v{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--modal-line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv .k{
+      background: #fafafa;
+      font-weight: 900;
+      color:#333;
+      border-right: 1px solid var(--modal-line);
+    }
+    .kv .v{ color:#222; }
+    .kv .k:last-child, .kv .v:last-child{ border-bottom:none; }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 10px; }
+    .chip{
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+    .section2{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .section2__title{
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .section2 ul{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .code{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0b0b0d;
+      color: #e9e9ef;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre;
+    }
+
+    @media (max-width: 420px){
+      .tr{ grid-template-columns: 130px 1fr; }
+      .hero-copy .big{ font-size: 18px; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap" role="application" aria-label="설립년월일_업종분류 (0059)">
+
+    <div class="topbar" role="banner">
+      <div class="title">카드신청 <small>(0059)</small></div>
+      <div class="close" id="closeBtn" aria-label="닫기">×</div>
+    </div>
+
+    <div class="stepbar" aria-label="진행 상태">
+      <div class="label">본인확인</div>
+      <div class="steps" aria-label="1~4 단계">
+        <div class="step done" title="1단계 완료"><span>1</span></div>
+        <div class="step on" title="2단계 진행중">2</div>
+        <div class="step" title="3단계">3</div>
+        <div class="step" title="4단계">4</div>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- 상단 카드/문구 -->
+      <div class="hero" aria-label="카드 안내 영역">
+        <div class="hero-top">
+          <div class="cardthumb" aria-hidden="true"></div>
+          <div class="hero-copy">
+            <div class="small">5분만에 간편하게 신청하세요!</div>
+            <div class="big"><b>StarBiz</b> 고유기업카드(비교통)</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 정보입력(상단 4개: 이전세션 disable) -->
+      <div class="section-title" style="margin-top:12px;">
+        <span>정보입력</span>
+        <span class="hint">이전 단계 값 · 수정 불가</span>
+      </div>
+      <div class="table" aria-label="대표자 기본 정보(이전세션)">
+        <div class="tr">
+          <div class="th">대표자 성명</div>
+          <div class="td muted">아나콘</div>
+        </div>
+        <div class="tr">
+          <div class="th">주민등록번호</div>
+          <div class="td muted">900101-1*******</div>
+        </div>
+        <div class="tr">
+          <div class="th">휴대폰번호</div>
+          <div class="td muted">010-3665-8433</div>
+        </div>
+        <div class="tr">
+          <div class="th">사업자등록번호</div>
+          <div class="td muted">401-39-89057</div>
+        </div>
+      </div>
+
+      <!-- 설립년월일 -->
+      <div class="section-title">
+        <span>설립년월일</span>
+      </div>
+      <div class="table" aria-label="설립년월일 입력">
+        <div class="tr">
+          <div class="th">설립년월일</div>
+          <div class="td">
+            <input id="founded" class="field" type="date" value="2023-02-13" aria-label="설립년월일" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 업종 및 산업분류 -->
+      <div class="section-title">
+        <span>업종 및 산업분류</span>
+        <span class="hint">선택/조회</span>
+      </div>
+      <div class="table" aria-label="업종 및 산업분류 선택">
+        <div class="tr">
+          <div class="th">업체 업종</div>
+          <div class="td">
+            <div class="row-inline">
+              <input id="bizType" class="field" type="text" value="액체 여과기 제조업" disabled aria-label="업체 업종(표시)" />
+              <button id="pickBizType" class="btn-mini" type="button">선택</button>
+            </div>
+          </div>
+        </div>
+        <div class="tr">
+          <div class="th">주요상품/제품</div>
+          <div class="td">
+            <input id="mainProduct" class="field" type="text" value="도매" aria-label="주요상품/제품" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 고객군형태 -->
+      <div class="section-title">
+        <span>고객군형태</span>
+        <span class="hint">필수 선택</span>
+      </div>
+      <div class="table" aria-label="고객군형태 선택">
+        <div class="tr">
+          <div class="th">고객군형태</div>
+          <div class="td">
+            <select id="custGroup" class="select focus-yellow" aria-label="고객군형태">
+              <option value="" selected>선택</option>
+              <option value="corp_including_soho">기업체(개인사업자 포함)</option>
+              <option value="soho">개인사업자</option>
+              <option value="professional">전문직(예시)</option>
+            </select>
+            <div class="note">※ 화면 예시처럼 포커스/강조(노란 테두리) 상태를 기본으로 표현했습니다(목업).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 희망한도 -->
+      <div class="section-title">
+        <span>희망한도</span>
+        <span class="hint">만원 단위</span>
+      </div>
+      <div class="table" aria-label="희망한도 입력">
+        <div class="tr">
+          <div class="th">희망한도</div>
+          <div class="td">
+            <div class="row-inline">
+              <input id="wishLimit" class="field" type="text" inputmode="numeric" placeholder="예: 200" value="200" aria-label="희망한도" />
+              <div style="font-weight:900; color:#333; flex:0 0 auto;">만원</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 추천인(선택) -->
+      <div class="section-title">
+        <span>추천인(선택)</span>
+        <span class="hint">직원번호 입력</span>
+      </div>
+      <div class="table" aria-label="추천인 입력">
+        <div class="tr">
+          <div class="th">추천인</div>
+          <div class="td">
+            <input id="recommender" class="field" type="text" placeholder="추천직원번호 입력" aria-label="추천직원번호" />
+            <div class="note">※ 추천인 선택/검색 로직은 별도 정책(은행/카드 구분 등) 확정 후 반영.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px;">
+        <span class="pill">ID:0059</span>
+        <span class="pill">개인사업자 Mobile Web</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 버튼 -->
+  <div class="bottom" role="contentinfo" aria-label="하단 다음 버튼">
+    <button class="primary" id="nextBtn" type="button">다음</button>
+  </div>
+
+  <!-- 토스트 -->
+  
+
+  <!-- (공통) 히든 요구사항 버튼 -->
+  <button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+  <!-- (공통) 요구사항/주석 모달 -->
+  <div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="spec-modal" aria-label="업무 정의서 및 주석">
+      <div class="spec-modal__head">
+        <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0059)</div>
+        <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+      </div>
+      <div id="specModalBody" class="spec-modal__body"></div>
+    </div>
+  </div>
+
+<script>
+  // Generated by GPT
+  (function(){
+    const SCREEN_ID = "0059";
+    const SCREEN_NAME = "설립년월일_업종분류(개사자전용)";
+    const CHANNEL = "mobile web (개인사업자)";
+    const ACTION = "설립년월/업종 및 산업분류/고객군형태/희망한도/추천인 입력";
+
+    const $ = (id) => document.getElementById(id);
+
+    // ===== 토스트 =====
+    const toast = $("toast");
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(()=> toast.classList.remove("show"), 1600);
+    }
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+    const digitsOnly = (s) => String(s || "").replace(/\D/g, "");
+
+    // ===== 닫기(목업) =====
+    $("closeBtn").addEventListener("click", ()=> showToast("닫기(모의): 이전 화면 유지"));
+
+    // ===== 업종 선택(목업) =====
+    $("pickBizType").addEventListener("click", ()=>{
+      // 실제 서비스: 업종/산업분류 검색 팝업/바텀시트 등
+      showToast("업종 선택(모의): 검색/선택 UI는 미구현");
+    });
+
+    // ===== 희망한도 숫자만 =====
+    const wishLimit = $("wishLimit");
+    wishLimit.addEventListener("input", (e)=>{
+      e.target.value = digitsOnly(e.target.value).slice(0, 6);
+    });
+
+    // ===== 검증 =====
+    function validate(){
+      const founded = $("founded").value;
+      if(!founded){
+        showToast("설립년월일을 입력해 주세요.");
+        $("founded").focus();
+        return false;
+      }
+      const custGroup = $("custGroup").value;
+      if(!custGroup){
+        showToast("고객군형태를 선택해 주세요.");
+        $("custGroup").focus();
+        return false;
+      }
+      const lim = digitsOnly(wishLimit.value);
+      if(!lim){
+        showToast("희망한도를 입력해 주세요.");
+        wishLimit.focus();
+        return false;
+      }
+      return true;
+    }
+
+    $("nextBtn").addEventListener("click", ()=>{
+      if(!validate()) return;
+      showToast("다음(모의): 다음 단계로 이동");
+      // 다음 화면(예: 0062 또는 0063 등) 확정 후 수정
+      if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+            location.hash = "#/0062";
+          }
+        }
+      }
+    });
+
+    // ====== (공통) 요구사항/주석 모달 ======
+    const REQ_SPEC = {
+      screen_id: SCREEN_ID,
+      screen_name: SCREEN_NAME,
+      channel: CHANNEL,
+      action: ACTION,
+      input_fields: [
+        { name: "대표자성명", source: "이전세션(disable)" },
+        { name: "주민등록번호", source: "이전세션(disable)" },
+        { name: "휴대폰번호", source: "이전세션(disable)" },
+        { name: "사업자등록번호", source: "이전세션(disable)" },
+        { name: "설립년월일", source: "고객 입력" },
+        { name: "업종 및 산업분류", source: "선택/조회(검색 UI)" },
+        { name: "고객군형태", source: "선택" },
+        { name: "희망한도", source: "고객 입력(만원 단위)" },
+        { name: "추천인", source: "선택(직원번호 입력/검색)" }
+      ],
+      control_rules: [
+        "이전세션 값(대표자/주민번호/휴대폰/사업자번호)은 수정 불가(disable)",
+        "고객군형태는 필수(미선택 시 진행 불가)",
+        "희망한도는 숫자 입력(만원 단위)",
+        "업종/산업분류는 선택 버튼을 통한 검색/선택 UI를 연동(목업에서는 미구현)"
+      ],
+      backend: {
+        domain: "고객/심사(개사자)",
+        txn: "설립년월/업종분류/희망한도 저장(가정)",
+        purpose: "개인사업자 신청 기본정보 및 분류 값 확정"
+      },
+      audit_log_points: [
+        "설립년월일",
+        "업종/산업분류 선택값",
+        "고객군형태 선택값",
+        "희망한도",
+        "추천인 입력값(선택)",
+        "다음 버튼 클릭 시점"
+      ],
+      notes: [
+        "제공 이미지 기준: 상단 ‘카드신청’ + 단계 표시(1 완료, 2 진행중) + 하단 고정 ‘다음’ 버튼",
+        "우측 화면의 ‘고객군형태’ 노란 포커스 테두리를 목업으로 반영",
+        "추천인 로직(은행/카드 회원 분리 등)은 정책 확정 후 상세 구현"
+      ]
+    };
+
+    const reqBtn = $("reqBtn");
+    const specModalRoot = $("specModalRoot");
+    const specModalClose = $("specModalClose");
+    const specModalTitle = $("specModalTitle");
+    const specModalBody = $("specModalBody");
+
+    function renderSpec(spec){
+      document.title = `${spec.screen_name} (${spec.screen_id})`;
+      specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+
+      const chips = [
+        `ID:${spec.screen_id}`,
+        `Action:${spec.action}`,
+        `Channel:${spec.channel}`,
+        `Txn:${spec.backend.txn}`
+      ];
+
+      specModalBody.innerHTML = `
+        <div class="kv">
+          <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+          <div class="k">기능명</div><div class="v"><b>${escapeHtml(spec.screen_name)}</b></div>
+          <div class="k">채널</div><div class="v">${escapeHtml(spec.channel)}</div>
+          <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+          <div class="k">업무 목적</div><div class="v">${escapeHtml(spec.backend.purpose)}</div>
+        </div>
+
+        <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+
+        <div class="section2">
+          <div class="section2__title">입력 항목</div>
+          <ul>${(spec.input_fields||[]).map(x=>`<li><b>${escapeHtml(x.name)}</b> — ${escapeHtml(x.source)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">제어 규칙</div>
+          <ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">감사/로그 포인트</div>
+          <ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">주석(개발/QA 포인트)</div>
+          <ul>${(spec.notes||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">REQ_SPEC 원문(JSON)</div>
+          <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+        </div>
+      `;
+    }
+
+    function openSpec(){
+      renderSpec(REQ_SPEC);
+      specModalRoot.classList.add("show");
+      specModalRoot.setAttribute("aria-hidden", "false");
+    }
+    function closeSpec(){
+      specModalRoot.classList.remove("show");
+      specModalRoot.setAttribute("aria-hidden", "true");
+    }
+
+    reqBtn.addEventListener("click", openSpec);
+    specModalClose.addEventListener("click", closeSpec);
+    specModalRoot.addEventListener("click", (e)=>{ if(e.target === specModalRoot) closeSpec(); });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && specModalRoot.classList.contains("show")) closeSpec();
+      if(e.ctrlKey && e.altKey && (e.key === "r" || e.key === "R")){
+        if(specModalRoot.classList.contains("show")) closeSpec();
+        else openSpec();
+      }
+    });
+  })();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0059"></script>
+</body>
+</html>

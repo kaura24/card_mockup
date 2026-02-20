@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>유의 및 준비사항 (0066)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#e6e6e6;
+      --bg:#f7f8fa;
+
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --card:#fff;
+      --panel:#fafafa;
+
+      --danger:#e53935;
+      --gray-btn:#e9ecef;
+      --gray-btn-text:#222;
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body{
+      margin:0;
+      font-family: "Malgun Gothic", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ====== 풀페이지(모바일) ====== */
+    .wrap{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background:#fff;
+      padding-bottom: 92px; /* 하단 버튼 */
+      border-left: 1px solid rgba(0,0,0,.06);
+      border-right: 1px solid rgba(0,0,0,.06);
+    }
+
+    /* ====== 상단바 ====== */
+    .topbar{
+      height: 56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: sticky;
+      top: 0;
+      background:#fff;
+      z-index: 20;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      padding: 0 14px;
+    }
+    .topbar .title{
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: -.2px;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+      text-align:center;
+    }
+    .topbar .title small{
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+    .topbar .close{
+      position:absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      color:#333;
+      user-select:none;
+    }
+    .topbar .close:hover{
+      background:#fafafa;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .content{ padding: 14px 16px 14px; }
+
+    /* ====== 카드(박스) ====== */
+    .card{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      background:#fff;
+      overflow:hidden;
+    }
+    .card + .card{ margin-top: 12px; }
+
+    .card-head{
+      padding: 14px 14px 12px;
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing:-.2px;
+      border-bottom: 1px solid var(--line);
+      background:#fff;
+    }
+    .card-body{ padding: 12px 14px 14px; }
+
+    .h2{
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing:-.2px;
+      margin: 2px 0 10px;
+    }
+
+    .bullets{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13.5px;
+      line-height: 1.65;
+    }
+    .bullets li{ margin: 6px 0; }
+
+    .danger{
+      margin-top: 10px;
+      color: var(--danger);
+      font-weight: 900;
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    /* ====== 아코디언 ====== */
+    .acc{
+      border-top: 1px solid var(--line);
+      background:#fff;
+    }
+    .acc-btn{
+      width:100%;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 12px 14px;
+      border:none;
+      background:#fff;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing:-.2px;
+    }
+    .chev{
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#fafafa;
+      user-select:none;
+      font-weight: 900;
+      color:#444;
+    }
+    .acc-panel{
+      display:none;
+      padding: 0 14px 14px;
+    }
+    .acc.open .acc-panel{ display:block; }
+    .acc.open .chev{ background:#f0f2f4; }
+
+    .muted-note{
+      margin-top: 10px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ===== 하단 버튼(취소/확인) ===== */
+    .bottom{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(520px, 100vw);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background:#fff;
+      z-index: 30;
+      padding: 10px 12px;
+    }
+    .btnrow{
+      display:flex;
+      gap:10px;
+    }
+    .btn{
+      flex:1;
+      height: 56px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      letter-spacing: -.2px;
+    }
+    .btn.gray{
+      background: var(--gray-btn);
+      color: var(--gray-btn-text);
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .btn.yellow{
+      background: var(--kb-yellow);
+      color:#111;
+    }
+    .btn.yellow:hover{ background: var(--kb-yellow-dark); }
+    .btn:active{ transform: translateY(1px); }
+
+    /* ===== 토스트 ===== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.86);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(480px, calc(100vw - 24px));
+      text-align:center;
+      z-index: 60;
+    }
+    .toast.show{ opacity: 1; }
+
+    /* ====== (공통) 우하단 히든 버튼: 컬러 + 물음표 ====== */
+    .req-qmark{
+      position: fixed;
+      right: 14px;
+      bottom: 98px;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      opacity: .82;
+      transition: opacity .15s ease, transform .05s ease, background .15s ease;
+      z-index: 1000;
+    }
+    .req-qmark:hover{ opacity: 1; background: var(--kb-yellow-dark); }
+    .req-qmark:active{ transform: translateY(1px); }
+
+    /* ====== (공통) 요구사항 모달 ====== */
+    .spec-modal-root{
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1200;
+    }
+    .spec-modal-root.show{ display:flex; }
+
+    .spec-modal{
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .spec-modal__head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--modal-line);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .spec-modal__title{
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .spec-modal__close{
+      border: 1px solid rgba(0,0,0,.18);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .spec-modal__body{ padding: 14px 16px 18px; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    .kv .k, .kv .v{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--modal-line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv .k{
+      background: #fafafa;
+      font-weight: 900;
+      color:#333;
+      border-right: 1px solid var(--modal-line);
+    }
+    .kv .v{ color:#222; }
+    .kv .k:last-child, .kv .v:last-child{ border-bottom:none; }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 10px; }
+    .chip{
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+    .section2{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .section2__title{
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .section2 ul{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .code{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0b0b0d;
+      color: #e9e9ef;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap" role="application" aria-label="유의 및 준비사항 (0066)">
+
+    <div class="topbar" role="banner">
+      <div class="title">유의 및 준비사항 안내 <small>(0066)</small></div>
+      <div class="close" id="closeBtn" aria-label="닫기">×</div>
+    </div>
+
+    <div class="content">
+
+      <!-- 준비사항 -->
+      <div class="card" aria-label="체크카드 발급 준비사항">
+        <div class="card-head">체크카드 발급</div>
+        <div class="card-body">
+          <ul class="bullets">
+            <li>대표자 신분증(주민등록증 또는 운전면허증)</li>
+            <li>사업자등록증(사업자등록증명원)</li>
+            <li>국민은행 결제계좌번호</li>
+          </ul>
+          <div class="danger">※ 결제계좌는 국민은행 계좌만 지정 가능합니다.</div>
+        </div>
+
+        <!-- 유의사항(아코디언) -->
+        <div class="acc" id="acc1" aria-label="유의사항">
+          <button class="acc-btn" type="button" id="accBtn">
+            유의사항
+            <span class="chev" id="chev">˄</span>
+          </button>
+          <div class="acc-panel" id="accPanel">
+            <ul class="bullets">
+              <li>개인사업자의 대표자만 신청 가능합니다.</li>
+              <li>공동명의 계좌는 ‘주 명의인’일 경우에만 결제계좌로 등록 가능합니다.</li>
+              <li>입력한 정보와 제출 서류가 다른 경우 또는 대표자 및 업체 신용평가 결과 등에 따라 카드발급이 거절될 수 있습니다.</li>
+              <li>고객님의 안전한 금융거래를 위해 일정시간이 지나면 서비스가 원활하지 않을 수 있습니다.</li>
+            </ul>
+            <div class="muted-note">※ 본 화면은 단순 안내(0066)이며, 확인 후 다음 단계로 진행합니다.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 하단 버튼 -->
+  <div class="bottom" role="contentinfo" aria-label="하단 버튼">
+    <div class="btnrow">
+      <button class="btn gray" id="cancelBtn" type="button">취소</button>
+      <button class="btn yellow" id="confirmBtn" type="button">확인</button>
+    </div>
+  </div>
+
+  <!-- 토스트 -->
+  
+
+  <!-- (공통) 히든 요구사항 버튼 -->
+  <button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+  <!-- (공통) 요구사항/주석 모달 -->
+  <div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="spec-modal" aria-label="업무 정의서 및 주석">
+      <div class="spec-modal__head">
+        <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0066)</div>
+        <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+      </div>
+      <div id="specModalBody" class="spec-modal__body"></div>
+    </div>
+  </div>
+
+<script>
+  // Generated by GPT
+  (function(){
+    const SCREEN_ID = "0066";
+    const SCREEN_NAME = "유의 및 준비사항(개사_체크전용)";
+    const CHANNEL = "mobile web (개인사업자)";
+
+    const $ = (id) => document.getElementById(id);
+    const toast = $("toast");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(()=> toast.classList.remove("show"), 1600);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // 닫기/취소(목업)
+    $("closeBtn").addEventListener("click", ()=> showToast("닫기(모의): 이전 화면 유지"));
+    $("cancelBtn").addEventListener("click", ()=>{
+      showToast("취소(모의): 이전 단계로 복귀");
+      history.back?.();
+    });
+
+    // 확인(목업) → 다음 단계(0067) 가정
+    $("confirmBtn").addEventListener("click", ()=>{
+      showToast("확인(모의): 다음 단계로 이동");
+      if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+            location.hash = "#/0067";
+          }
+        }
+      }
+    });
+
+    // 아코디언
+    const acc = $("acc1");
+    const btn = $("accBtn");
+    const chev = $("chev");
+    const panel = $("accPanel");
+
+    function setOpen(open){
+      if(open){
+        acc.classList.add("open");
+        panel.style.display = "block";
+        chev.textContent = "˅";
+      }else{
+        acc.classList.remove("open");
+        panel.style.display = "none";
+        chev.textContent = "˄";
+      }
+    }
+    // 이미지가 열려있는 상태로 보이므로 기본 open
+    setOpen(true);
+    btn.addEventListener("click", ()=>{
+      const isOpen = acc.classList.contains("open");
+      setOpen(!isOpen);
+    });
+
+    // ====== (공통) 요구사항/주석 모달 ======
+    
+
+    const reqBtn = $("reqBtn");
+    const specModalRoot = $("specModalRoot");
+    const specModalClose = $("specModalClose");
+    const specModalTitle = $("specModalTitle");
+    const specModalBody = $("specModalBody");
+
+    function renderSpec(spec){
+      document.title = `${spec.screen_name} (${spec.screen_id})`;
+      specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+
+      const chips = [
+        `ID:${spec.screen_id}`,
+        `Action:${spec.action}`,
+        `Channel:${spec.channel}`
+      ];
+
+      specModalBody.innerHTML = `
+        <div class="kv">
+          <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+          <div class="k">기능명</div><div class="v"><b>${escapeHtml(spec.screen_name)}</b></div>
+          <div class="k">채널</div><div class="v">${escapeHtml(spec.channel)}</div>
+          <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+          <div class="k">목적</div><div class="v">${escapeHtml(spec.purpose)}</div>
+        </div>
+
+        <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+
+        <div class="section2">
+          <div class="section2__title">안내 내용</div>
+          <ul>
+            <li><b>준비사항</b>
+              <ul>${(spec.contents.checklist||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+            </li>
+            <li style="margin-top:6px;"><b>유의사항</b>
+              <ul>${(spec.contents.cautions||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+            </li>
+          </ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">제어 규칙</div>
+          <ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">감사/로그 포인트</div>
+          <ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">주석(개발/QA 포인트)</div>
+          <ul>${(spec.notes||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">REQ_SPEC 원문(JSON)</div>
+          <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+        </div>
+      `;
+    }
+
+    function openSpec(){
+      renderSpec(REQ_SPEC);
+      specModalRoot.classList.add("show");
+      specModalRoot.setAttribute("aria-hidden", "false");
+    }
+    function closeSpec(){
+      specModalRoot.classList.remove("show");
+      specModalRoot.setAttribute("aria-hidden", "true");
+    }
+
+    reqBtn.addEventListener("click", openSpec);
+    specModalClose.addEventListener("click", closeSpec);
+    specModalRoot.addEventListener("click", (e)=>{ if(e.target === specModalRoot) closeSpec(); });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && specModalRoot.classList.contains("show")) closeSpec();
+      if(e.ctrlKey && e.altKey && (e.key === "r" || e.key === "R")){
+        if(specModalRoot.classList.contains("show")) closeSpec();
+        else openSpec();
+      }
+    });
+  })();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0066"></script>
+</body>
+</html>

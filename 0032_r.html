@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>KB국민카드 | 법인인증 (0032)</title>
+
+<style>
+/* ===== 전체 페이지 기본 ===== */
+body {
+  margin: 0;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", Arial, sans-serif;
+  color: #111;
+  line-height: 1.5;
+}
+
+/* ===== 레이아웃 ===== */
+.page-container {
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 26px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 900;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.screen-id {
+  font-size: 0.8em;
+  font-weight: 700;
+  color: #666;
+}
+
+/* ===== form ===== */
+.label {
+  font-weight: 900;
+  margin-bottom: 8px;
+  display: block;
+  font-size: 15px;
+}
+
+.input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin-bottom: 16px;
+  font-size: 15px;
+}
+
+.agree-box {
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 16px;
+}
+
+.agree-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f2f2f2;
+  font-size: 14px;
+}
+.agree-item:last-child { border-bottom: none; }
+
+.btn-detail {
+  padding: 4px 10px;
+  font-size: 13px;
+  border: 1px solid #ccc;
+  background: #fafafa;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.phone-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.btn-send {
+  white-space: nowrap;
+  padding: 0 16px;
+  background: #ffcc00;
+  font-weight: 900;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  height: 44px;
+}
+
+/* ===== Footer Action Buttons ===== */
+.footer-actions {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin-top: 40px;
+  padding-top: 26px;
+  border-top: 1px solid #eee;
+}
+.btn-primary {
+  min-width: 180px;
+  height: 52px;
+  border: none;
+  border-radius: 10px;
+  background: #ffcc00;
+  font-size: 17px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+/* ===== FAB 요구사항 버튼 ===== */
+.req-trigger {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #222;
+  color: #ffcc00;
+  border: none;
+  font-size: 28px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+}
+
+/* ===== 요구사항 모달 ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  padding: 20px;
+  justify-content: center;
+  align-items: center;
+  z-index: 3000;
+}
+.modal-overlay.show { display: flex; }
+
+.modal-content {
+  width: 100%;
+  max-width: 900px;
+  background: #fff;
+  border-radius: 16px;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+.modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  background: #fff;
+  top: 0;
+}
+.modal-body { padding: 24px; }
+
+.spec-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.spec-table th,
+.spec-table td {
+  border: 1px solid #eee;
+  padding: 12px;
+  font-size: 14px;
+}
+.spec-table th {
+  background: #fafafa;
+  width: 160px;
+  font-weight: 800;
+}
+
+.json-code {
+  background: #1e1e1e;
+  color: #ddd;
+  padding: 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-family: ui-monospace, monospace;
+  white-space: pre;
+  overflow-x: auto;
+}
+</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<div class="page-container">
+
+  <div class="page-header">
+    <h1 class="page-title">법인인증 <span class="screen-id">(0032)</span></h1>
+  </div>
+
+  <div class="page-body">
+
+    <label class="label">인증방법</label>
+    <div>
+      <label><input type="radio" name="auth" checked> 휴대폰</label>
+      <label style="margin-left: 20px;"><input type="radio" name="auth"> 법인 인감증명서</label>
+    </div>
+
+    <label class="label">대표자 성명</label>
+    <input type="text" class="input" value="홍길동" readonly>
+
+    <label class="label">이동통신사</label>
+    <select class="input">
+      <option>SKT</option>
+      <option>KT</option>
+      <option>LGU+</option>
+    </select>
+
+    <label class="label">약관동의</label>
+    <div class="agree-box">
+      <div class="agree-item"><span>휴대폰 본인확인 서비스 이용약관 동의</span><button class="btn-detail">보기</button></div>
+      <div class="agree-item"><span>개인정보 이용 및 제공 동의</span><button class="btn-detail">보기</button></div>
+      <div class="agree-item"><span>고유식별 정보 처리 동의</span><button class="btn-detail">보기</button></div>
+      <div class="agree-item"><span>통신사 이용약관 동의</span><button class="btn-detail">보기</button></div>
+
+      <div class="phone-row">
+        <select class="input" style="max-width: 90px;">
+          <option>010</option>
+        </select>
+        <input class="input" placeholder="1234">
+        <input class="input" placeholder="56**">
+        <button class="btn-send">인증번호 전송</button>
+      </div>
+    </div>
+
+    <div class="footer-actions">
+      <button class="btn-primary">다음</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- FAB -->
+<button id="btn-spec" class="req-trigger">?</button>
+
+<!-- 요구사항 모달 -->
+<div id="modal-spec" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>기능요구서 / 스펙 (0032)</h2>
+      <button id="btn-modal-close" class="btn-detail">닫기</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0032";
+/* =============================
+   요구사항 정의서 (REQ_SPEC)
+   ============================= */
+
+
+
+</td></tr>
+      <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+      <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+      <tr><th>트리거</th><td>${REQ_SPEC.trigger}</td></tr>
+      <tr><th>다음단계</th><td>${REQ_SPEC.next_step}</td></tr>
+      <tr><th>백엔드</th><td><pre>${JSON.stringify(REQ_SPEC.backend, null, 2)}</pre></td></tr>
+    </table>
+
+    <h3>UI 요소</h3>
+    <ul>${REQ_SPEC.ui_elements.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>검증 규칙</h3>
+    <ul>${REQ_SPEC.validations.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>QA 체크리스트</h3>
+    <ul>${REQ_SPEC.qa_checklist.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>JSON SPEC</h3>
+    <pre class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</pre>
+  `;
+}
+
+document.getElementById("btn-spec").onclick = () => {
+  renderSpec();
+  document.getElementById("modal-spec").classList.add("show");
+};
+
+document.getElementById("btn-modal-close").onclick = () => {
+  document.getElementById("modal-spec").classList.remove("show");
+};
+
+document.getElementById("modal-spec").onclick = (e) => {
+  if(e.target.id === "modal-spec"){
+    document.getElementById("modal-spec").classList.remove("show");
+  }
+};
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0032"></script>
+</body>
+</html>

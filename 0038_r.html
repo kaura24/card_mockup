@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>KB국민카드 | 개별카드 신청내역 조회 (0038)</title>
+
+    <style>
+        :root {
+            --text: #111;
+            --muted: #666;
+            --line: #d9d9d9;
+            --panel: #f4f6f9;
+            --req: #d64545;
+            --kb-yellow: #ffcc00;
+            --kb-yellow-dark: #f2b800;
+            --white: #fff;
+            --mono: ui-monospace, Menlo, Consolas, "Courier New", monospace;
+            --overlay: rgba(0, 0, 0, .55);
+            --modal-line: #e6e6e6;
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            margin: 0;
+            background: #fff;
+            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans KR", Roboto, sans-serif;
+            line-height: 1.5;
+        }
+
+        .wrap {
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 34px 24px 120px;
+        }
+
+        /* Header */
+        .header-group {
+            margin-bottom: 24px;
+        }
+
+        .title {
+            margin: 0;
+            font-size: 30px;
+            font-weight: 900;
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
+            flex-wrap: wrap;
+        }
+
+        .screen-id {
+            font-size: .78em;
+            color: #666;
+            font-weight: 900;
+        }
+
+        /* Toolbar: 새로고침 + 타임스탬프 + 총건수 */
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 14px;
+            margin-bottom: 10px;
+        }
+
+        .btn-refresh {
+            height: 36px;
+            padding: 0 16px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-refresh:hover {
+            background: #f5f5f5;
+        }
+
+        .btn-refresh .ico {
+            font-size: 15px;
+        }
+
+        .refresh-time {
+            font-size: 13px;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .total-count {
+            font-size: 14px;
+            font-weight: 900;
+            color: #333;
+        }
+
+        /* Table */
+        .tbl-wrap {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        thead tr {
+            border-top: 2px solid #333;
+            border-bottom: 1px solid #bbb;
+        }
+
+        thead th {
+            padding: 12px 14px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 900;
+            color: #222;
+            white-space: nowrap;
+            background: #fafafa;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid var(--line);
+        }
+
+        tbody tr:hover {
+            background: #fdfaf0;
+        }
+
+        tbody td {
+            padding: 14px 14px;
+            text-align: center;
+            font-size: 14px;
+            color: #333;
+            vertical-align: middle;
+        }
+
+        .td-status {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 상태 배지 */
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 900;
+        }
+
+        .badge.undone {
+            background: #fff3f3;
+            color: #c0392b;
+            border: 1px solid #f5c6c6;
+        }
+
+        .badge.done {
+            background: #e8f8f0;
+            color: #196f3d;
+            border: 1px solid #a9dfbf;
+        }
+
+        .badge.wait {
+            background: #fef9e7;
+            color: #7d6608;
+            border: 1px solid #f9e79f;
+        }
+
+        /* 동의서 재요청 버튼 */
+        .btn-resend {
+            height: 36px;
+            padding: 0 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 13px;
+            font-weight: 800;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .btn-resend:hover {
+            background: #f5f5f5;
+        }
+
+        /* 빈 상태 */
+        .empty-row td {
+            padding: 40px 0;
+            text-align: center;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* 안내 문구 */
+        .guide-note {
+            margin-top: 14px;
+            font-size: 13px;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .guide-note li {
+            margin-bottom: 4px;
+        }
+
+        /* Button area */
+        .btn-area {
+            margin-top: 40px;
+            display: flex;
+            gap: 14px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            width: 260px;
+            height: 56px;
+            border: none;
+            border-radius: 10px;
+            background: var(--kb-yellow);
+            color: #222;
+            font-size: 18px;
+            font-weight: 950;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background: var(--kb-yellow-dark);
+        }
+
+        .btn-primary:disabled {
+            background: #eee;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            width: 200px;
+            height: 56px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background: #fff;
+            font-weight: 900;
+            font-size: 17px;
+            cursor: pointer;
+        }
+
+        .spinner {
+            width: 18px;
+            height: 18px;
+            border: 3px solid rgba(0, 0, 0, .15);
+            border-top-color: #333;
+            border-radius: 50%;
+            animation: spin .8s linear infinite;
+            display: none;
+        }
+
+        .btn-primary.is-loading .spinner {
+            display: block;
+        }
+
+        .btn-primary.is-loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Spec Modal Styles removed - handled by js/spec-viewer.js */
+        /* Toast Styles removed - handled by js/common.js & css/kb-theme.css */
+    </style>
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+    <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+    <div class="wrap">
+        <div class="header-group">
+            <h1 class="title">
+                개별카드 신청내역 조회
+                <span class="screen-id">(0038)</span>
+            </h1>
+        </div>
+
+        <!-- 툴바: 새로고침 + 타임스탬프 + 총건수 -->
+        <div class="toolbar">
+            <button id="btn-refresh" class="btn-refresh" type="button">
+                <span class="ico">↻</span> 새로고침
+            </button>
+            <span class="refresh-time" id="refresh-time">
+                <span>⊙</span>
+                <span id="time-display">09분 33초 남음</span>
+            </span>
+            <span class="total-count">총 <span id="total-count">1</span>건</span>
+        </div>
+
+        <!-- 테이블 -->
+        <div class="tbl-wrap">
+            <table aria-label="개별카드 신청내역 목록">
+                <thead>
+                    <tr>
+                        <th>부서명</th>
+                        <th>개별카드 고객명</th>
+                        <th>신청카드</th>
+                        <th>LMS 발송 일시</th>
+                        <th>정보 동의 일시</th>
+                        <th>상태</th>
+                    </tr>
+                </thead>
+                <tbody id="tbl-body">
+                    <!--  목업 데이터 (JS로 렌더) -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- 안내 문구 -->
+        <ul class="guide-note">
+            <li>※ 개별카드 발급 고객님께 LMS로 동의서 작성 요청이 완료된 내역입니다.</li>
+            <li>※ 고객님이 동의서를 작성 완료한 후 <b>다음</b> 버튼을 눌러 진행해 주세요.</li>
+            <li>※ 동의 상태가 <b>미동의</b>인 경우 고객에게 동의서 작성 재요청이 가능합니다.</li>
+        </ul>
+
+        <!-- Navigation -->
+        <div class="btn-area">
+            <button id="btn-prev" class="btn-secondary">이전</button>
+            <button id="btn-next" class="btn-primary" disabled>
+                <span class="spinner"></span><span class="btn-text">다음</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Toast & Spec Modal Removed (Injected by JS) -->
+
+    <script>
+        /**
+         * KB국민카드 기업카드 신청 - Step 0038
+         * 개별카드 신청내역 조회(조회하기)
+         *
+         * 흐름:
+         *  0037(개별카드 발급대상 고객정보 + LMS 발송) → 0038(신청내역 조회) → 0039(본인인증)
+         *
+         * 주요 기능:
+         *  - LMS 발송 후 고객의 정보동의 상태를 폴링/새로고침하여 확인
+         *  - 미동의: "동의서 작성 재요청하기" 버튼 노출
+         *  - 동의 완료: 다음(→0039) 버튼 활성화
+         *  - 새로고침 버튼 + 자동 카운트다운(목업)
+         */
+
+        (function () {
+            const SCREEN_ID = "0038";
+            const SCREEN_NAME = "개별카드 신청내역 조회";
+
+            // ─── 목업 데이터 ───────────────────────────────────────────────
+            const MOCK_ROWS = [
+                {
+                    dept: "-",
+                    custName: "이*수",
+                    cardName: "ONE KB국민 기업카드",
+                    lmsDt: "2025-10-29\n12:56:18",
+                    agreeDt: "미동의",
+                    status: "undone"   // "undone" | "done" | "wait"
+                }
+            ];
+
+            // ─── DOM ───────────────────────────────────────────────────────
+            const $ = (id) => document.getElementById(id);
+            const tblBody = $("tbl-body");
+            const btnRefresh = $("btn-refresh");
+            const btnPrev = $("btn-prev");
+            const btnNext = $("btn-next");
+            const timeEl = $("time-display");
+            const totalEl = $("total-count");
+
+            // ─── 유틸 ─────────────────────────────────────────────────────
+            // showToast removed (use global window.showToast)
+
+            const escHtml = (s) =>
+                String(s)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;");
+
+            // ─── 테이블 렌더 ──────────────────────────────────────────────
+            const STATUS_LABEL = { undone: "미동의", done: "동의완료", wait: "확인중" };
+
+            function renderTable(rows) {
+                totalEl.textContent = rows.length;
+
+                if (rows.length === 0) {
+                    tblBody.innerHTML = `<tr class="empty-row"><td colspan="6">신청 내역이 없습니다.</td></tr>`;
+                    btnNext.disabled = true;
+                    return;
+                }
+
+                const allDone = rows.every(r => r.status === "done");
+                btnNext.disabled = !allDone;
+
+                tblBody.innerHTML = rows.map(r => {
+                    const badge =
+                        r.status === "done" ? `<span class="badge done">동의완료</span>` :
+                            r.status === "wait" ? `<span class="badge wait">확인중</span>` :
+                                `<span class="badge undone">미동의</span>`;
+
+                    const resendBtn = (r.status !== "done")
+                        ? `<button class="btn-resend" type="button" data-name="${escHtml(r.custName)}"
+               onclick="window._resend(this)">동의서 작성 재요청하기</button>`
+                        : ``;
+
+                    const agreeDtDisplay = r.status === "done"
+                        ? `<span style="color:#196f3d;font-weight:900;">${escHtml(r.agreeDt)}</span>`
+                        : `<span style="color:var(--muted);">${escHtml(r.agreeDt)}</span>`;
+
+                    return `
+        <tr>
+          <td>${escHtml(r.dept)}</td>
+          <td style="font-weight:900;">${escHtml(r.custName)}</td>
+          <td>${escHtml(r.cardName)}</td>
+          <td style="font-size:13px;white-space:pre-line;">${escHtml(r.lmsDt)}</td>
+          <td>${agreeDtDisplay}</td>
+          <td>
+            <div class="td-status" style="flex-direction:column;gap:8px;">
+              ${badge}
+              ${resendBtn}
+            </div>
+          </td>
+        </tr>`;
+                }).join("");
+            }
+
+            // 재요청 핸들러 (전역 노출)
+            window._resend = function (btn) {
+                const name = btn.dataset.name;
+                window.showToast(`${name}님께 동의서 작성 LMS 재발송 중...`);
+                btn.disabled = true;
+                setTimeout(() => {
+                    btn.disabled = false;
+                    window.showToast(`LMS가 재발송되었습니다. (목업)`);
+                }, 1200);
+            };
+
+            // 초기 렌더
+            renderTable(MOCK_ROWS);
+
+            // ─── 카운트다운 타이머(목업) ───────────────────────────────────
+            let seconds = 9 * 60 + 33;   // 09:33
+            const tick = () => {
+                if (seconds <= 0) { seconds = 10 * 60; }
+                const m = Math.floor(seconds / 60);
+                const s = seconds % 60;
+                timeEl.textContent = `${String(m).padStart(2, "0")}분 ${String(s).padStart(2, "0")}초 남음`;
+                seconds--;
+            };
+            tick();
+            setInterval(tick, 1000);
+
+            // ─── 새로고침 버튼 ────────────────────────────────────────────
+            let refreshLocked = false;
+            btnRefresh.addEventListener("click", () => {
+                if (refreshLocked) return;
+                refreshLocked = true;
+                btnRefresh.disabled = true;
+                window.showToast("신청내역을 새로 불러오는 중...");
+
+                // 목업: 1.2초 후 완료
+                setTimeout(() => {
+                    // 데모 토글: 새로고침 누를 때마다 동의 상태 변경 (언/동의 반복)
+                    MOCK_ROWS.forEach(r => {
+                        if (r._toggleCount === undefined) r._toggleCount = 0;
+                        r._toggleCount++;
+                    });
+                    if (MOCK_ROWS[0]._toggleCount % 2 === 1) {
+                        // 홀수 번째 새로고침 → 동의완료로 변경
+                        MOCK_ROWS[0].status = "done";
+                        MOCK_ROWS[0].agreeDt = "2025-10-29\n13:05:42";
+                    } else {
+                        MOCK_ROWS[0].status = "undone";
+                        MOCK_ROWS[0].agreeDt = "미동의";
+                    }
+                    renderTable(MOCK_ROWS);
+                    seconds = 10 * 60;
+                    window.showToast("신청내역이 업데이트되었습니다.");
+                    btnRefresh.disabled = false;
+                    refreshLocked = false;
+                }, 1200);
+            });
+
+            // ─── 이전/다음 ────────────────────────────────────────────────
+            btnPrev.addEventListener("click", () => {
+                window.showToast("이전 화면으로 이동합니다. (목업)");
+                setTimeout(() => history.back(), 500);
+            });
+
+            btnNext.addEventListener("click", async () => {
+                if (btnNext.disabled) { window.showToast("고객의 동의 완료 후 다음 단계로 이동 가능합니다."); return; }
+                if (btnNext.classList.contains("is-loading")) return;
+                btnNext.classList.add("is-loading");
+                window.showToast("동의 확인 중...");
+                await new Promise(r => setTimeout(r, 700));
+                if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+                      location.hash = "#/0039";
+                    }
+                  }
+                }
+                btnNext.classList.remove("is-loading");
+            });
+
+        })();
+    </script>
+
+    <script src="js/common.js"></script>
+
+    <script src="js/session-db.js"></script>
+    <script src="js/scenario-nav.js"></script>
+    <script src="js/spec-viewer.js" data-screen-id="0038"></script>
+</body>
+
+</html>

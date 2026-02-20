@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>3종 본인인증 (0058)</title>
+  
+  <!-- Pretendard Font (최신 트렌드 반영) -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+
+  <style>
+    :root {
+      /* KB Signature Colors */
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f5b900;
+      --kb-gray-bg: #f3f4f6;
+      --kb-text-primary: #111;
+      --kb-text-secondary: #767676;
+      --kb-line: #ebebeb;
+      --kb-focus: #333;
+      
+      --accent-blue: #3d76e8;
+      --danger: #e64c3c;
+      --white: #ffffff;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      
+      --safe-area-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      font-family: "Pretendard", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+      background: var(--kb-gray-bg);
+      color: var(--kb-text-primary);
+      line-height: 1.5;
+    }
+
+    /* ====== 레이아웃 ====== */
+    .wrap {
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background: var(--white);
+      padding-bottom: calc(70px + var(--safe-area-bottom));
+      position: relative;
+    }
+
+    /* ====== 상단 헤더 ====== */
+    .topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .topbar h1 {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 0;
+    }
+    .topbar .close-btn {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px; height: 32px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23111' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat center;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ====== 탭 네비게이션 ====== */
+    .tabs {
+      display: flex;
+      background: var(--white);
+      border-bottom: 1px solid var(--kb-line);
+      position: sticky;
+      top: 56px;
+      z-index: 99;
+    }
+    .tab-btn {
+      flex: 1;
+      height: 48px;
+      border: none;
+      background: transparent;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--kb-text-secondary);
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s, font-weight 0.2s;
+    }
+    .tab-btn.active {
+      color: #000;
+      font-weight: 700;
+    }
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: #000;
+    }
+
+    /* ====== 컨텐츠 영역 ====== */
+    .content-area {
+      padding: 24px 20px;
+      display: none;
+      animation: fadeIn 0.3s ease-out;
+    }
+    .content-area.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-tit {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    /* ====== 통신사 그리드 (최신 트렌드: 3열) ====== */
+    .carrier-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+    .c-btn {
+      height: 48px;
+      border: 1px solid #e0e0e0;
+      border-radius: var(--radius-sm);
+      background: var(--white);
+      font-size: 14px;
+      font-weight: 500;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .c-btn.active {
+      border-color: #000;
+      background: #222;
+      color: #fff;
+      font-weight: 700;
+    }
+    .c-btn small {
+      display: block;
+      font-size: 10px;
+      opacity: 0.8;
+      font-weight: 400;
+      line-height: 1;
+      margin-top: 2px;
+    }
+
+    /* ====== 약관 동의 박스 ====== */
+    .terms-wrap {
+      border: 1px solid var(--kb-line);
+      border-radius: var(--radius-md);
+      background: var(--white);
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .terms-head {
+      padding: 16px;
+      background: #f8f9fa;
+      border-bottom: 1px solid var(--kb-line);
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .chk-custom {
+      width: 20px; height: 20px;
+      border: 2px solid #ddd;
+      border-radius: 50%;
+      margin-right: 12px;
+      position: relative;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+    .chk-custom.checked {
+      border-color: var(--kb-yellow-dark);
+      background: var(--kb-yellow);
+    }
+    .chk-custom.checked::after {
+      content: '';
+      position: absolute;
+      top: 45%; left: 50%;
+      transform: translate(-50%, -50%) rotate(45deg);
+      width: 4px; height: 8px;
+      border-bottom: 2px solid #111;
+      border-right: 2px solid #111;
+      margin-top: -1px;
+    }
+    .terms-head-tit { font-size: 15px; font-weight: 700; flex: 1; }
+    
+    .terms-list { list-style: none; padding: 0; margin: 0; }
+    .t-item {
+      padding: 14px 16px;
+      border-bottom: 1px solid #f5f5f5;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      color: #333;
+      cursor: pointer;
+    }
+    .t-item:last-child { border-bottom: none; }
+    .t-chk {
+      width: 18px; height: 18px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E") no-repeat center;
+      margin-right: 10px;
+    }
+    .t-item.checked .t-chk {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233d76e8' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+    }
+    .t-arrow { margin-left: auto; color: #ccc; }
+
+    /* ====== 입력 폼 공통 ====== */
+    .form-group { margin-bottom: 24px; position: relative; }
+    .inp-box {
+      position: relative;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+      transition: border-color 0.2s;
+    }
+    .inp-box.focus { border-color: #111; border-width: 1.5px; }
+    .inp-box.error { border-color: var(--danger); }
+    
+    .inp-field {
+      width: 100%;
+      height: 50px;
+      border: none;
+      outline: none;
+      font-size: 16px;
+      color: #111;
+      padding: 0;
+      background: transparent;
+      letter-spacing: 0.5px;
+    }
+    .inp-field::placeholder { color: #bbb; letter-spacing: 0; }
+    
+    /* 입력필드 내부 버튼들 */
+    .util-btns {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* 삭제(X) 버튼 */
+    .btn-clear {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      background: #ccc url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fff' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cline x1='18' y1='6' x2='6' y2='18'%3E%3C/line%3E%3Cline x1='6' y1='6' x2='18' y2='18'%3E%3C/line%3E%3C/svg%3E") no-repeat center;
+      background-size: 12px;
+      border: none;
+      cursor: pointer;
+      display: none; /* JS 제어 */
+    }
+    .btn-clear.show { display: block; }
+    
+    /* 타이머 */
+    .timer-txt {
+      font-size: 14px;
+      color: var(--danger);
+      font-weight: 500;
+      font-feature-settings: "tnum";
+      display: none;
+    }
+    .timer-txt.show { display: block; }
+
+    /* 전송/확인 버튼 (인풋 우측) */
+    .btn-inline {
+      height: 32px;
+      padding: 0 14px;
+      font-size: 13px;
+      border-radius: 16px;
+      border: 1px solid #ddd;
+      background: #fff;
+      color: #333;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: 6px;
+    }
+    .btn-inline:disabled { color: #ccc; border-color: #eee; }
+
+    /* 에러 메시지 */
+    .err-msg {
+      font-size: 12px;
+      color: var(--danger);
+      margin-top: 6px;
+      display: none;
+    }
+    .err-msg.show { display: block; }
+
+    /* ====== 카드 인증 전용 ====== */
+    .card-notice {
+      background: #fff8e1;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      color: #664d03;
+      margin-bottom: 24px;
+      line-height: 1.4;
+    }
+    .card-grid-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .cg-label { font-size: 14px; font-weight: 700; color: #333; }
+    
+    /* 보안 키패드 점 */
+    .secure-dots { display: flex; gap: 4px; align-items: center; padding-left: 8px; }
+    .dot { width: 10px; height: 10px; background: #333; border-radius: 50%; }
+
+    /* ====== 하단 CTA (Bottom Sticky) ====== */
+    .bottom-cta {
+      position: fixed;
+      left: 50%; transform: translateX(-50%);
+      bottom: 0;
+      width: min(520px, 100%);
+      padding: 12px 20px var(--safe-area-bottom);
+      background: rgba(255,255,255,0.9);
+      backdrop-filter: blur(4px);
+      border-top: 1px solid #eee;
+      z-index: 50;
+    }
+    .btn-primary {
+      width: 100%;
+      height: 52px;
+      border: none;
+      border-radius: var(--radius-md);
+      background: var(--kb-yellow);
+      color: #111;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-primary:active { background: var(--kb-yellow-dark); }
+    .btn-primary:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
+
+    /* ====== 토스트 ====== */
+    .toast {
+      position: fixed;
+      left: 50%; bottom: 100px;
+      transform: translateX(-50%);
+      background: rgba(30,30,30,0.9);
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 24px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s;
+      z-index: 200;
+      pointer-events: none;
+      width: max-content;
+      max-width: 80%;
+      text-align: center;
+    }
+    .toast.show { opacity: 1; }
+
+    /* ====== 스펙/요구사항 버튼 (개발용) ====== */
+    .req-qmark {
+      position: fixed;
+      right: 20px; bottom: 120px;
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      background: var(--kb-yellow);
+      border: 1px solid rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      font-weight: 800;
+      font-size: 20px;
+      cursor: pointer;
+      z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* ====== 모달 공통 (스펙용) ====== */
+    .modal-root {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: none; align-items: center; justify-content: center;
+      z-index: 2000; padding: 20px;
+    }
+    .modal-root.show { display: flex; }
+    .modal-box {
+      width: 100%; max-width: 600px;
+      background: #fff; border-radius: 16px;
+      max-height: 80vh; overflow-y: auto;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-head { display: flex; justify-content: space-between; margin-bottom: 20px; align-items: center;}
+    .modal-title { font-weight: 700; font-size: 18px; }
+    .modal-close { padding: 6px 12px; border: 1px solid #ddd; background: #fff; border-radius: 6px; cursor: pointer;}
+    .code-view { background: #222; color: #eee; padding: 12px; border-radius: 8px; font-family: monospace; font-size: 12px; overflow-x: auto; white-space: pre; }
+  </style>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+  <div class="wrap" role="main">
+    
+    <!-- 상단바 -->
+    <header class="topbar">
+      <h1>본인인증 (0058)</h1>
+      <button class="close-btn" id="btnClose" aria-label="닫기"></button>
+    </header>
+
+    <!-- 탭 -->
+    <nav class="tabs" role="tablist">
+      <button class="tab-btn active" id="tabPhone" role="tab" aria-selected="true">휴대폰</button>
+      <button class="tab-btn" id="tabCard" role="tab" aria-selected="false">카드인증</button>
+    </nav>
+
+    <!-- [1] 휴대폰 인증 패널 -->
+    <section id="panelPhone" class="content-area active" role="tabpanel">
+      
+      <!-- 통신사 선택 (3열 그리드) -->
+      <strong class="section-tit">통신사 선택</strong>
+      <div class="carrier-grid" role="radiogroup">
+        <button class="c-btn active" data-val="SKT" role="radio" aria-checked="true">SKT</button>
+        <button class="c-btn" data-val="KT" role="radio" aria-checked="false">KT</button>
+        <button class="c-btn" data-val="LGU" role="radio" aria-checked="false">LG U+</button>
+        <button class="c-btn" data-val="SKT_MVNO" role="radio" aria-checked="false">알뜰폰<small>(SKT)</small></button>
+        <button class="c-btn" data-val="KT_MVNO" role="radio" aria-checked="false">알뜰폰<small>(KT)</small></button>
+        <button class="c-btn" data-val="LGU_MVNO" role="radio" aria-checked="false">알뜰폰<small>(LG U+)</small></button>
+      </div>
+
+      <!-- 약관 동의 -->
+      <div class="terms-wrap">
+        <div class="terms-head" id="btnAllAgree">
+          <div class="chk-custom" id="chkAll"></div>
+          <div class="terms-head-tit">휴대폰 본인인증 약관 전체동의</div>
+        </div>
+        <ul class="terms-list">
+          <li class="t-item checked"><div class="t-chk"></div>개인정보 이용 및 제공 동의(필수) <div class="t-arrow">›</div></li>
+          <li class="t-item checked"><div class="t-chk"></div>고유식별 정보처리 동의(필수) <div class="t-arrow">›</div></li>
+          <li class="t-item checked"><div class="t-chk"></div>통신사 이용약관 동의(필수) <div class="t-arrow">›</div></li>
+          <li class="t-item checked"><div class="t-chk"></div>서비스 이용약관 동의(필수) <div class="t-arrow">›</div></li>
+        </ul>
+      </div>
+
+      <!-- 입력 폼 -->
+      <div class="form-group">
+        <strong class="section-tit">휴대폰번호</strong>
+        <div class="inp-box" id="boxPhone">
+          <input type="tel" id="inpPhone" class="inp-field" placeholder="'-' 없이 숫자만 입력" maxlength="13">
+          <div class="util-btns">
+            <button type="button" class="btn-clear" aria-label="삭제"></button>
+            <button type="button" class="btn-inline" id="btnSend">인증요청</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <strong class="section-tit">인증번호</strong>
+        <div class="inp-box" id="boxCode">
+          <input type="tel" id="inpCode" class="inp-field" placeholder="인증번호 6자리" maxlength="6" disabled>
+          <div class="util-btns">
+            <span class="timer-txt" id="timer">03:00</span>
+            <button type="button" class="btn-clear" aria-label="삭제"></button>
+            <button type="button" class="btn-inline" id="btnCodeCheck" disabled>확인</button>
+          </div>
+        </div>
+        <p class="err-msg" id="msgCodeErr">인증번호가 일치하지 않습니다.</p>
+      </div>
+
+    </section>
+
+    <!-- [2] 카드 인증 패널 -->
+    <section id="panelCard" class="content-area" role="tabpanel">
+      <div class="card-notice">
+        <strong>KB국민 개인카드(신용/체크)</strong>로 인증이 가능합니다.<br>
+        (가족/법인카드는 휴대폰 인증을 이용해주세요.)
+      </div>
+
+      <div class="card-grid-row">
+        <div class="cg-label">카드번호</div>
+        <div class="inp-box" id="boxCardNo">
+          <input type="tel" id="inpCardNo" class="inp-field" placeholder="16자리 숫자 입력" maxlength="19">
+          <div class="util-btns">
+            <button type="button" class="btn-clear" aria-label="삭제"></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid-row">
+        <div class="cg-label">비밀번호</div>
+        <div>
+          <div class="inp-box" style="width: 100px; display:inline-flex; vertical-align:middle;">
+             <input type="password" class="inp-field" placeholder="앞 2자리" maxlength="2" style="text-align:center">
+          </div>
+          <div style="display:inline-flex; vertical-align:middle;">
+            <div class="secure-dots"><div class="dot"></div><div class="dot"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-grid-row">
+        <div class="cg-label">CVC</div>
+        <div>
+          <div class="inp-box" style="width: 100px;">
+             <input type="password" class="inp-field" placeholder="뒤 3자리" maxlength="3" style="text-align:center">
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+  </div> <!-- //wrap -->
+
+  <!-- 하단 고정 버튼 -->
+  <div class="bottom-cta">
+    <button id="btnNext" class="btn-primary" disabled>다음</button>
+  </div>
+
+  <!-- 토스트 -->
+  
+
+  <!-- 개발용 스펙 버튼 -->
+  <button id="reqBtn" class="req-qmark">?</button>
+
+  <!-- 스펙 모달 -->
+  <div id="specModal" class="modal-root">
+    <div class="modal-box">
+      <div class="modal-head">
+        <div class="modal-title">개발 스펙 (0058)</div>
+        <button id="specClose" class="modal-close">닫기</button>
+      </div>
+      <div id="specBody"></div>
+    </div>
+  </div>
+
+<script>
+    const SCREEN_ID = "0058";
+/**
+ * 0058_auth_logic.js (Refactored)
+ * * [주요 변경사항]
+ * 1. 통신사 선택: 3열 그리드 버튼 방식으로 변경 (최신 트렌드)
+ * 2. 입력 포맷팅: 휴대폰/카드번호 입력 시 자동 하이픈/스페이스 적용
+ * 3. UX 디테일: 입력창 Focus 효과, Clear 버튼, 에러 메시지 노출
+ */
+(function() {
+  "use strict";
+
+  const $ = (sel) => document.querySelector(sel);
+  const $$ = (sel) => document.querySelectorAll(sel);
+
+  // --- Elements ---
+  const els = {
+    tabBtns: $$('.tab-btn'),
+    panels: $$('.content-area'),
+    carrierBtns: $$('.c-btn'),
+    
+    // 휴대폰 관련
+    boxPhone: $('#boxPhone'),
+    inpPhone: $('#inpPhone'),
+    btnSend: $('#btnSend'),
+    boxCode: $('#boxCode'),
+    inpCode: $('#inpCode'),
+    timer: $('#timer'),
+    btnCodeCheck: $('#btnCodeCheck'),
+    msgCodeErr: $('#msgCodeErr'),
+    
+    // 약관
+    btnAllAgree: $('#btnAllAgree'),
+    chkAll: $('#chkAll'),
+    tItems: $$('.t-item'),
+    
+    // 카드 관련
+    inpCardNo: $('#inpCardNo'),
+    boxCardNo: $('#boxCardNo'),
+
+    // 공통
+    btnNext: $('#btnNext'),
+    toast: $('#toast'),
+    
+    // 모달
+    reqBtn: $('#reqBtn'),
+    specModal: $('#specModal'),
+    specBody: $('#specBody'),
+    specClose: $('#specClose')
+  };
+
+  let state = {
+    timerId: null,
+    timeLeft: 180,
+    isCodeSent: false,
+    isCodeVerified: false,
+    authType: 'phone' // phone | card
+  };
+
+  // --- Utils ---
+  const showToast = (msg) => {
+    els.toast.textContent = msg;
+    els.toast.classList.add('show');
+    setTimeout(() => els.toast.classList.remove('show'), 2000);
+  };
+
+  const formatPhone = (val) => val.replace(/[^0-9]/g, '').replace(/^(\d{0,3})(\d{0,4})(\d{0,4})$/g, "$1-$2-$3").replace(/(\-{1,2})$/g, "");
+  const formatCard = (val) => val.replace(/[^0-9]/g, '').replace(/(.{4})/g, '$1 ').trim();
+
+  // --- UI Interactions ---
+
+  // 1. 탭 전환
+  els.tabBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const targetId = e.target.id === 'tabPhone' ? 'panelPhone' : 'panelCard';
+      state.authType = e.target.id === 'tabPhone' ? 'phone' : 'card';
+      
+      els.tabBtns.forEach(b => b.classList.remove('active'));
+      e.target.classList.add('active');
+      
+      els.panels.forEach(p => p.classList.remove('active'));
+      $(`#${targetId}`).classList.add('active');
+      
+      // 버튼 상태 초기화
+      els.btnNext.disabled = true;
+    });
+  });
+
+  // 2. 통신사 선택
+  els.carrierBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      // 캡처링 방지
+      if(e.target.tagName === 'SMALL') e.target.parentElement.click(); 
+      els.carrierBtns.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-checked', false);
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-checked', true);
+    });
+  });
+
+  // 3. 인풋 UX (Focus, Clear, Formatting)
+  function setupInput(inp, box, formatter) {
+    const clearBtn = box.querySelector('.btn-clear');
+    
+    // Focus Effect
+    inp.addEventListener('focus', () => box.classList.add('focus'));
+    inp.addEventListener('blur', () => {
+        box.classList.remove('focus');
+        // 0.1초 뒤 Clear 버튼 숨김 (클릭 가능하게)
+        setTimeout(() => clearBtn && clearBtn.classList.remove('show'), 150);
+    });
+
+    // Input Logic
+    inp.addEventListener('input', (e) => {
+      if (formatter) inp.value = formatter(e.target.value);
+      
+      if (inp.value.length > 0) clearBtn && clearBtn.classList.add('show');
+      else clearBtn && clearBtn.classList.remove('show');
+    });
+
+    // Clear Click
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        inp.value = '';
+        inp.focus();
+        clearBtn.classList.remove('show');
+      });
+    }
+  }
+
+  setupInput(els.inpPhone, els.boxPhone, formatPhone);
+  setupInput(els.inpCode, els.boxCode, (v) => v.replace(/[^0-9]/g, '').slice(0,6));
+  setupInput(els.inpCardNo, els.boxCardNo, formatCard);
+
+  // 4. 인증번호 요청
+  els.btnSend.addEventListener('click', () => {
+    const rawPhone = els.inpPhone.value.replace(/-/g, '');
+    if (rawPhone.length < 10) {
+      showToast('휴대폰 번호를 올바르게 입력해주세요.');
+      els.inpPhone.focus();
+      return;
+    }
+
+    // UI Update
+    state.isCodeSent = true;
+    state.timeLeft = 180;
+    els.btnSend.textContent = "재전송";
+    els.inpCode.disabled = false;
+    els.inpCode.focus();
+    els.timer.classList.add('show');
+    els.btnCodeCheck.disabled = false;
+    els.boxPhone.classList.remove('error'); // 기존 에러 초기화
+
+    // Timer Start
+    if (state.timerId) clearInterval(state.timerId);
+    updateTimer();
+    state.timerId = setInterval(() => {
+      state.timeLeft--;
+      updateTimer();
+      if (state.timeLeft <= 0) {
+        clearInterval(state.timerId);
+        showToast('인증시간이 만료되었습니다.');
+        els.inpCode.disabled = true;
+      }
+    }, 1000);
+    
+    showToast('인증번호가 발송되었습니다.');
+  });
+
+  function updateTimer() {
+    const m = Math.floor(state.timeLeft / 60);
+    const s = state.timeLeft % 60;
+    els.timer.textContent = `${m}:${String(s).padStart(2,'0')}`;
+  }
+
+  // 5. 인증번호 확인
+  els.btnCodeCheck.addEventListener('click', () => {
+    if (els.inpCode.value === '123456') { // Mock Success
+      state.isCodeVerified = true;
+      els.boxCode.classList.remove('error');
+      els.msgCodeErr.classList.remove('show');
+      els.inpCode.disabled = true;
+      els.btnCodeCheck.textContent = "완료";
+      els.btnCodeCheck.disabled = true;
+      clearInterval(state.timerId);
+      els.timer.classList.remove('show');
+      
+      checkNextEnable();
+      showToast('인증이 완료되었습니다.');
+    } else {
+      els.boxCode.classList.add('error');
+      els.msgCodeErr.classList.add('show');
+      els.inpCode.value = '';
+      els.inpCode.focus();
+    }
+  });
+
+  // 6. 약관 동의
+  els.btnAllAgree.addEventListener('click', () => {
+    const isChecked = !els.chkAll.classList.contains('checked');
+    if(isChecked) {
+        els.chkAll.classList.add('checked');
+        els.tItems.forEach(i => i.classList.add('checked'));
+    } else {
+        els.chkAll.classList.remove('checked');
+        els.tItems.forEach(i => i.classList.remove('checked'));
+    }
+    checkNextEnable();
+  });
+
+  els.tItems.forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('checked');
+      const allChecked = Array.from(els.tItems).every(i => i.classList.contains('checked'));
+      if(allChecked) els.chkAll.classList.add('checked');
+      else els.chkAll.classList.remove('checked');
+      checkNextEnable();
+    });
+  });
+
+  // 7. 다음 버튼 활성화 로직
+  function checkNextEnable() {
+    if (state.authType === 'phone') {
+      const isAllTerms = els.chkAll.classList.contains('checked');
+      if (state.isCodeVerified && isAllTerms) {
+        els.btnNext.disabled = false;
+      } else {
+        els.btnNext.disabled = true;
+      }
+    } else {
+      // 카드인증: 단순 길이 체크 (Mock)
+      const cardLen = els.inpCardNo.value.length;
+      if (cardLen >= 19) els.btnNext.disabled = false;
+      else els.btnNext.disabled = true;
+    }
+  }
+  
+  // 카드 번호 입력 시에도 버튼 체크
+  els.inpCardNo.addEventListener('input', checkNextEnable);
+
+
+  // 8. 개발용 스펙 모달
+  const SPEC_DATA = {
+    screenId: "0058",
+    desc: "본인인증 (개선된 UI)",
+    pattern: "3-Col Grid Carrier / Auto-Format Input",
+    changes: [
+      "통신사 선택을 3열 그리드 버튼으로 변경하여 터치 영역 확대",
+      "Input 내부에 Clear(x) 버튼 및 타이머 통합",
+      "휴대폰/카드 번호 입력 시 자동 포맷팅 스크립트 적용",
+      "Pretendard 폰트 적용 및 KB 테마 컬러 미세 조정"
+    ]
+  };
+
+  els.reqBtn.addEventListener('click', () => {
+    els.specBody.innerHTML = `<div class="code-view">${JSON.stringify(SPEC_DATA, null, 2)}</div>`;
+    els.specModal.classList.add('show');
+  });
+  els.specClose.addEventListener('click', () => els.specModal.classList.remove('show'));
+
+  // 닫기 버튼
+  $('#btnClose').addEventListener('click', () => showToast('화면을 닫습니다.'));
+
+})();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0058"></script>
+</body>
+</html>

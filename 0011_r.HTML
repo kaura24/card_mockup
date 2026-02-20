@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 신청인 신용정보 조회 이용 동의 (0011)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --panel: #f4f6f9;
+      --req: #d64545;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+      --white: #fff;
+
+      --modal-bg: rgba(0, 0, 0, .6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 24px 90px;
+    }
+
+    .header-group {
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .screen-id {
+      font-size: .78em;
+      font-weight: 900;
+      color: #666;
+      letter-spacing: -.2px;
+      white-space: nowrap;
+    }
+
+    .subnote {
+      margin: 8px 0 0;
+      color: #555;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    .form-container {
+      border-top: 2px solid #333;
+      margin-top: 18px;
+    }
+
+    .required-info {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 8px;
+    }
+
+    .required-info .star {
+      color: var(--req);
+      margin-right: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      border-bottom: 1px solid var(--line);
+      align-items: stretch;
+    }
+
+    .form-label {
+      background: #fafafa;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      font-weight: 800;
+      color: #333;
+    }
+
+    .form-content {
+      padding: 16px 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    /* ===== Consent block ===== */
+    .consent-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      border: 1px solid #eee;
+      background: #fbfbfb;
+      border-radius: 10px;
+      font-weight: 850;
+      color: #333;
+    }
+
+    .consent-head .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .minus-box {
+      width: 28px;
+      height: 28px;
+      border: 1px solid #e6e6e6;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: #fff;
+      color: #666;
+      font-weight: 900;
+    }
+
+    .check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+      font-weight: 850;
+      color: #444;
+    }
+
+    .check-pill input {
+      display: none;
+    }
+
+    .check-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      border: 1.5px solid #cfcfcf;
+      display: inline-grid;
+      place-items: center;
+      font-size: 14px;
+      color: transparent;
+      background: #fff;
+      transition: .15s ease;
+      flex: 0 0 auto;
+    }
+
+    .check-pill input:checked+.check-icon {
+      border-color: #bdbdbd;
+      background: #f7f7f7;
+      color: #666;
+    }
+
+    .consent-list {
+      border: 1px solid #eee;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .consent-row {
+      display: grid;
+      grid-template-columns: 1fr 120px 120px;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 16px;
+      border-top: 1px solid #eee;
+      background: #fff;
+    }
+
+    .consent-row:first-child {
+      border-top: none;
+    }
+
+    .consent-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #333;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .btn-detail {
+      height: 38px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: #333;
+      font-weight: 850;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-detail:hover {
+      background: #fafafa;
+    }
+
+    .btn-detail:active {
+      transform: scale(.98);
+    }
+
+    .help-line {
+      margin: 2px 0 0;
+      font-size: 13px;
+      color: #777;
+    }
+
+    /* bottom buttons */
+    .btn-area {
+      margin-top: 42px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn-secondary {
+      width: 180px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #fff;
+      color: #333;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #fafafa;
+    }
+
+    .btn-secondary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      width: 260px;
+      height: 56px;
+      border: none;
+      border-radius: 10px;
+      background: var(--kb-yellow);
+      color: #222;
+      font-size: 18px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(0, 0, 0, 0.12);
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      display: none;
+    }
+
+    .btn-primary.is-loading .spinner {
+      display: block;
+    }
+
+    .btn-primary.is-loading .btn-text {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(33, 33, 33, .92);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .28s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #222;
+      color: var(--kb-yellow);
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      z-index: 2900;
+      transition: transform .2s;
+    }
+
+    .req-trigger:hover {
+      transform: rotate(15deg) scale(1.08);
+    }
+
+    .req-trigger:active {
+      transform: scale(.98);
+    }
+
+    /* ===== Modals ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 4000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, .4);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #eee;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      background: #f9f9f9;
+      width: 160px;
+      font-weight: 850;
+    }
+
+    .spec-section {
+      margin-top: 24px;
+    }
+
+    .spec-section h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--kb-yellow);
+      padding-left: 10px;
+      font-weight: 900;
+    }
+
+    .spec-section ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+      white-space: pre;
+    }
+
+    /* Responsive */
+    @media (max-width: 920px) {
+      .consent-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .btn-detail {
+        width: 160px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-label {
+        padding: 12px 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .form-content {
+        padding: 16px 20px;
+      }
+
+      .btn-area {
+        flex-direction: column;
+      }
+
+      .btn-secondary,
+      .btn-primary {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆 화면번호 렌더 + 탭 타이틀 SSOT 동기화 -->
+      <h1 class="title">
+        <span id="title-text">신청인 신용정보 조회 이용 동의</span>
+        <span id="title-id" class="screen-id">(0011)</span>
+      </h1>
+      <p class="subnote">대표자 또는 대리인의 신용정보 조회를 위해 필수 동의가 필요합니다.</p>
+    </div>
+
+    <div class="required-info">
+      <span class="star" aria-hidden="true">*</span>필수동의항목
+    </div>
+
+    <div class="form-container">
+      <section class="form-row">
+        <div class="form-label">
+          신청인 정보 필수 동의사항
+        </div>
+
+        <div class="form-content">
+          <div class="consent-head" aria-label="필수 동의 헤더">
+            <div class="left">
+              <div class="minus-box" aria-hidden="true">–</div>
+              <div style="min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">
+                신청인 정보 필수 동의사항
+              </div>
+            </div>
+
+            <label class="check-pill" title="전체동의">
+              <input type="checkbox" id="chk-all" />
+              <span class="check-icon" aria-hidden="true">✓</span>
+              <span>전체동의</span>
+            </label>
+          </div>
+
+          <div class="consent-list" aria-label="필수 동의 목록">
+            <div class="consent-row">
+              <div class="consent-title" title="기업(신용)정보 필수적 수집 이용동의(대표자 또는 대리인)">
+                - 기업(신용)정보 필수적 수집 이용동의(대표자 또는 대리인)
+              </div>
+
+              <button type="button" class="btn-detail" id="btn-detail-1">자세히보기</button>
+
+              <label class="check-pill" title="동의">
+                <input type="checkbox" id="chk-req-1" />
+                <span class="check-icon" aria-hidden="true">✓</span>
+                <span>동의</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="help-line">※ 동의 없이 다음 단계 진행 불가 (대표자/대리인 공용)</div>
+        </div>
+      </section>
+    </div>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary" disabled>
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text">다음</span>
+      </button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- [Modal A] 동의 상세 -->
+  <div id="modal-detail" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="detail-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="detail-title">동의 상세</h2>
+        <button type="button" id="btn-detail-close" class="modal-close">닫기</button>
+      </div>
+      <div id="detail-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- [Modal B] 요구사항 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="spec-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="spec-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-spec-close" class="modal-close">닫기</button>
+      </div>
+      <div id="spec-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCREEN_ID = "0011";
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0011
+     * 신청자 신용정보 조회 이용 동의(대표자/대리인) (신설 필요)
+     *
+     * 핵심 리팩토링 포인트
+     * 1) 타이틀/화면번호/탭타이틀: SSOT(META) 기반으로 1회 정의 후 동기화
+     * 2) 요구사항/주석: ? FAB 버튼으로 모달 표시(요건정의서 + JSON)
+     * 3) 필수동의 검증: 필수 동의 체크 시에만 Next 활성
+     * 4) 자세히보기: 동의 상세 모달 제공 (텍스트는 정책/법무 문구로 교체 가능)
+     */
+    (function () {
+      // =========================
+      // 0) SSOT: 화면 메타
+      // =========================
+      const META = {
+        id: "0011",
+        title: "신청인 신용정보 조회 이용 동의",
+        name: "신청자 신용정보 조회 이용 동의(대표자/대리인)",
+        prevTarget: "0010",
+        nextTarget: "0012"
+      };
+
+      document.title = `KB국민카드 | ${META.title} (${META.id})`;
+      document.getElementById("title-text").textContent = META.title;
+      document.getElementById("title-id").textContent = `(${META.id})`;
+
+      // =========================
+      // 1) DOM
+      // =========================
+      const toast = document.getElementById("toast");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      const chkAll = document.getElementById("chk-all");
+      const chkReq1 = document.getElementById("chk-req-1");
+
+      const btnDetail1 = document.getElementById("btn-detail-1");
+      const modalDetail = document.getElementById("modal-detail");
+      const detailBody = document.getElementById("detail-body");
+      const btnDetailClose = document.getElementById("btn-detail-close");
+
+      const specBtn = document.getElementById("btn-spec");
+      const modalSpec = document.getElementById("modal-spec");
+      const specBody = document.getElementById("spec-body");
+      const btnSpecClose = document.getElementById("btn-spec-close");
+
+      // =========================
+      // 2) State
+      // =========================
+      const state = {
+        required: {
+          credit_inquiry_consent: false
+        }
+      };
+
+      // =========================
+      // 3) Utils
+      // =========================
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+      };
+
+      const goTo = (id) => { location.hash = `#/${id}`; };
+
+      const canProceed = () => state.required.credit_inquiry_consent === true;
+
+      const setLoading = (isLoading) => {
+        btnNext.disabled = isLoading || !canProceed();
+        btnNext.classList.toggle("is-loading", isLoading);
+      };
+
+      const updateNextState = () => {
+        if (btnNext.classList.contains("is-loading")) return;
+        btnNext.disabled = !canProceed();
+      };
+
+      const openModal = (modalEl, focusEl) => {
+        modalEl.classList.add("show");
+        modalEl.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        (focusEl || modalEl).focus?.();
+      };
+
+      const closeModal = (modalEl, focusBackEl) => {
+        modalEl.classList.remove("show");
+        modalEl.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        focusBackEl?.focus?.();
+      };
+
+      // =========================
+      // 4) Consent logic
+      // =========================
+      const syncAllCheckbox = () => {
+        chkAll.checked = chkReq1.checked;
+      };
+
+      chkAll.addEventListener("change", () => {
+        chkReq1.checked = chkAll.checked;
+        state.required.credit_inquiry_consent = chkReq1.checked;
+        updateNextState();
+        showToast(chkAll.checked ? "필수 동의가 적용되었습니다." : "동의가 해제되었습니다.");
+      });
+
+      chkReq1.addEventListener("change", () => {
+        state.required.credit_inquiry_consent = chkReq1.checked;
+        syncAllCheckbox();
+        updateNextState();
+      });
+
+      // init sync
+      syncAllCheckbox();
+      updateNextState();
+
+      // =========================
+      // 5) Detail modal
+      // =========================
+      const DETAIL_TEXT = {
+        title: "기업(신용)정보 필수적 수집·이용 동의",
+        bullets: [
+          "신용정보조회 필수 동의: 동의 없이는 다음 단계 진행 불가",
+          "대표자/대리인 공용 동의 항목",
+          "본 동의는 신청 진행을 위한 신용정보 조회 및 관련 처리 목적에 한정",
+          "실제 고지 문구(수집 항목/보유기간/제공처 등)는 법무/준법 문구로 교체 필요"
+        ]
+      };
+
+      btnDetail1.addEventListener("click", () => {
+        detailBody.innerHTML = `
+      <table class="spec-table">
+        <tr><th>항목</th><td>${DETAIL_TEXT.title}</td></tr>
+        <tr><th>구분</th><td>필수</td></tr>
+        <tr><th>대상</th><td>대표자 또는 대리인</td></tr>
+      </table>
+      <div class="spec-section">
+        <h3>안내</h3>
+        <ul>${DETAIL_TEXT.bullets.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+    `;
+        openModal(modalDetail, btnDetailClose);
+      });
+
+      btnDetailClose.addEventListener("click", () => closeModal(modalDetail, btnDetail1));
+      modalDetail.addEventListener("click", (e) => { if (e.target === modalDetail) closeModal(modalDetail, btnDetail1); });
+
+      // =========================
+      // 6) Navigation (mock)
+      // =========================
+      btnPrev.addEventListener("click", () => {
+        showToast("이전 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          if (window.ScenarioNav) {
+            ScenarioNav.goPrev();
+          } else {
+            setTimeout(() => goTo(META.prevTarget), 250);
+          }
+        }
+      });
+
+      btnNext.addEventListener("click", async () => {
+        if (btnNext.classList.contains("is-loading")) return;
+
+        if (!canProceed()) {
+          showToast("필수 동의 후 진행할 수 있습니다.");
+          return;
+        }
+
+        setLoading(true);
+        showToast("동의 처리 중입니다...");
+
+        try {
+          if (window.SessionDB && window._KB_SESSION) {
+            SessionDB.save(META.id, {
+              creditConsent: state.required.credit_inquiry_consent
+            }, window._KB_SESSION);
+          }
+
+          await new Promise(res => setTimeout(res, 550));
+          showToast("동의 완료. 다음 단계로 이동합니다.");
+          if (window.ScenarioNav) {
+        ScenarioNav.goNext();
+      } else {
+        setTimeout(() => {
+            const nb = document.getElementById('_sc-next-btn');
+            if (nb) nb.click();
+            else goTo(META.nextTarget);
+          }, 450);
+      }
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      // =========================
+      // 7) Spec modal (요건정의서/주석)
+      // =========================
+      const REQ_SPEC = {
+        screen_id: META.id,
+        screen_name: META.name,
+        action: "고객동의",
+        input: "동의여부",
+        purpose: "신청자(대표자 또는 대리인) 신용정보 조회 이용 동의 수집",
+        business_rule_source: "화면기능목록 ID:0011 (신청자 신용정보 조회 이용 동의(대표자/대리인) 신설필요)",
+        condition_rule_policy: {
+          condition: [
+            "대표자 또는 대리인이 신청 진행",
+            "신용정보 조회가 필요한 신청 단계에 진입"
+          ],
+          rule: [
+            "필수 동의 미체크 시 다음 단계 진행 불가",
+            "전체동의는 화면 내 필수 동의 항목에 대해 일괄 적용"
+          ],
+          policy: [
+            "동의 근거/수집항목/보유기간/제3자 제공 등 고지 문구는 법무/준법 확정본으로 교체",
+            "동의 이력 저장 위치(플랫폼 DB vs 처리계 전문)는 플랫폼 개발부 확인 필요"
+          ]
+        },
+        ui_elements: [
+          "전체동의 체크",
+          "필수동의 항목(1개 이상 가능) 체크",
+          "자세히보기(동의 상세 모달)",
+          "이전/다음 버튼"
+        ],
+        rules: [
+          "신용정보조회 필수 동의",
+          "동의 없이 다음 단계 진행 불가",
+          "대표자/대리인 공용"
+        ],
+        flow: { prev: META.prevTarget, next: META.nextTarget },
+        qa_points: [
+          "필수 동의 체크 전 Next 비활성 유지",
+          "전체동의 토글 시 개별 동의와 동기화",
+          "개별 동의만 체크해도 Next 활성",
+          "자세히보기 모달 오픈/닫기(ESC/바깥클릭) 정상 동작",
+          "모바일 레이아웃에서 버튼/체크 UI 깨짐 여부"
+        ],
+        data_spec: {
+          state_shape: "{ required: { credit_inquiry_consent: boolean } }"
+        }
+      };
+
+      const renderSpec = () => {
+        specBody.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action}</td></tr>
+        <tr><th>입력</th><td>${REQ_SPEC.input}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+        <tr><th>흐름</th><td>이전: ${REQ_SPEC.flow.prev} / 다음: ${REQ_SPEC.flow.next}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>Condition → Rule → Policy</h3>
+        <ul>
+          <li><b>Condition</b><ul>${REQ_SPEC.condition_rule_policy.condition.map(x => `<li>${x}</li>`).join("")}</ul></li>
+          <li><b>Rule</b><ul>${REQ_SPEC.condition_rule_policy.rule.map(x => `<li>${x}</li>`).join("")}</ul></li>
+          <li><b>Policy</b><ul>${REQ_SPEC.condition_rule_policy.policy.map(x => `<li>${x}</li>`).join("")}</ul></li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+      };
+
+      specBtn.addEventListener("click", () => {
+        renderSpec();
+        openModal(modalSpec, btnSpecClose);
+      });
+      btnSpecClose.addEventListener("click", () => closeModal(modalSpec, specBtn));
+      modalSpec.addEventListener("click", (e) => { if (e.target === modalSpec) closeModal(modalSpec, specBtn); });
+
+      // ESC: 열려있는 모달부터 닫기 (detail 우선)
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (modalDetail.classList.contains("show")) return closeModal(modalDetail, btnDetail1);
+        if (modalSpec.classList.contains("show")) return closeModal(modalSpec, specBtn);
+      });
+    })();
+  </script>
+  <script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0011"></script>
+</body>
+
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>개별카드 신청내역 조회 (0044)</title>
+
+<style>
+/* 0025 기반 공통 스타일(간략화) */
+:root{
+  --line:#e6e6e6;
+  --kb-yellow:#ffcc00;
+  --kb-yellow-dark:#f2b800;
+  --field-line:#d9d9d9;
+}
+body{
+  margin:0; font-family:"Malgun Gothic",sans-serif;
+  background:#f2f2f2;
+}
+
+/* 모달 */
+.modal{
+  width:980px; max-width:calc(100vw - 24px);
+  background:#fff; border-radius:14px;
+  position:absolute; top:50%; left:50%;
+  transform:translate(-50%, -50%);
+  padding:18px 22px 18px;
+  box-shadow:0 20px 45px rgba(0,0,0,.20);
+}
+.modal-header{
+  display:flex; justify-content:space-between;
+  align-items:center;
+  padding-bottom:12px;
+  border-bottom:1px solid rgba(0,0,0,.08);
+}
+.modal-title{
+  font-size:20px; font-weight:900;
+}
+.close-btn{
+  width:36px; height:36px; border-radius:10px;
+  display:flex; align-items:center; justify-content:center;
+  cursor:pointer; font-size:22px; color:#666;
+}
+
+/* grid-row */
+.grid-row{
+  display:grid; grid-template-columns:260px 1fr;
+  border:1px solid var(--line);
+  border-radius:10px;
+  overflow:hidden;
+  background:#fff;
+  margin-top:14px;
+}
+.cell-left{
+  padding:18px;
+  border-right:1px solid var(--line);
+  font-weight:900;
+}
+.cell-right{ padding:18px 16px; }
+.select{
+  height:44px; border:1px solid var(--field-line);
+  border-radius:8px; padding:0 38px 0 12px;
+  font-weight:900; cursor:pointer;
+  background:#fff;
+}
+.notice{
+  margin-top:8px; font-size:13px; color:#555;
+}
+
+/* 조회 버튼 */
+.search-btn{
+  width:180px; height:48px;
+  background:var(--kb-yellow);
+  border:none; border-radius:8px;
+  font-size:17px; font-weight:900;
+  cursor:pointer;
+  display:block; margin:20px auto;
+}
+.search-btn:hover{ background:var(--kb-yellow-dark); }
+
+/* 결과 테이블 */
+.table-wrap{
+  margin-top:16px; 
+}
+.table{
+  width:100%; border-collapse:collapse;
+}
+.table th{
+  background:#fafafa; border-bottom:1px solid var(--line);
+  padding:12px; font-weight:900;
+}
+.table td{
+  padding:12px; border-bottom:1px solid var(--line);
+}
+.reissue-btn{
+  padding:8px 12px;
+  border:1px solid #555;
+  background:#fff;
+  font-size:13px; border-radius:6px;
+  cursor:pointer;
+}
+
+/* 요구사항 버튼 */
+.req-qmark{
+  position:fixed; right:14px; bottom:14px;
+  width:44px; height:44px; border-radius:999px;
+  background:var(--kb-yellow);
+  font-size:22px; font-weight:900;
+  cursor:pointer;
+}
+
+/* 요구사항 모달 */
+.spec-modal-root{
+  position:fixed; inset:0; display:none;
+  background:rgba(0,0,0,.55);
+  align-items:center; justify-content:center;
+}
+.spec-modal-root.show{ display:flex; }
+.spec-modal{
+  width:860px; max-height:86vh;
+  overflow:auto; background:#fff;
+  padding:20px; border-radius:12px;
+  box-shadow:0 20px 50px rgba(0,0,0,.25);
+}
+.section{ margin-top:14px; padding:12px; border:1px solid var(--line); border-radius:10px;}
+.section__title{ font-weight:900; margin-bottom:6px;}
+</style>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+<body>
+
+<div class="modal">
+
+  <!-- Header -->
+  <div class="modal-header">
+    <div class="modal-title">개별카드 신청내역 조회 <small>(0044)</small></div>
+    <div class="close-btn">×</div>
+  </div>
+
+  <div class="content">
+
+    <!-- 조회 부서 -->
+    <div class="grid-row">
+      <div class="cell-left">조회 부서</div>
+      <div class="cell-right">
+        <select id="deptSelect" class="select">
+          <option>전체</option>
+          <option>임원전략부</option>
+          <option>영업1팀</option>
+        </select>
+        <div class="notice">
+          ※ 최근 3일간의 개별카드 접수내역 및 동의정보가 조회됩니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- 조회 버튼 -->
+    <button class="search-btn">조회</button>
+
+    <!-- 조회 결과 (즉시 렌더링) -->
+    <div class="table-wrap">
+      <div style="text-align:right; font-size:13px; margin-bottom:4px;">총 1건</div>
+
+      <table class="table">
+        <thead>
+          <tr>
+            <th>부서명</th>
+            <th>개별카드 고객명</th>
+            <th>신청카드</th>
+            <th>LMS 발송 일시</th>
+            <th>정보 동의 일시</th>
+            <th>상태</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>(임)전략기획부</td>
+            <td>이수</td>
+            <td>ONE KB국민 global 기업카드</td>
+            <td>2025-11-12<br/>12:55:28</td>
+            <td>미동의</td>
+            <td>
+              <button class="reissue-btn">동의서 작성 재요청하기</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- 요구사항 버튼 -->
+<button id="reqBtn" class="req-qmark">?</button>
+
+<!-- 요구사항 모달 -->
+<div id="specModalRoot" class="spec-modal-root">
+  <div class="spec-modal">
+    <h3>요구사항 / 주석 (0044)</h3>
+    <div id="specBody"></div>
+  </div>
+</div>
+
+
+<script>
+    const SCREEN_ID = "0044";
+// 요구사항
+
+
+document.getElementById("reqBtn").onclick = ()=>{
+  document.getElementById("specBody").innerHTML = `
+    <div class="section">
+      <div class="section__title">기능 개요</div>
+      <ul><li>${REQ_SPEC.purpose}</li></ul>
+    </div>
+    <div class="section">
+      <div class="section__title">UI / 제어 규칙</div>
+      <ul>${REQ_SPEC.ui_rules.map(x=>`<li>${x}</li>`).join("")}</ul>
+    </div>
+  `;
+  document.getElementById("specModalRoot").classList.add("show");
+};
+
+document.getElementById("specModalRoot").onclick = (e)=>{
+  if(e.target.id==="specModalRoot"){
+    e.target.classList.remove("show");
+  }
+};
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0044"></script>
+</body>
+</html>

@@ -1,0 +1,432 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 개별카드 발급 대상 고객정보 (0037)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#d9d9d9;
+      --panel:#f4f6f9;
+      --req:#d64545;
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+      --white:#fff;
+      --modal-bg:rgba(0,0,0,.6);
+      --mono: ui-monospace,Menlo,Consolas,"Courier New",monospace;
+    }
+
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{
+      margin:0;background:#fff;color:var(--text);
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",Roboto,sans-serif;
+      line-height:1.5;
+    }
+
+    .wrap{max-width:1120px;margin:0 auto;padding:34px 24px 120px;}
+
+    /* Header */
+    .header-group{margin-bottom:18px;}
+    .title{
+      margin:0;font-size:30px;font-weight:900;
+      display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;
+    }
+    .screen-id{font-size:.78em;color:#666;font-weight:900;}
+    .subnote{margin:8px 0 0;font-size:14px;color:#555;font-weight:650;}
+
+    /* Layout */
+    .form-container{border-top:2px solid #333;margin-top:16px;}
+    .form-row{
+      display:grid;grid-template-columns:280px 1fr;
+      border-bottom:1px solid #eee;
+    }
+    .form-label{
+      padding:18px 24px;background:#fafafa;
+      font-size:16px;font-weight:800;color:#333;
+      display:flex;align-items:center;
+    }
+    .form-label .star{color:var(--req);margin-left:4px;}
+
+    .form-content{
+      padding:16px 24px 18px;
+      display:flex;flex-direction:column;gap:12px;
+    }
+
+    /* Input controls */
+    .input-text,.input-small{
+      height:46px;padding:0 14px;font-size:15px;
+      border:1px solid var(--line);border-radius:8px;
+    }
+    .input-text::placeholder{color:#aaa;}
+    .input-small{width:100%;}
+    .inline-fields{display:flex;gap:10px;}
+    .inline-fields .input-small{flex:1;}
+    .inline-fields .pin-digit{
+      width:48px;text-align:center;font-size:20px;font-weight:800;
+    }
+
+    .input-text.is-invalid,.input-small.is-invalid{
+      border-color:var(--req);background:#fff6f6;
+    }
+
+    /* Select */
+    .select{
+      height:46px;border:1px solid var(--line);
+      border-radius:8px;padding:0 12px;background:#fff;
+      font-size:15px;
+    }
+
+    .help-line{font-size:13px;color:#777;margin-top:-4px;}
+
+    /* Button area */
+    .btn-area{
+      margin-top:40px;
+      display:flex;gap:14px;justify-content:center;flex-wrap:wrap;
+    }
+
+    .btn-primary{
+      width:260px;height:56px;border:none;
+      border-radius:10px;background:var(--kb-yellow);
+      color:#222;font-size:18px;font-weight:950;
+      display:flex;align-items:center;justify-content:center;
+      gap:10px;cursor:pointer;
+    }
+    .btn-primary:hover{background:var(--kb-yellow-dark);}
+    .btn-primary:disabled{background:#eee;color:#aaa;cursor:not-allowed;}
+    .btn-secondary{
+      width:200px;height:56px;border:1px solid #ccc;
+      border-radius:10px;background:#fff;font-weight:900;font-size:17px;
+      cursor:pointer;
+    }
+
+    .spinner{
+      width:18px;height:18px;border:3px solid rgba(0,0,0,.15);
+      border-top-color:#333;border-radius:50%;animation:spin .8s linear infinite;
+      display:none;
+    }
+    .btn-primary.is-loading .spinner{display:block;}
+    .btn-primary.is-loading .btn-text{display:none;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    /* Toast */
+    .toast{
+      position:fixed;left:50%;bottom:40px;transform:translateX(-50%) translateY(20px);
+      background:rgba(33,33,33,.92);color:#fff;padding:12px 22px;border-radius:30px;
+      opacity:0;pointer-events:none;transition:.28s;z-index:2000;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* Spec FAB */
+    .req-trigger{
+      position:fixed;right:24px;bottom:24px;width:56px;height:56px;
+      background:#222;color:var(--kb-yellow);
+      border:none;border-radius:50%;font-size:26px;font-weight:900;
+      cursor:pointer;z-index:2500;
+    }
+
+    /* Modal */
+    .modal-overlay{
+      position:fixed;inset:0;display:none;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(4px);
+      align-items:center;justify-content:center;padding:20px;z-index:3000;
+    }
+    .modal-overlay.show{display:flex;}
+    .modal-content{
+      background:#fff;width:100%;max-width:860px;
+      border-radius:16px;overflow-y:auto;max-height:90vh;
+    }
+    .modal-header{
+      padding:20px 24px;border-bottom:1px solid #eee;
+      display:flex;align-items:center;justify-content:space-between;
+      position:sticky;top:0;background:#fff;
+    }
+    .modal-body{padding:24px;font-size:14px;}
+    .modal-close{background:#eee;border:none;padding:8px 16px;border-radius:6px;cursor:pointer;}
+
+    .spec-table{width:100%;border-collapse:collapse;margin-bottom:24px;}
+    .spec-table th,.spec-table td{
+      border:1px solid #eee;padding:12px;vertical-align:top;font-size:14px;
+    }
+    .spec-table th{background:#fafafa;width:180px;font-weight:900;}
+    .spec-section h3{
+      font-size:15px;margin:12px 0;font-weight:900;
+      border-left:4px solid var(--kb-yellow);padding-left:8px;
+    }
+    .json-code{
+      background:#1e1e1e;color:#d4d4d4;padding:16px;border-radius:8px;
+      font-family:var(--mono);font-size:12px;overflow-x:auto;
+    }
+
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<div class="wrap">
+  <div class="header-group">
+    <h1 class="title">
+      <span id="title-text">개별카드 발급대상 고객정보</span>
+      <span id="title-id" class="screen-id">(0037)</span>
+    </h1>
+    <p class="subnote">개별카드 발급 대상 사용자의 필수 정보를 입력해 주세요.</p>
+  </div>
+
+  <div class="form-container">
+
+    <!-- 사용자 성명 -->
+    <section class="form-row">
+      <div class="form-label">사용자 성명<span class="star">*</span></div>
+      <div class="form-content">
+        <input id="name" class="input-text" type="text" placeholder="한글로 입력해 주세요" />
+      </div>
+    </section>
+
+    <!-- 주민등록번호 -->
+    <section class="form-row">
+      <div class="form-label">주민등록번호<span class="star">*</span></div>
+      <div class="form-content">
+        <div class="inline-fields">
+          <input id="rrn1" class="input-small" maxlength="6" placeholder="생년월일(6자리)" inputmode="numeric" />
+          <input id="rrn2" class="input-small pin-digit" maxlength="1" inputmode="numeric" />
+          <input class="input-small" value="●●●●●●" readonly />
+        </div>
+        <div class="help-line">주민번호는 6자리 + 1자리까지 입력하며, 뒷자리는 보안처리됩니다.</div>
+      </div>
+    </section>
+
+    <!-- 휴대폰번호 -->
+    <section class="form-row">
+      <div class="form-label">휴대폰번호<span class="star">*</span></div>
+      <div class="form-content">
+        <div class="inline-fields">
+          <select id="phone1" class="select">
+            <option value="010">010</option>
+            <option value="011">011</option>
+            <option value="016">016</option>
+            <option value="017">017</option>
+            <option value="018">018</option>
+            <option value="019">019</option>
+          </select>
+          <input id="phone2" class="input-small" maxlength="4" inputmode="numeric" placeholder="1234" />
+          <input id="phone3" class="input-small" maxlength="4" inputmode="numeric" placeholder="5678" />
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 안내 문구 -->
+  <div class="help-line" style="margin-top:12px;">
+    ※ 개별카드 발급 고객님의 개인(신용)정보 수집·이용·제공 동의서 작성이 완료되면  
+    <u>카드→상품안내·신청→개별카드 신청내역</u>에서 확인 후 ‘신청하기’를 눌러 진행해 주세요.
+  </div>
+
+  <!-- LMS 발송 버튼 -->
+  <div class="btn-area" style="margin-top:28px;">
+    <button type="button" id="btn-lms" class="btn-secondary">필수 동의서 작성 요청하기(LMS발송)</button>
+  </div>
+
+  <!-- Navigation -->
+  <div class="btn-area">
+    <button id="btn-prev" class="btn-secondary">이전</button>
+    <button id="btn-next" class="btn-primary" disabled>
+      <span class="spinner"></span><span class="btn-text">다음</span>
+    </button>
+  </div>
+
+</div>
+
+<!-- Toast -->
+
+
+<!-- Spec FAB -->
+<button id="btn-spec" class="req-trigger">?</button>
+
+<!-- Spec Modal -->
+<div id="modal-spec" class="modal-overlay" aria-hidden="true">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modal-title">기능요구서 및 주석</h2>
+      <button id="btn-modal-close" class="modal-close">닫기</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0037";
+/**
+ * KB국민카드 기업카드 신청 - Step 0037
+ * 개별카드 발급 대상 고객정보 입력
+ *
+ * 필수 입력값:
+ *  - 성명(한글)
+ *  - 주민번호 앞6자리 + 1자리
+ *  - 휴대폰번호(통신사 + 4자리 + 4자리)
+ * • LMS 요청 버튼은 동의서 재요청 기능
+ * • 다음 버튼: 모든 필수 입력 검증 후 0038 로 이동
+ */
+
+(function(){
+  // =========================
+  // 0) META
+  // =========================
+  const META = {
+    id: "0037",
+    title: "개별카드 발급대상 고객정보",
+    nextTarget: "0038"
+  };
+  document.title = `KB국민카드 | ${META.title} (${META.id})`;
+
+  // DOM
+  const nameEl  = document.getElementById("name");
+  const rrn1    = document.getElementById("rrn1");
+  const rrn2    = document.getElementById("rrn2");
+  const phone1  = document.getElementById("phone1");
+  const phone2  = document.getElementById("phone2");
+  const phone3  = document.getElementById("phone3");
+
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+  const btnLms  = document.getElementById("btn-lms");
+
+  const toast = document.getElementById("toast");
+
+  // Utils
+  const showToast = (msg) => {
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"),2200);
+  };
+
+  const isKoreanName = (v)=> /^[가-힣]{2,20}$/.test(v.trim());
+  const isRrn1 = (v)=> /^\d{6}$/.test(v);
+  const isRrn2 = (v)=> /^[1-4]$/.test(v);  // 기본 형태
+  const isPhone2 = (v)=> /^\d{3,4}$/.test(v);
+  const isPhone3 = (v)=> /^\d{4}$/.test(v);
+
+  const validate = ()=>{
+    const ok =
+      isKoreanName(nameEl.value) &&
+      isRrn1(rrn1.value) &&
+      isRrn2(rrn2.value) &&
+      isPhone2(phone2.value) &&
+      isPhone3(phone3.value);
+
+    btnNext.disabled = !ok;
+  };
+
+  [nameEl, rrn1, rrn2, phone2, phone3].forEach(el=>{
+    el.addEventListener("input", ()=>{
+      if(el === nameEl && nameEl.value.trim() && !isKoreanName(nameEl.value)){
+        nameEl.classList.add("is-invalid");
+      } else { nameEl.classList.remove("is-invalid"); }
+
+      if(el === rrn1 && rrn1.value && !isRrn1(rrn1.value)){
+        rrn1.classList.add("is-invalid");
+      } else { rrn1.classList.remove("is-invalid"); }
+
+      if(el === rrn2 && rrn2.value && !isRrn2(rrn2.value)){
+        rrn2.classList.add("is-invalid");
+      } else { rrn2.classList.remove("is-invalid"); }
+
+      if(el === phone2 && phone2.value && !isPhone2(phone2.value)){
+        phone2.classList.add("is-invalid");
+      } else { phone2.classList.remove("is-invalid"); }
+
+      if(el === phone3 && phone3.value && !isPhone3(phone3.value)){
+        phone3.classList.add("is-invalid");
+      } else { phone3.classList.remove("is-invalid"); }
+
+      validate();
+    });
+  });
+
+  // LMS 발송
+  btnLms.addEventListener("click", async ()=>{
+    if(!isPhone3(phone3.value) || !isPhone2(phone2.value)){
+      showToast("유효한 휴대폰 번호를 입력해 주세요.");
+      return;
+    }
+    showToast("필수 동의서 작성 요청(LMS) 발송 중...");
+    await new Promise(r=>setTimeout(r,700));
+    showToast("LMS가 발송되었습니다.");
+  });
+
+  btnPrev.addEventListener("click", ()=> history.back());
+
+  btnNext.addEventListener("click", async ()=>{
+    if(btnNext.classList.contains("is-loading")) return;
+    if(btnNext.disabled) { showToast("필수 정보를 입력해 주세요."); return; }
+
+    btnNext.classList.add("is-loading");
+    showToast("정보 확인 중...");
+    await new Promise(r=>setTimeout(r,600));
+    location.hash = `#/${META.nextTarget}`;
+    btnNext.classList.remove("is-loading");
+  });
+
+  // =========================
+  // Spec modal
+  // =========================
+  
+
+  const specBtn = document.getElementById("btn-spec");
+  const modal = document.getElementById("modal-spec");
+  const modalClose = document.getElementById("btn-modal-close");
+  const modalBody = document.getElementById("modal-body");
+
+  const renderSpec = ()=>{
+    modalBody.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+        <tr><th>다음 단계</th><td>${REQ_SPEC.next}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>입력</h3>
+        <ul>${REQ_SPEC.inputs.map(v=>`<li>${v}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(v=>`<li>${v}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(v=>`<li>${v}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>JSON 스펙</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC,null,2)}</div>
+      </div>
+    `;
+  };
+
+  specBtn.addEventListener("click", ()=>{
+    renderSpec(); modal.classList.add("show");
+  });
+  modalClose.addEventListener("click", ()=> modal.classList.remove("show"));
+  modal.addEventListener("click",(e)=>{ if(e.target===modal) modal.classList.remove("show"); });
+
+})();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0037"></script>
+</body>
+</html>
+``

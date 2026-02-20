@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KB국민카드 | 대표자정보(확인용) (0031)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #e6b800;
+      --modal-bg: rgba(0,0,0,0.6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      margin: 0;
+      background: #fff;
+      font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    /* 팝업 공통 */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      z-index: 1500;
+    }
+    .dialog {
+      width: 100%;
+      max-width: 720px;
+      background: #fff;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.35);
+    }
+    .dialog-header {
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #eee;
+    }
+    .dialog-title {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 900;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+    }
+    .screen-id { font-size: 0.8em; color: #666; }
+
+    .btn-x {
+      width: 42px; height: 42px;
+      border: none; background: transparent; cursor: pointer;
+      display: grid; place-items: center;
+      border-radius: 10px;
+    }
+    .btn-x:hover { background: rgba(0,0,0,0.05); }
+    .x-icon { width: 20px; height: 20px; position: relative; }
+    .x-icon::before, .x-icon::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 20px; height: 2px;
+      background: #666;
+      border-radius: 2px;
+    }
+    .x-icon::before { transform: rotate(45deg); }
+    .x-icon::after { transform: rotate(-45deg); }
+
+    .dialog-body { padding: 28px 24px 34px; }
+
+    /* 데이터 테이블 */
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+    .info-table th, .info-table td {
+      padding: 14px 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    .info-table th {
+      width: 180px;
+      font-weight: 800;
+      background: #fafafa;
+    }
+
+    /* 요구사항 버튼 */
+    .req-trigger {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: none;
+      background: #222;
+      color: var(--kb-yellow);
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+      z-index: 3200;
+    }
+
+    /* 요구사항 모달 */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      backdrop-filter: blur(4px);
+      z-index: 4000;
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      overflow-y: auto;
+      max-height: 90vh;
+    }
+    .modal-header {
+      padding: 20px 24px;
+      display: flex; justify-content: space-between; align-items: center;
+      border-bottom: 1px solid #eee;
+      background: #fff;
+      position: sticky; top: 0;
+    }
+    .modal-body { padding: 24px; }
+    .modal-close {
+      background: #f4f4f4; border: none;
+      padding: 8px 16px; border-radius: 6px;
+      cursor: pointer; font-weight: 900;
+    }
+
+    .spec-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+    .spec-table th, .spec-table td { border: 1px solid #eee; padding: 12px; }
+    .spec-table th { background: #fafafa; width: 150px; font-weight: 800; }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #ddd;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: pre;
+      overflow-x: auto;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+<body>
+
+<!-- ====== 팝업 ====== -->
+<div class="overlay">
+  <div class="dialog">
+    <div class="dialog-header">
+      <h1 class="dialog-title">
+        대표자 정보 <span class="screen-id">(0031)</span>
+      </h1>
+      <button class="btn-x"><span class="x-icon"></span></button>
+    </div>
+
+    <div class="dialog-body">
+      <table class="info-table">
+        <tr><th>대표자 성명</th><td>이환용</td></tr>
+        <tr><th>대표자 영문 성명</th><td>NJ YPX RK</td></tr>
+        <tr><th>대표자 휴대폰번호</th><td>010-4886-54**</td></tr>
+        <tr><th>대표자 자택주소</th><td>인천 미추홀구 참의전로 268</td></tr>
+        <tr><th>대표자 자택주소 상세</th><td>폴로리 357-4</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- FAB -->
+<button id="btn-spec" class="req-trigger">?</button>
+
+<!-- 요구사항 모달 -->
+<div id="modal-spec" class="modal-overlay">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2>기능요구서 및 주석 (0031)</h2>
+      <button class="modal-close" id="btn-modal-close">닫기</button>
+    </div>
+    <div id="modal-body" class="modal-body"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0031";
+/* ====== 기능 요구사항 정의 ====== */
+
+
+/* === 요구사항 렌더링 === */
+</td></tr>
+      <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+      <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+      <tr><th>트리거</th><td>${REQ_SPEC.trigger}</td></tr>
+      <tr><th>백엔드</th><td>${REQ_SPEC.backend}</td></tr>
+    </table>
+
+    <h3>UI 구성</h3>
+    <ul>${REQ_SPEC.ui.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>필드 목록</h3>
+    <ul>${REQ_SPEC.fields.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>QA 체크리스트</h3>
+    <ul>${REQ_SPEC.qa_points.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+    <h3>JSON Spec</h3>
+    <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+  `;
+}
+
+/* === 모달 제어 === */
+document.getElementById("btn-spec").onclick = () => {
+  renderSpec();
+  document.getElementById("modal-spec").classList.add("show");
+};
+document.getElementById("btn-modal-close").onclick = () => {
+  document.getElementById("modal-spec").classList.remove("show");
+};
+document.getElementById("modal-spec").onclick = (e)=>{
+  if(e.target.id === "modal-spec"){
+    document.getElementById("modal-spec").classList.remove("show");
+  }
+};
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0031"></script>
+</body>
+</html>

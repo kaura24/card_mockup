@@ -1,0 +1,39 @@
+{
+  "screen_id": "0049",
+  "screen_name": "기본정보2",
+  "action": "정보조회",
+  "persona": {
+    "corp_biz": true,
+    "personal_biz": false
+  },
+  "input": {
+    "fields": [],
+    "note": "입력 없음(조회 전용)"
+  },
+  "backend": {
+    "system": "회원",
+    "txn": "업체/부서 정보 조회",
+    "purpose": "前 화면(0048)에서 입력된 정보 확인"
+  },
+  "ui_nature": [
+    "조회 화면",
+    "좌 라벨 / 우 값 형태",
+    "정보 재확인 목적"
+  ],
+  "entry_condition": [
+    "0048 업체(부서)정보 입력 완료"
+  ],
+  "control_rules": [
+    "수정 기능 없음",
+    "조회값 없을 시 안내 필요(실서비스 정책)"
+  ],
+  "audit_log_points": [
+    "조회 성공 여부",
+    "다음 버튼 클릭 시점"
+  ],
+  "notes": [
+    "0047 샘플의 요구사항 모달 구조 그대로 적용됨",
+    "실서비스에서는 회원원장 또는 이전 세션에서 조회됨",
+    "location.hash 이동은 목업용"
+  ]
+}

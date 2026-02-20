@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+  <title>카드정보 입력 (0063) - 개선됨</title>
+
+  <style>
+    /* [스타일 변수 정의]
+      - 테마 색상 및 공통 UI 요소의 속성을 정의하여 일관성 유지
+    */
+    :root{
+      --text: #111;
+      --muted: #666;
+      --line: #e6e6e6;
+      --bg: #f7f8fa;
+
+      /* KB 테마 색상 */
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+      --card: #fff;
+      --danger: #e53935;
+      --success: #2e7d32;
+
+      --field-bg: #fff;
+      --field-line: #d9d9d9;
+      --focus-shadow: 0 0 0 3px rgba(255,204,0,.3);
+      --accent-blue: #4f7cff;
+    }
+
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    
+    body {
+      margin: 0;
+      font-family: "Malgun Gothic", "Apple SD Gothic Neo", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.4;
+    }
+
+    /* ====== 레이아웃 컨테이너 ====== */
+    .wrap {
+      max-width: 520px; /* 모바일 뷰 제한 */
+      margin: 0 auto;
+      min-height: 100vh;
+      background: #fff;
+      padding-bottom: 92px; /* 하단 고정 버튼 공간 확보 */
+      border-left: 1px solid rgba(0,0,0,.06);
+      border-right: 1px solid rgba(0,0,0,.06);
+      position: relative;
+    }
+
+    /* ====== 상단바 (Sticky) ====== */
+    .topbar {
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(5px);
+      z-index: 100;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .topbar .title { font-weight: 800; font-size: 17px; }
+    .topbar .title small { font-size: 13px; color: var(--muted); margin-left: 4px; font-weight: 600; }
+    .topbar .close {
+      position: absolute; right: 12px; width: 40px; height: 40px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; cursor: pointer; border-radius: 50%;
+    }
+    .topbar .close:active { background: #f0f0f0; }
+
+    .content { padding: 16px; }
+
+    /* ====== 진행 단계 (Stepper) ====== */
+    .subhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+    .subhead .label { font-size: 18px; font-weight: 800; }
+    .steps { display: flex; gap: 6px; }
+    .step {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800;
+      background: #f0f2f4; color: #999;
+    }
+    .step.done { background: #e9ecef; color: #555; }
+    .step.current { background: var(--text); color: var(--kb-yellow); }
+
+    /* ====== 안내 배너 ====== */
+    .hero {
+      background: #f8f9fa; border-radius: 12px; padding: 16px;
+      display: flex; align-items: center; gap: 16px; margin-bottom: 24px;
+      border: 1px solid rgba(0,0,0,.05);
+    }
+    .hero-icon {
+      width: 48px; height: 32px; background: #fff; border: 1px solid #ddd;
+      border-radius: 4px; display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: #aaa; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .hero-text h2 { margin: 0; font-size: 18px; font-weight: 800; color: #222; }
+    .hero-text p { margin: 4px 0 0; font-size: 13px; color: #666; }
+
+    /* ====== 섹션 공통 ====== */
+    .section {
+      background: #fff; border: 1px solid var(--line); border-radius: 12px;
+      margin-bottom: 16px; overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+    }
+    .section-head {
+      padding: 14px 16px; border-bottom: 1px solid var(--line); background: #fff;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .section-title { font-size: 15px; font-weight: 800; }
+    .req-badge { font-size: 11px; color: var(--danger); background: rgba(229,57,53,0.1); padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+    .req-star { color: var(--danger); margin-left: 2px; }
+
+    /* ====== 테이블 폼 스타일 ====== */
+    .form-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .form-table th {
+      width: 100px; text-align: left; padding: 14px 16px;
+      background: #fafafa; border-bottom: 1px solid var(--line);
+      vertical-align: top; padding-top: 18px; color: #333; font-weight: 700;
+    }
+    .form-table td {
+      padding: 12px 16px; border-bottom: 1px solid var(--line);
+    }
+    .form-table tr:last-child th, .form-table tr:last-child td { border-bottom: none; }
+
+    /* ====== 입력 필드 공통 ====== */
+    .input-group { display: flex; gap: 8px; margin-bottom: 8px; }
+    .input-group:last-child { margin-bottom: 0; }
+    
+    .field, .select {
+      width: 100%; height: 44px; padding: 0 12px;
+      border: 1px solid var(--field-line); border-radius: 8px;
+      font-size: 15px; outline: none; transition: all 0.2s;
+      background: var(--field-bg); color: #333;
+    }
+    .field::placeholder { color: #aaa; font-size: 14px; }
+    .field:focus, .select:focus {
+      border-color: #888; box-shadow: var(--focus-shadow);
+    }
+    .field[readonly], .field:disabled, .select:disabled {
+      background: #f5f5f5; color: #888; cursor: not-allowed;
+    }
+
+    .btn-sm {
+      height: 44px; padding: 0 14px; font-size: 13px; font-weight: 700;
+      border: 1px solid var(--field-line); border-radius: 8px;
+      background: #fff; color: #333; cursor: pointer; white-space: nowrap;
+    }
+    .btn-sm:active { background: #f0f0f0; }
+
+    /* ====== 세그먼트 컨트롤 (버튼형 라디오) ====== */
+    .segment { display: flex; padding: 12px; gap: 8px; }
+    .segment-btn {
+      flex: 1; height: 42px; border: 1px solid var(--line); border-radius: 8px;
+      background: #fff; color: #666; font-weight: 700; font-size: 14px; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .segment-btn.active {
+      background: rgba(255, 204, 0, 0.2); border-color: var(--kb-yellow-dark);
+      color: #000;
+    }
+
+    /* ====== 브랜드 그리드 ====== */
+    .brand-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px; }
+    .brand-item {
+      height: 60px; border: 1px solid var(--line); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; color: #ccc; cursor: pointer; position: relative;
+      transition: all 0.2s;
+    }
+    .brand-item.active {
+      border-color: var(--kb-yellow-dark); color: #000;
+      background: #fff; box-shadow: 0 0 0 2px rgba(255,204,0,0.3);
+    }
+    .brand-check {
+      position: absolute; top: 6px; right: 6px; width: 16px; height: 16px;
+      background: var(--accent-blue); color: #fff; border-radius: 50%;
+      font-size: 10px; display: none; align-items: center; justify-content: center;
+    }
+    .brand-item.active .brand-check { display: flex; }
+
+    /* ====== 파일 업로드 UI ====== */
+    .file-box {
+      border: 1px dashed #ccc; border-radius: 8px; padding: 12px;
+      text-align: center; background: #fafafa; cursor: pointer;
+      font-size: 13px; color: #666; transition: 0.2s;
+    }
+    .file-box:active { background: #eee; }
+    .file-box.has-file {
+      border-style: solid; border-color: var(--accent-blue);
+      background: #f0f7ff; color: var(--accent-blue); font-weight: 700;
+    }
+
+    .hint { padding: 0 16px 16px; font-size: 12px; color: #888; line-height: 1.5; }
+
+    /* ====== 하단 고정 버튼 ====== */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
+      width: 100%; max-width: 520px; padding: 12px 16px 20px;
+      background: #fff; border-top: 1px solid var(--line); z-index: 50;
+    }
+    .btn-primary {
+      width: 100%; height: 56px; border: none; border-radius: 12px;
+      background: var(--kb-yellow); color: #000; font-size: 16px; font-weight: 800;
+      cursor: pointer; transition: background 0.2s;
+    }
+    .btn-primary:active { background: var(--kb-yellow-dark); }
+    .btn-primary:disabled { background: #eee; color: #aaa; cursor: not-allowed; }
+
+    /* ====== 로딩 오버레이 ====== */
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(255,255,255,0.7);
+      z-index: 2000; display: none; align-items: center; justify-content: center; flex-direction: column;
+    }
+    .spinner {
+      width: 40px; height: 40px; border: 4px solid #eee;
+      border-top-color: var(--kb-yellow-dark); border-radius: 50%;
+      animation: spin 0.8s linear infinite; margin-bottom: 10px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ====== 토스트 메시지 ====== */
+    .toast {
+      position: fixed; left: 50%; bottom: 100px; transform: translateX(-50%) translateY(20px);
+      background: rgba(30,30,30,0.9); color: #fff; padding: 12px 20px;
+      border-radius: 25px; font-size: 14px; opacity: 0; pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28); z-index: 200; width: max-content;
+      max-width: 80%; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ====== 모달 스타일 (요구사항 정의서용) ====== */
+    .modal-backdrop {
+      position: fixed; inset: 0; background: var(--overlay);
+      z-index: 1000; display: none; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-backdrop.show { display: flex; }
+    .modal-content {
+      background: #fff; width: 100%; max-width: 600px; max-height: 80vh;
+      border-radius: 16px; overflow: hidden; display: flex; flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+    .modal-header { padding: 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+    .modal-title { font-weight: 800; font-size: 16px; }
+    .modal-body { padding: 20px; overflow-y: auto; font-size: 13px; line-height: 1.6; }
+    .spec-item { margin-bottom: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px; border: 1px solid #eee; }
+    .spec-label { font-weight: 800; display: block; margin-bottom: 4px; color: #333; }
+    .close-btn { background: none; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; cursor: pointer; }
+
+    /* 플로팅 버튼 (요구사항 보기) */
+    .fab-spec {
+      position: fixed; bottom: 110px; right: 20px; width: 44px; height: 44px;
+      background: var(--kb-yellow); border-radius: 50%; border: none;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2); font-weight: 900; font-size: 20px;
+      cursor: pointer; z-index: 90; display: flex; align-items: center; justify-content: center;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+<body>
+
+<div class="wrap">
+  <!-- 상단바 -->
+  <div class="topbar">
+    <div class="title">카드신청 <small>(0063)</small></div>
+    <div class="close" id="btnClose" aria-label="닫기">×</div>
+  </div>
+
+  <div class="content">
+    <!-- 단계 표시 -->
+    <div class="subhead">
+      <div class="label">정보 입력</div>
+      <div class="steps">
+        <div class="step done">✓</div>
+        <div class="step done">✓</div>
+        <div class="step current">3</div>
+        <div class="step">4</div>
+      </div>
+    </div>
+
+    <!-- 안내 배너 -->
+    <div class="hero">
+      <div class="hero-icon">CARD</div>
+      <div class="hero-text">
+        <h2>ONE KB국민 기업카드</h2>
+        <p>사업자 정보를 정확히 입력해주세요.</p>
+      </div>
+    </div>
+
+    <!-- 1. 대표자 정보 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">대표자 정보</div>
+        <div class="req-badge">필수 입력</div>
+      </div>
+      <table class="form-table">
+        <tr>
+          <th>영문명<span class="req-star">*</span></th>
+          <td><input type="text" id="ownerEngName" class="field" placeholder="예) HONG GIL DONG" oninput="this.value = this.value.toUpperCase()"></td>
+        </tr>
+        <tr>
+          <th>자택주소<span class="req-star">*</span></th>
+          <td>
+            <div class="input-group">
+              <input type="text" id="homeAddr" class="field" placeholder="주소" readonly>
+              <button type="button" class="btn-sm" onclick="mockAddressSearch('home')">검색</button>
+            </div>
+            <input type="text" id="homeAddrDetail" class="field" placeholder="상세주소 입력">
+          </td>
+        </tr>
+        <tr>
+          <th>이메일<span class="req-star">*</span></th>
+          <td><input type="email" id="email" class="field" placeholder="example@email.com"></td>
+        </tr>
+        <tr>
+          <th>휴대폰<span class="req-star">*</span></th>
+          <!-- 포맷팅을 위해 pattern 사용 및 inputmode 지정 -->
+          <td><input type="tel" id="phone" class="field" inputmode="numeric" placeholder="숫자만 입력" maxlength="13"></td>
+        </tr>
+      </table>
+      <div class="hint">※ 연락처와 이메일은 심사 진행상황 안내에 사용됩니다.</div>
+    </div>
+
+    <!-- 2. 업체 정보 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">업체 정보</div>
+      </div>
+      <table class="form-table">
+        <tr>
+          <th>업체명<span class="req-star">*</span></th>
+          <td><input type="text" id="bizName" class="field" placeholder="사업자등록증 상호"></td>
+        </tr>
+        <tr>
+          <th>업체영문<span class="req-star">*</span></th>
+          <td><input type="text" id="bizEngName" class="field" placeholder="카드 인쇄용 영문명" oninput="this.value = this.value.toUpperCase()"></td>
+        </tr>
+        <tr>
+          <th>사업장주소<span class="req-star">*</span></th>
+          <td>
+            <div class="input-group">
+              <input type="text" id="bizAddr" class="field" placeholder="주소" readonly>
+              <button type="button" class="btn-sm" onclick="mockAddressSearch('biz')">검색</button>
+            </div>
+            <input type="text" id="bizAddrDetail" class="field" placeholder="상세주소 입력">
+          </td>
+        </tr>
+        <tr>
+          <th>전화번호<span class="req-star">*</span></th>
+          <td><input type="tel" id="bizTel" class="field" inputmode="numeric" placeholder="지역번호 포함" maxlength="13"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 3. 명세서 수령 방법 (세그먼트) -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">명세서 수령 방법</div>
+      </div>
+      <div class="segment" id="segStmt">
+        <button type="button" class="segment-btn active" data-value="APP">KB앱(권장)</button>
+        <button type="button" class="segment-btn" data-value="EMAIL">이메일</button>
+      </div>
+      <div class="hint">※ 탄소중립 실천을 위해 앱/이메일 명세서를 권장합니다.</div>
+    </div>
+
+    <!-- 4. 카드 설정 (브랜드, 국내/해외) -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">카드 종류 및 브랜드</div>
+        <div class="req-badge">선택</div>
+      </div>
+      <div class="segment" id="segType" style="border-bottom: 1px solid var(--line); margin-bottom:0;">
+        <button type="button" class="segment-btn active" data-value="GLOBAL">해외겸용</button>
+        <button type="button" class="segment-btn" data-value="DOMESTIC">국내전용</button>
+      </div>
+      
+      <div class="brand-grid" id="brandGrid">
+        <div class="brand-item active" data-brand="VISA">VISA<div class="brand-check">✔</div></div>
+        <div class="brand-item" data-brand="MASTER">MASTER<div class="brand-check">✔</div></div>
+        <div class="brand-item" data-brand="JCB">JCB<div class="brand-check">✔</div></div>
+        <div class="brand-item" data-brand="KWORLD">K-WORLD<div class="brand-check">✔</div></div>
+      </div>
+
+      <div style="padding: 16px;">
+        <label for="dccBlock" style="font-size:14px; font-weight:700; display:block; margin-bottom:8px;">
+          해외 원화결제 차단 (DCC)
+        </label>
+        <select id="dccBlock" class="select">
+          <option value="">선택해주세요</option>
+          <option value="Y">차단 신청 (권장)</option>
+          <option value="N">미신청</option>
+        </select>
+        <div class="hint" style="padding-left:0; padding-bottom:0; margin-top:6px;">
+          ※ 해외 원화 결제 시 추가 수수료가 발생할 수 있습니다.
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. 결제 정보 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">결제 정보</div>
+      </div>
+      <table class="form-table">
+        <tr>
+          <th>결제일<span class="req-star">*</span></th>
+          <td>
+            <select id="payDay" class="select">
+              <option value="">선택</option>
+              <option value="1">1일</option>
+              <option value="5">5일</option>
+              <option value="14">14일</option>
+              <option value="25">25일</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th>계좌정보<span class="req-star">*</span></th>
+          <td>
+            <div class="input-group">
+              <select id="bankCode" class="select" style="flex:1">
+                <option value="004">국민은행</option>
+                <option value="088">신한은행</option>
+                <option value="020">우리은행</option>
+              </select>
+              <button type="button" class="btn-sm" id="btnAcctCheck">인증</button>
+            </div>
+            <input type="tel" id="acctNo" class="field" inputmode="numeric" placeholder="계좌번호 (- 없이 입력)">
+            <input type="hidden" id="acctVerified" value="N">
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 6. 비밀번호 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">비밀번호 설정</div>
+      </div>
+      <table class="form-table">
+        <tr>
+          <th>비밀번호<span class="req-star">*</span></th>
+          <td><input type="password" id="cardPw" class="field" maxlength="4" placeholder="4자리 숫자" inputmode="numeric"></td>
+        </tr>
+        <tr>
+          <th>확인<span class="req-star">*</span></th>
+          <td><input type="password" id="cardPwConfirm" class="field" maxlength="4" placeholder="한 번 더 입력" inputmode="numeric"></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- 7. 필수 서류 -->
+    <div class="section">
+      <div class="section-head">
+        <div class="section-title">증빙 서류 제출</div>
+      </div>
+      <div style="padding:16px;">
+        <div style="margin-bottom:12px;">
+          <label class="spec-label" style="font-size:13px; margin-bottom:6px;">신분증 사본</label>
+          <div class="file-box" id="fileIdBox" onclick="document.getElementById('fileId').click()">
+            + 신분증 촬영 또는 파일 업로드
+          </div>
+          <input type="file" id="fileId" accept="image/*,.pdf" hidden>
+        </div>
+        <div>
+          <label class="spec-label" style="font-size:13px; margin-bottom:6px;">사업자등록증</label>
+          <div class="file-box" id="fileBizBox" onclick="document.getElementById('fileBiz').click()">
+            + 사업자등록증 촬영 또는 파일 업로드
+          </div>
+          <input type="file" id="fileBiz" accept="image/*,.pdf" hidden>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- content end -->
+
+  <!-- 하단 버튼 -->
+  <div class="bottom-bar">
+    <button type="button" class="btn-primary" id="btnNext">다음</button>
+  </div>
+</div>
+
+<!-- 로딩화면 -->
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <div style="font-weight:700; color:#333;">처리중입니다...</div>
+</div>
+
+<!-- 토스트 메시지 -->
+<div class="toast" id="toast">메시지</div>
+
+<!-- 요구사항 플로팅 버튼 -->
+<button class="fab-spec" onclick="toggleSpecModal()">?</button>
+
+<!-- 요구사항 모달 -->
+<div class="modal-backdrop" id="specModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">업무 정의서 (Step 3)</div>
+      <button class="close-btn" onclick="toggleSpecModal()">닫기</button>
+    </div>
+    <div class="modal-body">
+      <div class="spec-item">
+        <span class="spec-label">화면 ID</span>
+        MO-CARD-APP-0063
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">데이터 검증 규칙</span>
+        1. 대표자명/업체명: 영문 입력 시 자동 대문자 변환<br>
+        2. 전화번호: 하이픈 자동 포맷팅<br>
+        3. 계좌: '인증' 버튼 클릭 시 유효성 검사 필수 (Mock)<br>
+        4. 비밀번호: 4자리 숫자, 재입력 일치 확인
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">제어 로직</span>
+        - 국내전용 선택 시 DCC 차단 옵션 비활성화<br>
+        - 명세서 수령 '이메일' 선택 시 이메일 필드 유효성 강화
+      </div>
+      <div class="spec-item">
+        <span class="spec-label">개발 메모</span>
+        - 실제 파일 업로드 시 비동기 Multipart 전송 필요<br>
+        - 주소 검색은 카카오 주소 API 연동 예정 (현재 Mock)
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0063";
+  // =======================================================
+  // [개선된 JavaScript 로직]
+  // 1. 네임스페이스 보호를 위한 IIFE 패턴 사용
+  // 2. 유틸리티 함수 분리 (Toast, Loading, Formatter)
+  // 3. 이벤트 위임 패턴 활용
+  // =======================================================
+  (function(){
+    // --- DOM 요소 참조 ---
+    const $ = (id) => document.getElementById(id);
+    const $q = (sel) => document.querySelector(sel);
+    const $qa = (sel) => document.querySelectorAll(sel);
+
+    // --- 상태 관리 변수 ---
+    let state = {
+      stmtMethod: 'APP', // APP | EMAIL
+      cardType: 'GLOBAL', // GLOBAL | DOMESTIC
+      brand: 'VISA',
+      acctVerified: false
+    };
+
+    // --- 유틸리티: 토스트 메시지 ---
+    let toastTimer;
+    function showToast(msg) {
+      const el = $('toast');
+      el.textContent = msg;
+      el.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove('show'), 2000);
+    }
+
+    // --- 유틸리티: 로딩 제어 ---
+    function toggleLoading(show) {
+      $('loading').style.display = show ? 'flex' : 'none';
+    }
+
+    // --- 유틸리티: 전화번호 포맷터 (010-1234-5678) ---
+    function formatPhoneNumber(value) {
+      const raw = value.replace(/[^0-9]/g, '');
+      if (raw.length < 4) return raw;
+      if (raw.length < 7) return raw.substr(0, 3) + '-' + raw.substr(3);
+      if (raw.length < 11) return raw.substr(0, 3) + '-' + raw.substr(3, 3) + '-' + raw.substr(6);
+      return raw.substr(0, 3) + '-' + raw.substr(3, 4) + '-' + raw.substr(7);
+    }
+
+    // --- 이벤트 바인딩: 입력 필드 포맷팅 ---
+    ['phone', 'bizTel'].forEach(id => {
+      $(id).addEventListener('input', (e) => {
+        e.target.value = formatPhoneNumber(e.target.value);
+      });
+    });
+
+    // --- 이벤트 바인딩: 세그먼트 버튼 (공통 처리) ---
+    function bindSegment(wrapperId, callback) {
+      const wrapper = $(wrapperId);
+      if(!wrapper) return;
+      wrapper.addEventListener('click', (e) => {
+        if(e.target.classList.contains('segment-btn')) {
+          // UI 업데이트
+          Array.from(wrapper.children).forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          // 콜백 실행
+          callback(e.target.dataset.value);
+        }
+      });
+    }
+
+    // 1. 명세서 수령 방법 변경
+    bindSegment('segStmt', (val) => {
+      state.stmtMethod = val;
+      if(val === 'EMAIL') {
+        $('email').focus();
+        showToast('이메일 주소를 정확히 확인해주세요.');
+      }
+    });
+
+    // 2. 카드 종류 변경 (국내/해외)
+    bindSegment('segType', (val) => {
+      state.cardType = val;
+      const dcc = $('dccBlock');
+      if(val === 'DOMESTIC') {
+        dcc.value = 'N';
+        dcc.disabled = true;
+        showToast('국내전용은 DCC 차단 설정이 필요 없습니다.');
+      } else {
+        dcc.disabled = false;
+        dcc.value = ''; // 초기화
+      }
+    });
+
+    // --- 브랜드 선택 로직 ---
+    $('brandGrid').addEventListener('click', (e) => {
+      const item = e.target.closest('.brand-item');
+      if(item) {
+        $qa('.brand-item').forEach(el => el.classList.remove('active'));
+        item.classList.add('active');
+        state.brand = item.dataset.brand;
+        showToast(`${state.brand} 브랜드가 선택되었습니다.`);
+      }
+    });
+
+    // --- 주소 검색 Mock ---
+    window.mockAddressSearch = function(type) {
+      toggleLoading(true);
+      setTimeout(() => {
+        toggleLoading(false);
+        if(type === 'home') {
+          $('homeAddr').value = '서울 영등포구 국제금융로8길 26';
+          $('homeAddrDetail').focus();
+        } else {
+          $('bizAddr').value = '서울 종로구 새문안로3길 30';
+          $('bizAddrDetail').focus();
+        }
+      }, 600); // 0.6초 딜레이
+    };
+
+    // --- 계좌 인증 Mock ---
+    $('btnAcctCheck').addEventListener('click', () => {
+      const bank = $('bankCode').value;
+      const acct = $('acctNo').value;
+      
+      if(acct.length < 8) {
+        showToast('계좌번호를 올바르게 입력해주세요.');
+        return;
+      }
+      
+      toggleLoading(true);
+      setTimeout(() => {
+        toggleLoading(false);
+        state.acctVerified = true;
+        $('acctVerified').value = 'Y';
+        // 시각적 피드백
+        $('btnAcctCheck').textContent = '완료';
+        $('btnAcctCheck').style.color = 'var(--success)';
+        $('btnAcctCheck').style.borderColor = 'var(--success)';
+        $('acctNo').disabled = true;
+        showToast('계좌 검증이 완료되었습니다.');
+      }, 1000);
+    });
+
+    // --- 파일 업로드 UI 핸들러 ---
+    function handleFileUpload(inputId, boxId) {
+      $(inputId).addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        const box = $(boxId);
+        if(file) {
+          box.textContent = `✔ ${file.name}`;
+          box.classList.add('has-file');
+        }
+      });
+    }
+    handleFileUpload('fileId', 'fileIdBox');
+    handleFileUpload('fileBiz', 'fileBizBox');
+
+    // --- 유효성 검사 (Validation) ---
+    function validateForm() {
+      // 필수값 정의 (ID, 에러메시지)
+      const rules = [
+        { id: 'ownerEngName', msg: '대표자 영문명을 입력해주세요.' },
+        { id: 'homeAddr', msg: '자택 주소를 검색해주세요.' },
+        { id: 'email', msg: '이메일을 입력해주세요.' },
+        { id: 'phone', msg: '휴대폰 번호를 입력해주세요.' },
+        { id: 'bizName', msg: '업체명을 입력해주세요.' },
+        { id: 'bizAddr', msg: '사업장 주소를 검색해주세요.' },
+        { id: 'payDay', msg: '결제일을 선택해주세요.' },
+        { id: 'cardPw', msg: '비밀번호 4자리를 입력해주세요.', check: v => v.length === 4 },
+        { id: 'cardPwConfirm', msg: '비밀번호 확인을 입력해주세요.' }
+      ];
+
+      // 1. 기본 필드 검사
+      for (let r of rules) {
+        const val = $(r.id).value.trim();
+        if (!val || (r.check && !r.check(val))) {
+          showToast(r.msg);
+          $(r.id).focus();
+          return false;
+        }
+      }
+
+      // 2. 비밀번호 일치 검사
+      if ($('cardPw').value !== $('cardPwConfirm').value) {
+        showToast('비밀번호가 일치하지 않습니다.');
+        $('cardPwConfirm').value = '';
+        $('cardPwConfirm').focus();
+        return false;
+      }
+
+      // 3. 계좌 인증 확인
+      if (state.acctVerified === false && $('acctVerified').value !== 'Y') {
+        showToast('계좌 인증을 진행해주세요.');
+        $('btnAcctCheck').focus();
+        return false;
+      }
+
+      // 4. DCC 확인 (해외겸용인 경우 필수)
+      if (state.cardType === 'GLOBAL' && !$('dccBlock').value) {
+        showToast('해외 원화결제 차단 여부를 선택해주세요.');
+        $('dccBlock').focus();
+        return false;
+      }
+
+      // 5. 파일 첨부 확인
+      if (!$('fileId').files.length || !$('fileBiz').files.length) {
+        showToast('필수 증빙서류(신분증, 사업자등록증)를 첨부해주세요.');
+        return false;
+      }
+
+      return true;
+    }
+
+    // --- 다음 단계 진행 ---
+    $('btnNext').addEventListener('click', () => {
+      if(validateForm()) {
+        toggleLoading(true);
+        // 서버 전송 시뮬레이션
+        setTimeout(() => {
+          toggleLoading(false);
+          alert(`[신청 완료]\n- 대표자: ${$('ownerEngName').value}\n- 브랜드: ${state.brand}\n- 카드종류: ${state.cardType}\n\n다음 단계로 이동합니다.`);
+          // 실제 이동 로직: location.href = 'step4.html';
+        }, 1500);
+      }
+    });
+
+    // --- 모달 제어 ---
+    window.toggleSpecModal = function() {
+      const modal = $('specModal');
+      modal.classList.toggle('show');
+    };
+    $('btnClose').addEventListener('click', () => showToast('화면 닫기 동작 (Main으로 이동)'));
+
+  })();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0063"></script>
+</body>
+</html>

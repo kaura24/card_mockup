@@ -1,0 +1,787 @@
+/**
+ * KB국민카드 기업카드 목업 — 공통 테마 CSS
+ * KB 공식 디자인 시스템 기준 (KB Star Yellow #FFBC00)
+ *
+ * 모든 *_r.html 화면에서 <link rel="stylesheet" href="css/kb-theme.css"> 로 로드
+ */
+
+/* ────────────────────────────────────────────────────────────────
+   1. 디자인 토큰
+──────────────────────────────────────────────────────────────── */
+:root {
+  /* KB 브랜드 컬러 */
+  --kb-yellow: #FFBC00;
+  /* KB Star Yellow (공식) */
+  --kb-yellow-dark: #F0A800;
+  /* hover/active */
+  --kb-yellow-light: #FFF8E1;
+  /* 배경 강조 */
+  --kb-yellow-border: rgba(255, 188, 0, .35);
+  --kb-brown: #4B433E;
+  /* KB Star Brown (보조 다크) */
+
+  /* 텍스트 */
+  --text-primary: #222222;
+  --text-secondary: #555555;
+  --text-muted: #888888;
+  --text-disabled: #BBBBBB;
+  --text-on-yellow: #222222;
+  /* Yellow 버튼 위 텍스트 */
+
+  /* 배경 */
+  --bg-white: #FFFFFF;
+  --bg-light: #F7F7F7;
+  /* 섹션 구분 배경 */
+  --bg-panel: #F9F9F9;
+  /* 레이블, 패널 bg */
+  --bg-hover: #FFF9E8;
+  /* hover 상태 */
+
+  /* 선 / 구분 */
+  --line: #E8E8E8;
+  --line-strong: #CCCCCC;
+  --line-table: #EEEEEE;
+
+  /* 상태 */
+  --danger: #ED1C24;
+  --danger-bg: #FFF0F0;
+  --success: #00A850;
+  --info: #0046FF;
+  --warning: #F59E0B;
+
+  /* 폼 */
+  --input-height: 48px;
+  --input-radius: 6px;
+  --input-border: 1px solid var(--line-strong);
+  --focus-ring: 0 0 0 3px rgba(255, 188, 0, .28);
+
+  /* 레이아웃 */
+  --container-max: 1120px;
+  --r-sm: 6px;
+  --r-md: 12px;
+  --r-lg: 16px;
+  --r-xl: 24px;
+  --shadow-card: 0 2px 16px rgba(0, 0, 0, .06);
+  --shadow-modal: 0 20px 60px rgba(0, 0, 0, .22);
+  --shadow-float: 0 4px 20px rgba(0, 0, 0, .12);
+
+  /* 타이포그래피 */
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont,
+    "Segoe UI", "Noto Sans KR", "Apple SD Gothic Neo",
+    Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, "Courier New", monospace;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   2. 리셋 & 기본
+──────────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--bg-white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--info);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   3. 레이아웃
+──────────────────────────────────────────────────────────────── */
+.kb-wrap {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 40px 24px 120px;
+}
+
+/* 페이지 헤더 */
+.kb-page-header {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.kb-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 0 0 6px;
+  color: var(--text-primary);
+}
+
+.kb-page-subtitle {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   4. 폼 레이아웃 (테이블형 — KB 공식 스타일)
+──────────────────────────────────────────────────────────────── */
+.kb-form {
+  border-top: 2px solid var(--text-primary);
+}
+
+.kb-required-note {
+  text-align: right;
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 10px 0 6px;
+}
+
+.kb-required-note .star {
+  color: var(--danger);
+}
+
+.kb-form-row {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  border-bottom: 1px solid var(--line-table);
+  align-items: stretch;
+}
+
+.kb-form-label {
+  background: var(--bg-panel);
+  padding: 20px 24px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  line-height: 1.5;
+}
+
+.kb-form-label .star {
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.kb-form-content {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   5. 입력 컴포넌트
+──────────────────────────────────────────────────────────────── */
+.kb-input {
+  height: var(--input-height);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 0 14px;
+  font-size: 15px;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-white);
+  outline: none;
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.kb-input::placeholder {
+  color: var(--text-disabled);
+}
+
+.kb-input:focus {
+  border-color: var(--kb-yellow);
+  box-shadow: var(--focus-ring);
+}
+
+.kb-input.is-error {
+  border-color: var(--danger);
+  background: var(--danger-bg);
+}
+
+.kb-input:disabled {
+  background: var(--bg-panel);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+.kb-select {
+  height: var(--input-height);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 0 40px 0 14px;
+  font-size: 15px;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-white) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' viewBox='0 0 12 8'%3E%3Cpath stroke='%23555' stroke-width='1.5' d='M1 1l5 5 5-5'/%3E%3C/svg%3E") no-repeat right 14px center;
+  appearance: none;
+  outline: none;
+  width: 100%;
+  cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+.kb-select:focus {
+  border-color: var(--kb-yellow);
+  box-shadow: var(--focus-ring);
+}
+
+.kb-textarea {
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 12px 14px;
+  font-size: 15px;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  resize: vertical;
+  min-height: 100px;
+  outline: none;
+  width: 100%;
+  transition: border-color .15s;
+}
+
+.kb-textarea:focus {
+  border-color: var(--kb-yellow);
+  box-shadow: var(--focus-ring);
+}
+
+/* 체크박스 / 라디오 */
+.kb-check-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  cursor: pointer;
+  padding: 4px 0;
+}
+
+.kb-check-label input[type="checkbox"],
+.kb-check-label input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--kb-yellow);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+/* 메시지 */
+.kb-msg-hint {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+.kb-msg-error {
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 4px;
+  font-weight: 600;
+  display: none;
+  align-items: center;
+  gap: 4px;
+}
+
+.kb-msg-error.show {
+  display: flex;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   6. 버튼
+──────────────────────────────────────────────────────────────── */
+/* 기본 초기화 */
+button {
+  font-family: var(--font-sans);
+  cursor: pointer;
+}
+
+/* PRIMARY — KB Yellow */
+.kb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 36px;
+  background: var(--kb-yellow);
+  color: var(--text-on-yellow);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -.2px;
+  transition: background .15s, transform .1s, box-shadow .15s;
+  text-decoration: none;
+}
+
+.kb-btn:hover {
+  background: var(--kb-yellow-dark);
+  box-shadow: var(--shadow-float);
+}
+
+.kb-btn:active {
+  transform: scale(.98);
+}
+
+.kb-btn:disabled {
+  background: #E8E8E8;
+  color: var(--text-disabled);
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* SECONDARY — Outline */
+.kb-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 52px;
+  padding: 0 28px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-weight: 700;
+  transition: border-color .15s, background .15s;
+}
+
+.kb-btn-outline:hover {
+  border-color: var(--kb-yellow-dark);
+  background: var(--kb-yellow-light);
+}
+
+/* GHOST — 텍스트형 */
+.kb-btn-ghost {
+  background: none;
+  border: none;
+  color: var(--info);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 4px 0;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+/* 버튼 영역 */
+.kb-btn-area {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 48px;
+  flex-wrap: wrap;
+}
+
+.kb-btn-area .kb-btn {
+  min-width: 200px;
+}
+
+.kb-btn-area .kb-btn-outline {
+  min-width: 120px;
+}
+
+/* 로딩 스피너 */
+.kb-spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(0, 0, 0, .12);
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: kb-spin .8s linear infinite;
+  display: none;
+}
+
+.kb-btn.is-loading .kb-spinner {
+  display: block;
+}
+
+.kb-btn.is-loading .kb-btn-text {
+  display: none;
+}
+
+@keyframes kb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   7. 패널 / 카드
+──────────────────────────────────────────────────────────────── */
+.kb-panel {
+  background: var(--bg-white);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+.kb-panel-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-primary);
+  border-left: 4px solid var(--kb-yellow);
+  padding-left: 12px;
+  margin: 0 0 16px;
+  line-height: 1.4;
+}
+
+/* 안내 박스 */
+.kb-notice {
+  background: var(--bg-light);
+  border-radius: var(--r-md);
+  padding: 20px 24px;
+  font-size: 14px;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.kb-notice ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.kb-notice li {
+  margin: 6px 0;
+}
+
+.kb-notice.warning {
+  background: #FFFBEB;
+  border-left: 4px solid var(--warning);
+}
+
+.kb-notice.danger {
+  background: var(--danger-bg);
+  border-left: 4px solid var(--danger);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   8. 토스트
+──────────────────────────────────────────────────────────────── */
+.kb-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 40px;
+  transform: translateX(-50%) translateY(16px);
+  background: rgba(34, 34, 34, .92);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  pointer-events: none;
+  transition: all .3s cubic-bezier(.175, .885, .32, 1.3);
+  z-index: 3000;
+  white-space: nowrap;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+}
+
+.kb-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   9. 모달 (공통 — spec-viewer.js 도 이 스타일 참조 가능)
+──────────────────────────────────────────────────────────────── */
+.kb-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .55);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.kb-modal-overlay.show {
+  display: flex;
+}
+
+.kb-modal {
+  width: 100%;
+  max-width: 600px;
+  background: var(--bg-white);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-modal);
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.kb-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg-white);
+  z-index: 1;
+}
+
+.kb-modal-header h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.kb-modal-close {
+  background: var(--bg-light);
+  border: 1px solid var(--line);
+  padding: 8px 16px;
+  border-radius: var(--r-sm);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text-primary);
+  transition: background .15s;
+}
+
+.kb-modal-close:hover {
+  background: var(--line);
+}
+
+.kb-modal-body {
+  padding: 24px;
+}
+
+/* ────────────────────────────────────────────────────────────────
+   10. 테이블
+──────────────────────────────────────────────────────────────── */
+.kb-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.kb-table th,
+.kb-table td {
+  border: 1px solid var(--line-table);
+  padding: 12px 16px;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.kb-table th {
+  background: var(--bg-panel);
+  font-weight: 700;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.kb-table tr:hover td {
+  background: var(--bg-hover);
+}
+
+/* ────────────────────────────────────────────────────────────────
+   11. 반응형
+──────────────────────────────────────────────────────────────── */
+@media (max-width: 860px) {
+  .kb-form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .kb-form-label {
+    border-bottom: 1px solid var(--line-table);
+    padding: 14px 16px;
+  }
+
+  .kb-form-content {
+    padding: 14px 16px;
+  }
+
+  .kb-page-title {
+    font-size: 22px;
+  }
+
+  .kb-btn-area .kb-btn {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .kb-btn-area .kb-btn-outline {
+    width: 100%;
+    min-width: unset;
+  }
+
+  .kb-wrap {
+    padding: 24px 16px 100px;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────
+   12. 레거시 호환 (Legacy Adapter)
+   기존 74개 파일의 클래스를 KB 스타일로 강제 매핑하여 디자인 통일
+   ──────────────────────────────────────────────────────────────── */
+
+/* 레이아웃 & 타이포그래피 */
+.wrap {
+  max-width: var(--container-max);
+  margin: 0 auto;
+  padding: 40px 24px 120px;
+}
+
+.header-group {
+  margin-bottom: 32px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  margin: 0 0 6px;
+  color: var(--text-primary);
+  display: block;
+}
+
+.subnote {
+  font-size: 15px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin: 0;
+}
+
+/* 폼 요소 */
+.input,
+.select,
+.textarea,
+input[type="text"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+select,
+textarea {
+  height: var(--input-height);
+  border: var(--input-border);
+  border-radius: var(--input-radius);
+  padding: 0 14px;
+  font-size: 15px;
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-white);
+  outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+
+textarea,
+.textarea {
+  height: auto;
+  padding: 12px 14px;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--kb-yellow);
+  box-shadow: var(--focus-ring);
+}
+
+/* 버튼 */
+.btn-primary,
+.kb-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 0 36px;
+  background: var(--kb-yellow);
+  color: var(--text-on-yellow);
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  text-decoration: none;
+}
+
+.btn-primary:active,
+.kb-btn:active {
+  transform: scale(.98);
+}
+
+.btn-secondary,
+.kb-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 52px;
+  padding: 0 28px;
+  background: var(--bg-white);
+  color: var(--text-primary);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-sm);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .15s;
+  text-decoration: none;
+}
+
+.btn-secondary:hover,
+.kb-btn-outline:hover {
+  border-color: var(--kb-yellow-dark);
+  background: var(--kb-yellow-light);
+}
+
+/* 체크박스 라벨 */
+.checkline,
+.kb-check-label {
+  display: flex !important;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+.chk,
+input[type="checkbox"],
+input[type="radio"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--kb-yellow);
+  cursor: pointer;
+}
+
+/* 패널 */
+.info-card {
+  background: var(--bg-white);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-card);
+  padding: 24px;
+}
+
+/* 메시지 */
+.msg {
+  font-size: 13px;
+  color: var(--danger);
+  margin-top: 4px;
+  font-weight: 400;
+}

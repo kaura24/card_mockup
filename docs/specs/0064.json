@@ -1,0 +1,108 @@
+{
+  "screen_id": "0064",
+  "screen_name": "카드정보수정하기(개사자전용)",
+  "channel": "mobile web (개인사업자)",
+  "action": "정보확인",
+  "purpose": "카드신청 처리에 필요한 정보 재확인 또는 수정 기능 제공",
+  "fields": [
+    {
+      "key": "카드종류(상품명)",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "카드디자인명(자재)",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "신청유형",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "발급확인 및 약관수령 방법",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "브랜드",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "결제계좌",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "결제일",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "신청매수",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "카드수령지",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "사업자 등록번호",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "업체명/업체영문명",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "사업장주소/사업장전화",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "대표자 자택주소",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "대표자 휴대폰",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "대표자 영문성명",
+      "required": false,
+      "type": "display(요약)"
+    },
+    {
+      "key": "대표자 이메일",
+      "required": false,
+      "type": "display(요약)"
+    }
+  ],
+  "control_rules": [
+    "본 화면은 확인용 요약 화면이며, 수정은 ‘수정하기’ 버튼으로 이전 입력 화면(0063)에서 수행(목업 가정)",
+    "요약 값은 이전 세션/회원원장/플랫폼 저장값을 집계하여 표시(목업)",
+    "‘다음’ 클릭 시 신청완료(0065)로 진행(목업)"
+  ],
+  "backend": {
+    "domain": "N/A(목업)",
+    "txn": "신청 정보 최종 확인/확정(가정)",
+    "purpose": "오입력 방지 및 고객 확인 이력 확보"
+  },
+  "audit_log_points": [
+    "요약 화면 진입 시각",
+    "수정하기 버튼 클릭 여부/시각",
+    "다음 버튼 클릭 여부/시각"
+  ],
+  "notes": [
+    "제공 이미지(0064) 기준: 상단 ‘신청내역확인’ + 단계 아이콘(마지막 4 강조) + 하단 ‘수정하기/다음’ 2버튼 구성 반영",
+    "카드 정보 요약과 사업자/대표자 정보 요약을 한 화면에 스크롤로 구성"
+  ]
+}

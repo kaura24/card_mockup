@@ -1,0 +1,840 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>신청정보_수정하기 (0073) - Refactored</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#777;
+      --line:#e6e6e6;
+      --bg:#f7f8fa;
+
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --panel:#f2f3f5;
+      --card:#fff;
+
+      --field-bg:#fff;
+      --field-line:#d9d9d9;
+
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family:"Malgun Gothic", Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    /* ====== 모바일 풀페이지 ====== */
+    .wrap{
+      max-width:520px;
+      margin:0 auto;
+      min-height:100vh;
+      background:#fff;
+      padding-bottom: 92px; /* 하단 버튼 */
+      border-left:1px solid rgba(0,0,0,.06);
+      border-right:1px solid rgba(0,0,0,.06);
+    }
+
+    /* ====== 상단바 ====== */
+    .topbar{
+      height:56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:sticky;
+      top:0;
+      background:#fff;
+      z-index:20;
+      border-bottom:1px solid rgba(0,0,0,.08);
+      padding:0 14px;
+    }
+    .topbar .title{
+      font-weight:900;
+      font-size:16px;
+      letter-spacing:-.2px;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+    }
+    .topbar .title small{
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+    }
+    .topbar .close{
+      position:absolute;
+      right:12px;
+      top:50%;
+      transform:translateY(-50%);
+      width:38px;
+      height:38px;
+      border-radius:10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      color:#333;
+      user-select:none;
+    }
+    .topbar .close:hover{ background:#fafafa; border:1px solid rgba(0,0,0,.10); }
+
+    .content{ padding: 0 0 12px; }
+
+    /* ===== 상단 헤더: 좌측 라벨 + 우측 스텝(1~5) ===== */
+    .subhead{
+      padding: 10px 16px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      background:#fff;
+    }
+    .subhead .label{
+      font-weight:900;
+      font-size:14px;
+      color:#333;
+      letter-spacing:-.2px;
+    }
+    .steps{
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .step{
+      width:22px;
+      height:22px;
+      border-radius:999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:900;
+      font-size:12px;
+      border:1px solid rgba(0,0,0,.10);
+      background:#f0f2f4;
+      color:#666;
+      user-select:none;
+    }
+    .step.done{ background:#e9ecef; color:#666; }
+    .step.current{ background:#4f7cff; border-color:rgba(0,0,0,.06); color:#fff; }
+
+    /* ===== 배너(스크린샷 회색바) ===== */
+    .banner{
+      background: #e9ecef;
+      padding: 12px 16px;
+      border-top:1px solid rgba(0,0,0,.06);
+      border-bottom:1px solid rgba(0,0,0,.06);
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .banner .img{
+      width: 138px;
+      height: 74px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.35));
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      object-fit: cover;
+      flex:0 0 auto;
+    }
+    .banner .msg{
+      flex:1;
+      font-size: 13px;
+      font-weight: 900;
+      color:#333;
+      letter-spacing:-.2px;
+      line-height: 1.3;
+    }
+
+    /* ===== 섹션(리스트 요약) ===== */
+    .section{
+      margin: 12px 16px 0;
+      border:1px solid rgba(0,0,0,.10);
+      border-radius:12px;
+      overflow:hidden;
+      background:#fff;
+      transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    /* 편집 모드일 때 섹션 강조 */
+    .section.edit {
+      border-color: var(--kb-yellow);
+      box-shadow: 0 0 0 1px var(--kb-yellow), 0 10px 30px rgba(0,0,0,.05);
+    }
+
+    .section-title{
+      padding: 12px 12px;
+      font-weight: 900;
+      font-size: 14px;
+      background:#fff;
+      border-bottom:1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .section-title small{
+      font-size:12px;
+      font-weight:900;
+      color:var(--muted);
+      transition: color 0.2s;
+    }
+    .section.edit .section-title small {
+      color: var(--kb-yellow-dark);
+    }
+
+    /* 행: label-left, value-right */
+    .kv-row{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding: 12px 12px;
+      border-bottom:1px solid var(--line);
+      gap:10px;
+      min-height: 56px; /* 높이 확보 */
+    }
+    .kv-row:last-child{ border-bottom:none; }
+    .k{
+      font-size: 13px;
+      font-weight:900;
+      color:#333;
+      min-width: 120px;
+      letter-spacing:-.2px;
+    }
+    .v{
+      font-size: 13px;
+      font-weight:900;
+      color:#444;
+      text-align:right;
+      letter-spacing:-.2px;
+      word-break: break-word;
+    }
+    .v.muted{ color: var(--muted); font-weight:800; }
+
+    /* ===== 편집 모드 입력 ===== */
+    .edit .v{ display:none; }
+    .edit .field{ display:block; }
+    
+    /* 읽기 전용 행(예: 브랜드 등) 처리를 위한 클래스 */
+    .kv-row.readonly .field { display: none !important; }
+    .edit .kv-row.readonly .v { display: block !important; opacity: 0.6; }
+
+    .field{
+      display:none;
+      width: 100%;
+      max-width: 240px;
+      height: 40px;
+      border: 1px solid var(--field-line);
+      border-radius: 10px;
+      padding: 0 12px;
+      background: var(--field-bg);
+      outline:none;
+      font-size: 13.5px;
+      font-weight: 800;
+      text-align:right;
+      transition: all 0.2s;
+    }
+    .field:focus{
+      border-color: rgba(0,0,0,.35);
+      box-shadow: 0 0 0 3px rgba(255,204,0,.18);
+    }
+    /* 필수 입력 누락 시 스타일 */
+    .field.error {
+      border-color: #ff4d4f;
+      background-color: #fff1f0;
+    }
+
+    /* ===== 하단 버튼(2개) ===== */
+    .bottom{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(520px, 100vw);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background:#fff;
+      z-index: 30;
+      padding: 10px 12px;
+    }
+    .btn-row{
+      display:flex;
+      gap:10px;
+    }
+    .btn{
+      flex:1;
+      height: 56px;
+      border:none;
+      border-radius: 10px;
+      cursor:pointer;
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing:-.2px;
+      transition: transform 0.1s;
+    }
+    .btn:active { transform: scale(0.98); }
+    .btn.primary{
+      background: var(--kb-yellow);
+      color:#111;
+    }
+    .btn.primary:hover{ background: var(--kb-yellow-dark); }
+    .btn.secondary{
+      background: var(--kb-yellow);
+      color:#111;
+      opacity: .92;
+    }
+
+    /* ===== 토스트 ===== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 88px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.86);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(480px, calc(100vw - 24px));
+      text-align:center;
+      z-index: 60;
+    }
+    .toast.show{ opacity: 1; }
+
+    /* ====== 요구사항 버튼 + 모달 ====== */
+    .req-qmark{
+      position: fixed;
+      right: 14px;
+      bottom: 98px;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      opacity: .82;
+      transition: opacity .15s ease, transform .05s ease, background .15s ease;
+      z-index: 1000;
+    }
+    .req-qmark:hover{ opacity: 1; background: var(--kb-yellow-dark); }
+    .req-qmark:active{ transform: translateY(1px); }
+
+    .spec-modal-root{
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1200;
+    }
+    .spec-modal-root.show{ display:flex; }
+    .spec-modal{
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .spec-modal__head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .spec-modal__title{
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .spec-modal__close{
+      border: 1px solid rgba(0,0,0,.18);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .spec-modal__body{ padding: 14px 16px 18px; }
+    .kv{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    .kv .kk, .kv .vv{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv .kk{
+      background: #fafafa;
+      font-weight: 900;
+      color:#333;
+      border-right: 1px solid var(--line);
+    }
+    .kv .vv{ color:#222; }
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 10px; }
+    .chip{
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+    .section2{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .section2__title{
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .section2 ul{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .code{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0b0b0d;
+      color: #e9e9ef;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap" role="application" aria-label="신청정보_수정하기 (0073)"
+       data-screen-id="0073" data-targets="개인사업자(체크)" data-action="정보확인/수정">
+
+    <div class="topbar" role="banner">
+      <div class="title">카드신청 <small>(0073)</small></div>
+      <div class="close" id="closeBtn" aria-label="닫기">×</div>
+    </div>
+
+    <div class="content">
+      <div class="subhead">
+        <div class="label">신청내역확인</div>
+        <div class="steps" aria-label="진행 단계">
+          <div class="step done" aria-label="1단계 완료">✓</div>
+          <div class="step done" aria-label="2단계 완료">✓</div>
+          <div class="step done" aria-label="3단계 완료">✓</div>
+          <div class="step done" aria-label="4단계 완료">✓</div>
+          <div class="step current" aria-label="5단계 현재">5</div>
+        </div>
+      </div>
+
+      <div class="banner" aria-label="신청내역 배너">
+        <!-- data-image-key 속성을 통해 스크립트에서 이미지 경로 매핑 -->
+        <img class="img" alt="0073 카드 이미지" data-image-key="img_0073_card" />
+        <div class="msg">고객님의 기업체크카드 신청 내역입니다.</div>
+      </div>
+
+      <!-- 
+        [리팩토링 포인트]
+        - input의 value 속성을 제거했습니다. (스크립트에서 v 클래스의 텍스트를 기반으로 자동 초기화)
+        - readonly 클래스를 추가하면 수정 불가 필드로 처리됩니다.
+      -->
+
+      <!-- 카드 정보(요약) -->
+      <section class="section" aria-label="카드 정보">
+        <div class="section-title">
+          카드 정보
+          <small class="mode-badge">보기</small>
+        </div>
+
+        <!-- 수정 불가 필드 예시 (readonly 클래스 사용) -->
+        <div class="kv-row readonly" data-field="cardName">
+          <div class="k">카드</div>
+          <div class="v">MyBiz 사장님든든 기업체크카드</div>
+          <input class="field" aria-label="카드명" />
+        </div>
+
+        <div class="kv-row" data-field="design">
+          <div class="k">카드디자인명</div>
+          <div class="v">공용 - 기본</div>
+          <input class="field" aria-label="카드디자인명" />
+        </div>
+
+        <div class="kv-row" data-field="applyType">
+          <div class="k">신청유형</div>
+          <div class="v">신규</div>
+          <input class="field" aria-label="신청유형" />
+        </div>
+
+        <div class="kv-row readonly" data-field="brand">
+          <div class="k">브랜드</div>
+          <div class="v">Master</div>
+          <input class="field" aria-label="브랜드" />
+        </div>
+
+        <div class="kv-row" data-field="payAccount">
+          <div class="k">결제계좌</div>
+          <div class="v muted">국민은행 421701-**-****90</div>
+          <input class="field" aria-label="결제계좌" />
+        </div>
+
+        <div class="kv-row" data-field="payDay">
+          <div class="k">결제일</div>
+          <div class="v">23일</div>
+          <input class="field" aria-label="결제일" />
+        </div>
+
+        <div class="kv-row" data-field="count">
+          <div class="k">신청매수</div>
+          <div class="v">기본 1매 (CD기능: 미신청)</div>
+          <input class="field" aria-label="신청매수" />
+        </div>
+      </section>
+
+      <!-- 사업자/대표자 정보 -->
+      <section class="section" aria-label="사업자/대표자 정보" id="bizSection">
+        <div class="section-title">
+          사업자/대표자 정보
+          <small class="mode-badge">요약</small>
+        </div>
+
+        <div class="kv-row" data-field="bizNo">
+          <div class="k">사업자 등록번호</div>
+          <div class="v">247-**-56412</div>
+          <input class="field" aria-label="사업자 등록번호" />
+        </div>
+
+        <div class="kv-row" data-field="companyName">
+          <div class="k">업체명</div>
+          <div class="v">벡터임베딩</div>
+          <input class="field" aria-label="업체명" />
+        </div>
+
+        <div class="kv-row" data-field="companyEng">
+          <div class="k">업체영문명</div>
+          <div class="v">ENTER ENTER</div>
+          <input class="field" aria-label="업체영문명" />
+        </div>
+
+        <div class="kv-row" data-field="bizAddr">
+          <div class="k">사업장주소</div>
+          <div class="v">서울 종로구 *** (***빌딩)</div>
+          <input class="field" aria-label="사업장주소" />
+        </div>
+
+        <div class="kv-row" data-field="bizTel">
+          <div class="k">사업장전화번호</div>
+          <div class="v">02-****-2345</div>
+          <input class="field" aria-label="사업장전화번호" />
+        </div>
+
+        <div class="kv-row" data-field="ownerAddr">
+          <div class="k">대표자 자택주소</div>
+          <div class="v">서울 종로구 *** (***호)</div>
+          <input class="field" aria-label="대표자 자택주소" />
+        </div>
+
+        <div class="kv-row" data-field="ownerPhone">
+          <div class="k">대표자 휴대폰</div>
+          <div class="v">010-****-4567</div>
+          <input class="field" aria-label="대표자 휴대폰" />
+        </div>
+
+        <div class="kv-row" data-field="ownerEng">
+          <div class="k">대표자 영문명</div>
+          <div class="v">ENTER ENTER</div>
+          <input class="field" aria-label="대표자 영문명" />
+        </div>
+
+        <div class="kv-row" data-field="ownerEmail">
+          <div class="k">대표자 이메일</div>
+          <div class="v muted">***@***.com</div>
+          <input class="field" aria-label="대표자 이메일" />
+        </div>
+      </section>
+
+    </div><!-- /content -->
+
+    <!-- 하단 버튼 -->
+    <div class="bottom" role="contentinfo" aria-label="하단 버튼">
+      <div class="btn-row">
+        <button class="btn secondary" id="editBtn" type="button">수정하기</button>
+        <button class="btn primary" id="nextBtn" type="button">다음</button>
+      </div>
+    </div>
+
+    <!-- 토스트 -->
+    
+
+    <!-- 요구사항 버튼 -->
+    <button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+    <!-- 요구사항/주석 모달 -->
+    <div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+      <div class="spec-modal" aria-label="업무 정의서 및 주석">
+        <div class="spec-modal__head">
+          <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0073)</div>
+          <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+        </div>
+        <div id="specModalBody" class="spec-modal__body"></div>
+      </div>
+    </div>
+
+  </div><!-- /wrap -->
+
+  <script>
+    const SCREEN_ID = "0073";
+    (function(){
+      // ===== 1. 설정 및 상수 정의 =====
+      const SCREEN_ID   = "0073";
+      const SCREEN_NAME = "신청정보_수정하기(개사자_체크)";
+      const CHANNEL     = "mobile web (개인사업자_체크)";
+      const NEXT_SCREEN = "0072"; 
+      
+      const $ = (id) => document.getElementById(id);
+      const $$ = (sel) => document.querySelectorAll(sel);
+      const toast = $("toast");
+
+      // ===== 2. 유틸리티 함수 =====
+      function showToast(msg){
+        toast.textContent = msg;
+        toast.classList.add("show");
+        // 기존 타이머가 있다면 초기화하는 로직이 있으면 좋지만, 간단히 구현
+        setTimeout(()=> toast.classList.remove("show"), 1600);
+      }
+
+      function escapeHtml(s){
+        return String(s)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+      }
+
+      // ===== 3. 초기화 (Data Hydration) =====
+      // HTML의 .v 텍스트를 읽어서 input의 초기값으로 설정
+      // 이를 통해 HTML에서 중복 데이터를 관리할 필요가 없어짐
+      function initFields() {
+        $$('.kv-row').forEach(row => {
+          const v = row.querySelector('.v');
+          const input = row.querySelector('.field');
+          if (v && input) {
+            input.value = v.textContent.trim();
+          }
+        });
+      }
+
+      // 이미지 매핑
+      const IMG_MAP = {
+        // 'img_0073_card': '/assets/0073_card.png'
+      };
+      $$('img[data-image-key]').forEach(img=>{
+        const key = img.getAttribute('data-image-key');
+        if(IMG_MAP[key]) img.src = IMG_MAP[key];
+        else img.style.display = "none";
+      });
+
+      // ===== 4. 편집 모드 로직 =====
+      const editBtn = $("editBtn");
+      const modeBadges = $$(".mode-badge");
+      let isEdit = false;
+
+      function toggleEditMode() {
+        isEdit = !isEdit;
+        
+        // UI 상태 업데이트
+        $$('.section').forEach(sec => {
+          if(isEdit) sec.classList.add('edit');
+          else sec.classList.remove('edit');
+        });
+
+        modeBadges.forEach(el => el.textContent = isEdit ? "수정중" : "보기");
+        editBtn.textContent = isEdit ? "저장" : "수정하기";
+        
+        if (isEdit) {
+          showToast("내용을 수정할 수 있습니다.");
+          // UX 개선: 첫 번째 편집 가능한 input에 포커스
+          const firstInput = document.querySelector('.section.edit .kv-row:not(.readonly) .field');
+          if(firstInput) firstInput.focus();
+        } else {
+          showToast("저장되었습니다(모의).");
+        }
+      }
+
+      function validateAndSave() {
+        let isValid = true;
+        let firstError = null;
+
+        // 유효성 검사: 필수 입력값 체크
+        $$('.kv-row:not(.readonly)').forEach(row => {
+          const input = row.querySelector('.field');
+          const v = row.querySelector('.v');
+          
+          if (input && input.value.trim() === "") {
+            input.classList.add('error');
+            isValid = false;
+            if(!firstError) firstError = input;
+          } else if (input) {
+            input.classList.remove('error');
+            // 값 반영
+            if(v) v.textContent = input.value.trim();
+          }
+        });
+
+        if (!isValid) {
+          showToast("필수 정보를 입력해 주세요.");
+          if(firstError) firstError.focus();
+          return false;
+        }
+        
+        return true;
+      }
+
+      editBtn.addEventListener('click', () => {
+        if (!isEdit) {
+          // 수정 모드로 진입
+          toggleEditMode();
+        } else {
+          // 저장 시도
+          if (validateAndSave()) {
+            toggleEditMode(); // 유효성 통과 시 뷰 모드로 전환
+          }
+        }
+      });
+
+      // 닫기 버튼
+      $("closeBtn").addEventListener("click", () => showToast("닫기(모의): 현재 화면 유지"));
+
+      // 다음 버튼
+      $("nextBtn").addEventListener("click", () => {
+        if (isEdit) {
+          showToast("수정 중입니다. 저장 후 진행해 주세요.");
+          // 강조 효과 (옵션)
+          editBtn.focus();
+          return;
+        }
+        showToast("다음 단계로 이동합니다.");
+        location.hash = `#/${NEXT_SCREEN}`;
+      });
+
+      // input 입력 시 에러 스타일 제거 (UX)
+      document.addEventListener('input', (e) => {
+        if (e.target.classList.contains('field')) {
+          e.target.classList.remove('error');
+        }
+      });
+
+      // ===== 5. REQ_SPEC 모달 (기존 로직 유지) =====
+      
+
+      const specModalRoot  = $("specModalRoot");
+      const specModalClose = $("specModalClose");
+      const specModalTitle = $("specModalTitle");
+      const specModalBody  = $("specModalBody");
+      const reqBtn         = $("reqBtn");
+
+      function renderSpec(spec){
+        document.title = `${spec.screen_name} (${spec.screen_id})`;
+        specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+
+        const chips = [
+          `ID:${spec.screen_id}`,
+          `Action:${spec.action}`,
+          `Channel:${spec.channel}`
+        ];
+
+        specModalBody.innerHTML = `
+          <div class="kv">
+            <div class="kk">기능 ID</div><div class="vv"><b>${escapeHtml(spec.screen_id)}</b></div>
+            <div class="kk">기능명</div><div class="vv"><b>${escapeHtml(spec.screen_name)}</b></div>
+            <div class="kk">채널</div><div class="vv">${escapeHtml(spec.channel)}</div>
+            <div class="kk">대상</div><div class="vv">${escapeHtml(spec.targets || "-")}</div>
+            <div class="kk">Action</div><div class="vv">${escapeHtml(spec.action)}</div>
+            <div class="kk">목적</div><div class="vv">${escapeHtml(spec.purpose)}</div>
+          </div>
+
+          <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+
+          <div class="section2">
+            <div class="section2__title">필드</div>
+            <ul>${(spec.fields||[]).map(f =>
+              `<li><b>${escapeHtml(f.key)}</b> · ${f.required ? "필수" : "선택"} · ${escapeHtml(f.type)}${f.note ? ` (${escapeHtml(f.note)})` : ""}</li>`
+            ).join("")}</ul>
+          </div>
+
+          <div class="section2">
+            <div class="section2__title">제어 규칙</div>
+            <ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+          </div>
+
+          <div class="section2">
+            <div class="section2__title">감사/로그 포인트</div>
+            <ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+          </div>
+
+          <div class="section2">
+            <div class="section2__title">REQ_SPEC 원문(JSON)</div>
+            <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+          </div>
+        `;
+      }
+
+      function openSpec(){
+        renderSpec(REQ_SPEC);
+        specModalRoot.classList.add("show");
+        specModalRoot.setAttribute("aria-hidden", "false");
+      }
+      function closeSpec(){
+        specModalRoot.classList.remove("show");
+        specModalRoot.setAttribute("aria-hidden", "true");
+      }
+
+      reqBtn.addEventListener("click", openSpec);
+      specModalClose.addEventListener("click", closeSpec);
+      specModalRoot.addEventListener("click", (e)=>{ if(e.target === specModalRoot) closeSpec(); });
+
+      // ===== 실행 =====
+      initFields();
+    })();
+  </script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0073"></script>
+</body>
+</html>

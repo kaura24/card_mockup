@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>신분증 진위확인 (0067)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#e6e6e6;
+      --bg:#f7f8fa;
+
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --card:#fff;
+      --panel:#fafafa;
+      --danger:#e53935;
+
+      --gray-btn:#e9ecef;
+      --gray-btn-text:#222;
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+    body{
+      margin:0;
+      font-family: "Malgun Gothic", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ====== 풀페이지(모바일) ====== */
+    .wrap{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background:#fff;
+      padding-bottom: 92px; /* 하단 버튼 */
+      border-left: 1px solid rgba(0,0,0,.06);
+      border-right: 1px solid rgba(0,0,0,.06);
+    }
+
+    /* ====== 상단바 ====== */
+    .topbar{
+      height: 56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: sticky;
+      top: 0;
+      background:#fff;
+      z-index: 20;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      padding: 0 14px;
+    }
+    .topbar .title{
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: -.2px;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+      text-align:center;
+    }
+    .topbar .title small{
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+    .topbar .close{
+      position:absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      color:#333;
+      user-select:none;
+    }
+    .topbar .close:hover{
+      background:#fafafa;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .content{ padding: 14px 16px 14px; }
+
+    /* ===== 안내문 ===== */
+    .lead{
+      font-size: 15px;
+      font-weight: 900;
+      letter-spacing:-.2px;
+      line-height: 1.45;
+      margin: 6px 0 8px;
+    }
+    .sub{
+      font-size: 12.8px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin: 0 0 12px;
+    }
+
+    /* ====== 신분증 예시 카드(프리뷰) ====== */
+    .preview{
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      background:#fff;
+      overflow:hidden;
+    }
+    .preview + .preview{ margin-top: 12px; }
+
+    .preview__inner{
+      background: #fafafa;
+      padding: 14px;
+    }
+    .preview__card{
+      background: #f6f2ea;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      padding: 14px 14px;
+      display:grid;
+      grid-template-columns: 1fr 96px;
+      gap: 12px;
+      align-items:center;
+    }
+    .preview__title{
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing:-.3px;
+      text-align:center;
+      margin: 0 0 10px;
+      color:#222;
+    }
+    .preview__text{
+      font-size: 13px;
+      color:#333;
+      line-height: 1.55;
+    }
+    .hl{
+      display:inline-block;
+      background: var(--kb-yellow);
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+      color:#111;
+    }
+    .photo{
+      width: 96px;
+      height: 96px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.25));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#666;
+      font-weight: 900;
+      font-size: 12px;
+      user-select:none;
+    }
+    .seal{
+      margin-top: 8px;
+      font-size: 12px;
+      color:#666;
+      text-align:center;
+      font-weight: 900;
+    }
+
+    .preview__meta{
+      padding: 12px 14px 14px;
+      border-top: 1px solid var(--line);
+      background:#fff;
+      font-size: 12.8px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* ===== 하단 버튼 ===== */
+    .bottom{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(520px, 100vw);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background:#fff;
+      z-index: 30;
+      padding: 10px 12px;
+    }
+    .btnrow{ display:flex; gap:10px; }
+    .btn{
+      flex:1;
+      height: 56px;
+      border: none;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      letter-spacing: -.2px;
+    }
+    .btn.gray{
+      background: var(--gray-btn);
+      color: var(--gray-btn-text);
+      border: 1px solid rgba(0,0,0,.08);
+    }
+    .btn.yellow{
+      background: var(--kb-yellow);
+      color:#111;
+    }
+    .btn.yellow:hover{ background: var(--kb-yellow-dark); }
+    .btn:active{ transform: translateY(1px); }
+
+    /* ===== 토스트 ===== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 92px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.86);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(480px, calc(100vw - 24px));
+      text-align:center;
+      z-index: 60;
+    }
+    .toast.show{ opacity: 1; }
+
+    /* ===== 연결중(작은 상태 박스) ===== */
+    .status{
+      position: fixed;
+      left: 12px;
+      bottom: 90px;
+      background: rgba(255,255,255,.96);
+      border: 1px solid rgba(0,0,0,.12);
+      border-radius: 12px;
+      padding: 10px 12px;
+      font-size: 13px;
+      font-weight: 900;
+      color:#333;
+      box-shadow: 0 12px 26px rgba(0,0,0,.12);
+      display:none;
+      z-index: 80;
+    }
+    .status.show{ display:block; }
+
+    /* ====== (공통) 우하단 히든 버튼: 컬러 + 물음표 ====== */
+    .req-qmark{
+      position: fixed;
+      right: 14px;
+      bottom: 98px;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      opacity: .82;
+      transition: opacity .15s ease, transform .05s ease, background .15s ease;
+      z-index: 1000;
+    }
+    .req-qmark:hover{ opacity: 1; background: var(--kb-yellow-dark); }
+    .req-qmark:active{ transform: translateY(1px); }
+
+    /* ====== (공통) 요구사항 모달 ====== */
+    .spec-modal-root{
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1200;
+    }
+    .spec-modal-root.show{ display:flex; }
+
+    .spec-modal{
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .spec-modal__head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--modal-line);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .spec-modal__title{
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .spec-modal__close{
+      border: 1px solid rgba(0,0,0,.18);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .spec-modal__body{ padding: 14px 16px 18px; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    .kv .k, .kv .v{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--modal-line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv .k{
+      background: #fafafa;
+      font-weight: 900;
+      color:#333;
+      border-right: 1px solid var(--modal-line);
+    }
+    .kv .v{ color:#222; }
+    .kv .k:last-child, .kv .v:last-child{ border-bottom:none; }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 10px; }
+    .chip{
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+    .section2{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .section2__title{
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .section2 ul{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .code{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0b0b0d;
+      color: #e9e9ef;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap" role="application" aria-label="신분증 진위확인_촬영 또는 직접 입력 선택 (0067)">
+
+    <div class="topbar" role="banner">
+      <div class="title">카드신청 <small>(0067)</small></div>
+      <div class="close" id="closeBtn" aria-label="닫기">×</div>
+    </div>
+
+    <div class="content">
+      <div class="lead">
+        본인 확인을 위해 신분증을 준비해 주세요.<br/>
+        다음 화면에서 촬영을 진행합니다.
+      </div>
+      <div class="sub">※ 주민등록증, 운전면허증 촬영이 가능합니다.</div>
+
+      <!-- 주민등록증 예시 -->
+      <div class="preview" aria-label="주민등록증 예시">
+        <div class="preview__inner">
+          <div class="preview__title">주민등록증</div>
+          <div class="preview__card">
+            <div class="preview__text">
+              김국민(金國民)<br/>
+              912345-1234567<br/>
+              서울시 종로구 새문안로 3길<br/><br/>
+              <span class="hl">2017.01.01</span><br/>
+              <span class="seal">서울특별시 종로구청장</span>
+            </div>
+            <div class="photo">PHOTO</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 운전면허증 예시 -->
+      <div class="preview" aria-label="운전면허증 예시">
+        <div class="preview__inner">
+          <div class="preview__title" style="font-size:15px; margin-bottom:12px;">
+            자동차운전면허증 <span style="font-weight:900; color:var(--muted); font-size:12px;">(Driver’s License)</span>
+          </div>
+          <div class="preview__card" style="background:#f6f2ea;">
+            <div class="preview__text">
+              <span class="hl">11 - 01-123456-78</span><br/>
+              김국민<br/>
+              912345-1234567<br/>
+              서울시 종로구 새문안로 3길<br/>
+              적성검사&nbsp;&nbsp;2027.01.01<br/>
+              기간&nbsp;&nbsp;~2027.12.31<br/><br/>
+              <span class="hl">A1B23C</span><br/>
+              <span class="seal">서울특별시 종로구청장</span>
+            </div>
+            <div class="photo">PHOTO</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 하단 버튼 -->
+  <div class="bottom" role="contentinfo" aria-label="하단 버튼">
+    <div class="btnrow">
+      <button class="btn gray" id="directBtn" type="button">직접입력</button>
+      <button class="btn yellow" id="shootBtn" type="button">촬영하기</button>
+    </div>
+  </div>
+
+  <!-- 연결중 상태 -->
+  <div id="status" class="status" aria-live="polite">연결 중...</div>
+
+  <!-- 토스트 -->
+  
+
+  <!-- (공통) 히든 요구사항 버튼 -->
+  <button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+  <!-- (공통) 요구사항/주석 모달 -->
+  <div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="spec-modal" aria-label="업무 정의서 및 주석">
+      <div class="spec-modal__head">
+        <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0067)</div>
+        <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+      </div>
+      <div id="specModalBody" class="spec-modal__body"></div>
+    </div>
+  </div>
+
+<script>
+  // Generated by GPT
+  (function(){
+    const SCREEN_ID = "0067";
+    const SCREEN_NAME = "신분증진위확인_촬영 또는 직접 입력 선택(개사자_체크)";
+    const CHANNEL = "mobile web (개인사업자)";
+
+    const $ = (id) => document.getElementById(id);
+    const toast = $("toast");
+    const status = $("status");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(()=> toast.classList.remove("show"), 1600);
+    }
+    function showStatus(ms){
+      status.classList.add("show");
+      setTimeout(()=> status.classList.remove("show"), ms || 1200);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // 닫기(목업)
+    $("closeBtn").addEventListener("click", ()=> showToast("닫기(모의): 이전 화면 유지"));
+
+    // 직접입력(목업) → 0068 가정
+    $("directBtn").addEventListener("click", ()=>{
+      showToast("직접입력(모의): 신분증정보 입력으로 이동");
+      if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+            location.hash = "#/0068";
+          }
+        }
+      }
+    });
+
+    // 촬영하기(목업) → 0068 가정(촬영 플로우는 0068에서 처리)
+    $("shootBtn").addEventListener("click", ()=>{
+      showStatus(1200);
+      showToast("촬영하기(모의): 카메라 호출 후 다음 단계");
+      setTimeout(()=> location.hash = "#/0068?mode=capture", 600);
+    });
+
+    // ====== (공통) 요구사항/주석 모달 ======
+    
+
+    const reqBtn = $("reqBtn");
+    const specModalRoot = $("specModalRoot");
+    const specModalClose = $("specModalClose");
+    const specModalTitle = $("specModalTitle");
+    const specModalBody = $("specModalBody");
+
+    function renderSpec(spec){
+      document.title = `${spec.screen_name} (${spec.screen_id})`;
+      specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+
+      const chips = [
+        `ID:${spec.screen_id}`,
+        `Action:${spec.action}`,
+        `Channel:${spec.channel}`
+      ];
+
+      specModalBody.innerHTML = `
+        <div class="kv">
+          <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+          <div class="k">기능명</div><div class="v"><b>${escapeHtml(spec.screen_name)}</b></div>
+          <div class="k">채널</div><div class="v">${escapeHtml(spec.channel)}</div>
+          <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+          <div class="k">입력</div><div class="v">${escapeHtml(spec.input)}</div>
+          <div class="k">목적</div><div class="v">${escapeHtml(spec.purpose)}</div>
+        </div>
+
+        <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+
+        <div class="section2">
+          <div class="section2__title">제어 규칙</div>
+          <ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">감사/로그 포인트</div>
+          <ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">주석(개발/QA 포인트)</div>
+          <ul>${(spec.notes||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">REQ_SPEC 원문(JSON)</div>
+          <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+        </div>
+      `;
+    }
+
+    function openSpec(){
+      renderSpec(REQ_SPEC);
+      specModalRoot.classList.add("show");
+      specModalRoot.setAttribute("aria-hidden", "false");
+    }
+    function closeSpec(){
+      specModalRoot.classList.remove("show");
+      specModalRoot.setAttribute("aria-hidden", "true");
+    }
+
+    reqBtn.addEventListener("click", openSpec);
+    specModalClose.addEventListener("click", closeSpec);
+    specModalRoot.addEventListener("click", (e)=>{ if(e.target === specModalRoot) closeSpec(); });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && specModalRoot.classList.contains("show")) closeSpec();
+      if(e.ctrlKey && e.altKey && (e.key === "r" || e.key === "R")){
+        if(specModalRoot.classList.contains("show")) closeSpec();
+        else openSpec();
+      }
+    });
+  })();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0067"></script>
+</body>
+</html>

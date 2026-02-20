@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>기본정보 (0045)</title>
+
+<style>
+/* =================================================   
+   기본 스타일 및 변수 설정
+================================================= */
+:root {
+  --text: #111;
+  --muted: #666;
+  --line: #e6e6e6;
+  --kb-yellow: #ffcc00;
+  --kb-yellow-dark: #f2b800;
+  --danger: #e53935;
+  --field-bg: #fff;
+  --field-line: #d9d9d9;
+  --readonly-bg: #f5f5f5;
+  --white: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+  background: #f0f0f0; /* 배경색 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 전체 창 높이 사용 */
+  overflow: hidden; /* 바깥쪽 스크롤 방지 */
+}
+
+/* =================================================   
+   메인 모달 컨테이너 (창 크기에 맞춰 자동 조절)
+================================================= */
+.modal {
+  width: 980px;
+  max-width: calc(100vw - 32px);
+  max-height: 95vh; /* 화면 높이의 95%까지만 차지 */
+  background: var(--white);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column; /* 헤더-본문-푸터 분리 */
+  overflow: hidden;
+  position: relative;
+}
+
+/* =================================================   
+   헤더: 제목 및 화면번호 표시
+================================================= */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  border-bottom: 2px solid var(--kb-yellow);
+  flex-shrink: 0; /* 헤더 크기 고정 */
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.modal-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--text);
+  margin: 0;
+}
+
+.screen-id {
+  background: #f0f0f0;
+  color: #333;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 800;
+  font-family: ui-monospace, sans-serif;
+  border: 1px solid #ddd;
+}
+
+.close-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 28px;
+  color: #777;
+  transition: background 0.2s;
+}
+
+.close-btn:hover {
+  background: #f5f5f5;
+}
+
+/* =================================================   
+   본문 콘텐츠: 내부 스크롤 적용
+================================================= */
+.content {
+  padding: 24px 28px;
+  overflow-y: auto; /* 내용이 많으면 여기서 스크롤 */
+  flex: 1; /* 가용 공간 모두 사용 */
+  background: #fff;
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.grid-row {
+  display: grid;
+  grid-template-columns: 240px 1fr;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cell-left {
+  padding: 16px 20px;
+  background: #fafafa;
+  border-right: 1px solid var(--line);
+  font-weight: 900;
+  color: #333;
+  display: flex;
+  align-items: center;
+}
+
+.cell-right {
+  padding: 12px 20px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 필드 스타일 */
+.field {
+  width: 100%;
+  height: 44px;
+  border: 1px solid var(--field-line);
+  border-radius: 8px;
+  padding: 0 14px;
+  font-size: 14px;
+  font-weight: 700;
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.field:focus {
+  border-color: var(--kb-yellow-dark);
+  box-shadow: 0 0 0 3px rgba(255, 204, 0, 0.2);
+}
+
+.field[disabled] {
+  background: var(--readonly-bg);
+  color: #555;
+  border-color: #eee;
+  cursor: not-allowed;
+}
+
+.inline-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.input-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+  width: 100%;
+  font-weight: 700;
+}
+
+/* 주소검색 버튼 */
+.btn-search {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: var(--white);
+  border: 1px solid var(--field-line);
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-search:hover {
+  background: #fafafa;
+}
+
+/* =================================================   
+   푸터: 하단 버튼 영역
+================================================= */
+.footer {
+  padding: 16px 28px 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0; /* 푸터 크기 고정 */
+}
+
+.btn-footer {
+  height: 48px;
+  padding: 0 24px;
+  min-width: 110px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  background: var(--white);
+  transition: background 0.2s;
+}
+
+.btn-footer.primary {
+  background: var(--kb-yellow);
+  border: none;
+}
+
+.btn-footer.primary:hover {
+  background: var(--kb-yellow-dark);
+}
+
+/* 토스트 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 900;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s;
+  z-index: 1000;
+}
+.toast.show { opacity: 1; visibility: visible; bottom: 40px; }
+
+/* 요구사항 버튼 */
+.req-trigger {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--kb-yellow);
+  color: #111;
+  font-weight: 900;
+  font-size: 20px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 900;
+}
+
+/* 업무 정의서 모달 */
+.spec-modal-root {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 2000;
+}
+.spec-modal-root.show { display: flex; }
+.spec-modal {
+  width: 860px;
+  max-width: 100%;
+  background: #fff;
+  border-radius: 14px;
+  max-height: 85vh;
+  overflow: auto;
+  padding: 24px;
+}
+
+.spec-section {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.spec-section-title { font-weight: 900; margin-bottom: 8px; color: #000; }
+.spec-list { padding-left: 20px; font-size: 14px; color: #444; }
+
+@media (max-width: 820px) {
+  .grid-row { grid-template-columns: 1fr; }
+  .cell-left { border-right: none; border-bottom: 1px solid var(--line); }
+}
+</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<!-- 0045 메인 모달 -->
+<div class="modal" role="dialog" aria-labelledby="pageTitle">
+  <div class="modal-header">
+    <div class="modal-title-group">
+      <h1 class="modal-title" id="pageTitle">기본정보</h1>
+      <span class="screen-id">0045</span>
+    </div>
+    <div class="close-btn" id="closeBtn" title="닫기">&times;</div>
+  </div>
+
+  <div class="content">
+    <div class="form-grid">
+      
+      <!-- 업체명 -->
+      <div class="grid-row">
+        <div class="cell-left">업체(부서)명</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="한정러치건사(솔재분동송우)" disabled />
+        </div>
+      </div>
+
+      <!-- 결제일 -->
+      <div class="grid-row">
+        <div class="cell-left">결제일</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="27일" disabled />
+        </div>
+      </div>
+
+      <!-- 결제기관 -->
+      <div class="grid-row">
+        <div class="cell-left">결제기관</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="국민은행" disabled />
+        </div>
+      </div>
+
+      <!-- 결제계좌 -->
+      <div class="grid-row">
+        <div class="cell-left">결제계좌</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="26965799****46" disabled />
+        </div>
+      </div>
+
+      <!-- 우편물수령방법 -->
+      <div class="grid-row">
+        <div class="cell-left">우편물수령방법</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="우편+E-MAIL" disabled />
+        </div>
+      </div>
+
+      <!-- 부서별한도 -->
+      <div class="grid-row">
+        <div class="cell-left">부서별한도</div>
+        <div class="cell-right">
+          <input type="text" class="field" value="200,000 원" disabled />
+        </div>
+      </div>
+
+      <!-- 영문업체명 (수정 가능) -->
+      <div class="grid-row">
+        <div class="cell-left">영문업체명</div>
+        <div class="cell-right">
+          <input type="text" id="engName" class="field" placeholder="영문업체명을 입력하세요" />
+          <div class="input-note">※ 영문입력 중 특수문자는 6종(.-&/ )만 가능합니다.</div>
+        </div>
+      </div>
+
+      <!-- 전화번호 (수정 가능) -->
+      <div class="grid-row">
+        <div class="cell-left">전화번호</div>
+        <div class="cell-right">
+          <div class="inline-group">
+            <input type="text" id="phone1" class="field" style="width:80px" maxlength="3" placeholder="02" />
+            <span>-</span>
+            <input type="text" id="phone2" class="field" style="width:100px" maxlength="4" placeholder="2009" />
+            <span>-</span>
+            <input type="text" id="phone3" class="field" style="width:100px" maxlength="4" placeholder="5702" />
+          </div>
+        </div>
+      </div>
+
+      <!-- 주소 (수정 가능) -->
+      <div class="grid-row">
+        <div class="cell-left">주소</div>
+        <div class="cell-right">
+          <div class="inline-group" style="width:100%; margin-bottom:8px;">
+            <input type="text" id="zip" class="field" style="width:120px" placeholder="우편번호" />
+            <button id="addrBtn" class="btn-search">주소검색</button>
+          </div>
+          <input type="text" id="addr1" class="field" value="서울 송파구 잠실로 62" disabled style="margin-bottom:8px;" />
+          <input type="text" id="addr2" class="field" placeholder="상세주소 입력" />
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 푸터 영역 -->
+  <div class="footer">
+    <button class="btn-footer" id="prevBtn">이전</button>
+    <button class="btn-footer primary" id="nextBtn">다음</button>
+  </div>
+</div>
+
+<!-- 토스트 -->
+
+
+<!-- 요구사항 플로팅 버튼 -->
+<button id="reqBtn" class="req-trigger" title="업무 정의서">?</button>
+
+<!-- 업무 정의서 모달 -->
+<div id="specModalRoot" class="spec-modal-root">
+  <div class="spec-modal">
+    <h2 style="margin-top:0;">업무 정의서 / 주석 (0045)</h2>
+    <div id="specBody"></div>
+    <div style="text-align:right; margin-top:20px;">
+      <button class="btn-footer" onclick="document.getElementById('specModalRoot').classList.remove('show')">닫기</button>
+    </div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0045";
+// =================================================   
+// 비즈니스 로직 및 공통 함수
+// =================================================
+const $ = id => document.getElementById(id);
+
+function showToast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), 2000);
+}
+
+// 주소검색 연동 (목업)
+$("addrBtn").addEventListener("click", ()=>{
+  showToast("주소검색 API를 호출합니다.");
+});
+
+// 하단 버튼 액션
+$("prevBtn").addEventListener("click", ()=> showToast("이전 화면으로 이동합니다."));
+$("nextBtn").addEventListener("click", ()=> showToast("입력 정보를 저장하고 다음 단계로 진행합니다."));
+$("closeBtn").addEventListener("click", ()=> showToast("화면을 닫습니다."));
+
+// =================================================   
+// 요구사항 사양서 (REQ_SPEC)
+// =================================================
+
+
+$("reqBtn").addEventListener("click", ()=>{
+  $("specBody").innerHTML = `
+    <div class="spec-section">
+      <div class="spec-section-title">1. 화면 기본 사양</div>
+      <ul class="spec-list">
+        <li><b>화면 ID:</b> ${REQ_SPEC.screen_id}</li>
+        <li><b>화면명:</b> ${REQ_SPEC.screen_name}</li>
+        <li><b>레이아웃:</b> ${REQ_SPEC.layout}</li>
+      </ul>
+    </div>
+    <div class="spec-section">
+      <div class="spec-section-title">2. 업무 규칙</div>
+      <ul class="spec-list">
+        ${REQ_SPEC.rules.map(r => `<li>${r}</li>`).join("")}
+      </ul>
+    </div>
+    <div class="spec-section">
+      <div class="spec-section-title">3. 감사 포인트</div>
+      <ul class="spec-list"><li>${REQ_SPEC.audit_point}</li></ul>
+    </div>
+  `;
+  $("specModalRoot").classList.add("show");
+});
+
+// 모달 외부 클릭 시 닫기
+$("specModalRoot").addEventListener("click", e => {
+  if(e.target.id === "specModalRoot") $("specModalRoot").classList.remove("show");
+});
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0045"></script>
+</body>
+</html>

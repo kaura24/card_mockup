@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>카드 신청정보 (0052)</title>
+
+<style>
+/* ===============================
+   0047 샘플 스타일 그대로 복제
+================================*/
+:root{
+  --text:#111;
+  --muted:#666;
+  --line:#e6e6e6;
+  --bg-overlay: rgba(0,0,0,.45);
+  --kb-yellow:#ffcc00;
+  --kb-yellow-dark:#f2b800;
+  --overlay: rgba(0,0,0,.55);
+  --modal-line:#e6e6e6;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+}
+*{ box-sizing:border-box; }
+body{
+  margin:0;
+  background:var(--bg-overlay);
+  font-family:"Malgun Gothic", sans-serif;
+}
+
+/* ===== 모달 ===== */
+.modal{
+  width:980px;
+  max-width:calc(100vw - 24px);
+  background:#fff;
+  border-radius:14px;
+  padding:18px 22px 18px;
+  border:1px solid rgba(0,0,0,.08);
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  box-shadow:0 18px 50px rgba(0,0,0,.20);
+}
+.modal-header{
+  display:flex; justify-content:space-between;
+  align-items:center;
+  padding-bottom:10px;
+  border-bottom:1px solid rgba(0,0,0,.06);
+}
+.modal-title{ font-size:20px; font-weight:900; }
+.modal-title small{ font-size:13px; color:var(--muted); margin-left:6px; }
+.close-btn{
+  width:36px; height:36px;
+  display:flex; justify-content:center; align-items:center;
+  cursor:pointer; color:#777;
+}
+
+/* ===== 본문 ===== */
+.content{ padding:16px 6px 8px; }
+
+.section-title{
+  font-size:22px; font-weight:900;
+  margin:6px 0 14px;
+}
+
+/* info table */
+.info-table{
+  width:100%; border-collapse:collapse;
+  border:1px solid var(--line);
+  border-radius:10px; overflow:hidden;
+}
+.info-table th, .info-table td{
+  padding:18px;
+  border-bottom:1px solid var(--line);
+  font-size:15px;
+}
+.info-table th{
+  width:220px;
+  font-weight:900;
+  color:#222;
+  border-right:1px solid var(--line);
+}
+.info-table td{
+  font-weight:800;
+  color:#111;
+}
+.info-table tr:last-child td,
+.info-table tr:last-child th{
+  border-bottom:none;
+}
+
+/* footer buttons (중앙 정렬) */
+.footer-center{
+  display:flex; justify-content:center;
+  gap:16px;
+  margin-top:26px;
+}
+.btn{
+  height:46px; padding:0 24px;
+  border-radius:8px;
+  font-weight:900; cursor:pointer;
+  border:1px solid rgba(0,0,0,.18);
+  background:#fff;
+  font-size:15px;
+}
+.btn.primary{
+  background:var(--kb-yellow);
+  border:none;
+}
+.btn.primary:hover{
+  background:var(--kb-yellow-dark);
+}
+
+/* toast */
+.toast{
+  position:fixed; left:50%; bottom:22px;
+  transform:translateX(-50%);
+  background:rgba(0,0,0,.85);
+  padding:10px 14px;
+  color:#fff;
+  opacity:0;
+  border-radius:10px;
+  transition:opacity .18s;
+}
+.toast.show{ opacity:1; }
+
+/* req button */
+.req-qmark{
+  position:fixed;
+  right:14px; bottom:14px;
+  width:44px; height:44px;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.18);
+  background:var(--kb-yellow);
+  font-weight:900; font-size:22px;
+  cursor:pointer;
+}
+
+/* spec modal */
+.spec-modal-root{
+  position:fixed; inset:0;
+  display:none; justify-content:center; align-items:center;
+  background:var(--overlay);
+}
+.spec-modal-root.show{ display:flex; }
+
+.spec-modal{
+  width:min(980px,100%);
+  max-height:min(86vh,900px);
+  overflow:auto;
+  border-radius:12px;
+  background:#fff;
+  border:1px solid rgba(0,0,0,.15);
+}
+.spec-modal__head{
+  display:flex; justify-content:space-between;
+  align-items:center;
+  padding:14px 16px;
+  border-bottom:1px solid var(--modal-line);
+}
+.spec-modal__title{ font-weight:900; font-size:16px; }
+.spec-modal__body{ padding:14px 16px 20px; }
+
+/* kv */
+.kv{
+  display:grid; grid-template-columns:170px 1fr;
+  border:1px solid var(--modal-line);
+  border-radius:10px; overflow:hidden;
+  margin-bottom:12px;
+}
+.kv .k, .kv .v{
+  padding:10px 12px;
+  border-bottom:1px solid var(--modal-line);
+  font-size:13px;
+}
+.kv .k{
+  background:#fafafa;
+  font-weight:900;
+  border-right:1px solid var(--modal-line);
+}
+
+/* sections */
+.section{
+  margin-top:12px;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid var(--modal-line);
+}
+.section__title{
+  font-weight:900; font-size:13px;
+  margin-bottom:6px;
+}
+.section ul{
+  margin:0; padding-left:18px;
+}
+
+/* json */
+.code{
+  background:#0b0b0d;
+  padding:12px;
+  color:#e9e9ef;
+  border-radius:10px;
+  white-space:pre;
+  margin-top:10px;
+}
+.chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px; }
+.chip{
+  font-size:12px;
+  padding:6px 10px;
+  background:#fafafa;
+  border-radius:999px;
+  border:1px solid rgba(0,0,0,.18);
+}
+</style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+<div class="modal" role="dialog" aria-modal="true">
+  <div class="modal-header">
+    <div class="modal-title">카드 신청정보 <small>(0052)</small></div>
+    <div class="close-btn" id="closeBtn">×</div>
+  </div>
+
+  <div class="content">
+
+    <div class="section-title">카드 신청정보</div>
+
+    <table class="info-table">
+      <tr>
+        <th>업체(부서)명</th>
+        <td id="deptName">영업부</td>
+      </tr>
+      <tr>
+        <th>성명</th>
+        <td id="userName">이익수</td>
+      </tr>
+      <tr>
+        <th>카드명</th>
+        <td id="cardName">ONE KB국민 global 기업카드</td>
+      </tr>
+      <tr>
+        <th>브랜드</th>
+        <td id="brand">국내전용</td>
+      </tr>
+      <tr>
+        <th>카드수령지</th>
+        <td id="recvPlace">사업장</td>
+      </tr>
+    </table>
+
+    <div class="footer-center">
+      <button class="btn" id="statusBtn">발급상황조회</button>
+      <button class="btn primary" id="confirmBtn">확인</button>
+    </div>
+
+  </div>
+</div>
+
+
+<button id="reqBtn" class="req-qmark">?</button>
+
+<div id="specModalRoot" class="spec-modal-root">
+  <div class="spec-modal">
+    <div class="spec-modal__head">
+      <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0052)</div>
+      <button id="specModalClose">닫기</button>
+    </div>
+    <div id="specModalBody" class="spec-modal__body"></div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SCREEN_ID = "0052";
+  const SCREEN_NAME = "카드 신청정보";
+
+  const $ = (id)=>document.getElementById(id);
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1500);
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replace(/&/g,"&amp;")
+      .replace(/</g,"&lt;")
+      .replace(/>/g,"&gt;");
+  }
+
+  // Button events
+  $("closeBtn").onclick = ()=> showToast("닫기(모의)");
+  $("statusBtn").onclick = ()=> showToast("발급상황조회(모의)");
+  $("confirmBtn").onclick = ()=>{ 
+    showToast("확인(모의): 프로세스 종료/메인 이동");
+    location.hash="#/end";
+  };
+
+  // ============================
+  // REQ_SPEC 구성
+  // ============================
+  
+
+  // ============================
+  // 요구사항 모달 렌더링
+  // ============================
+  const specRoot = $("specModalRoot");
+  const specBody = $("specModalBody");
+  const specTitle = $("specModalTitle");
+
+  function renderSpec(spec){
+    specTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id})`;
+
+    const chips = [
+      `ID:${spec.screen_id}`,
+      `Action:${spec.action}`,
+      `System:${spec.backend.system}`,
+      `Purpose:${spec.backend.purpose}`
+    ];
+
+    specBody.innerHTML = `
+      <div class="kv">
+        <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+        <div class="k">기능명</div><div class="v">${escapeHtml(spec.screen_name)}</div>
+        <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+        <div class="k">처리계</div><div class="v">${escapeHtml(spec.backend.system)}</div>
+        <div class="k">거래</div><div class="v">${escapeHtml(spec.backend.txn)}</div>
+        <div class="k">업무 목적</div><div class="v">${escapeHtml(spec.backend.purpose)}</div>
+      </div>
+
+      <div class="chips">
+        ${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}
+      </div>
+
+      <div class="section">
+        <div class="section__title">진입 조건</div>
+        <ul>${REQ_SPEC.entry_condition.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">UI 성격</div>
+        <ul>${REQ_SPEC.ui_nature.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">제어 규칙</div>
+        <ul>${REQ_SPEC.control_rules.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">감사/로그 포인트</div>
+        <ul>${REQ_SPEC.audit_log_points.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">주석(개발/QA 포인트)</div>
+        <ul>${REQ_SPEC.notes.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="section">
+        <div class="section__title">REQ_SPEC 원문(JSON)</div>
+        <div class="code">${escapeHtml(JSON.stringify(REQ_SPEC,null,2))}</div>
+      </div>
+    `;
+  }
+
+  $("reqBtn").onclick = ()=>{ renderSpec(REQ_SPEC); specRoot.classList.add("show"); };
+  $("specModalClose").onclick = ()=> specRoot.classList.remove("show");
+  specRoot.onclick = (e)=>{ if(e.target===specRoot) specRoot.classList.remove("show"); };
+
+})();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0052"></script>
+</body>
+</html>

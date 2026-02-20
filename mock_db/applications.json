@@ -1,0 +1,16 @@
+[
+    {
+        "app_id": "APP-SAMPLE-001",
+        "biz_no": "1111111111",
+        "applicant_rrn": "8001011234567",
+        "status": "INIT",
+        "product_type": "CREDIT",
+        "screens_data": {
+            "0001": {
+                "bizNo": "1111111111"
+            }
+        },
+        "created_at": "2024-02-20T10:00:00Z",
+        "updated_at": "2024-02-20T10:00:00Z"
+    }
+]

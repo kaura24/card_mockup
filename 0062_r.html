@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>필수확인사항 (0062)</title>
+  <style>
+    :root{
+      --text:#111;--muted:#666;--line:#e6e6e6;--bg:#f7f8fa;
+      --kb-yellow:#ffcc00;--kb-yellow-dark:#f2b800;
+      --overlay:rgba(0,0,0,.55);--modal-line:#e6e6e6;
+      --mono:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+      --blue:#1a73e8;--danger:#e53935;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:"Malgun Gothic",Arial,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:520px;margin:0 auto;min-height:100vh;background:#fff;padding-bottom:84px;border-left:1px solid rgba(0,0,0,.06);border-right:1px solid rgba(0,0,0,.06);}
+
+    /* topbar */
+    .topbar{height:56px;display:flex;align-items:center;justify-content:center;position:sticky;top:0;background:#fff;z-index:20;border-bottom:1px solid rgba(0,0,0,.08);padding:0 14px;}
+    .topbar .title{font-weight:900;font-size:16px;letter-spacing:-.2px;display:flex;align-items:baseline;gap:6px;}
+    .topbar .title small{font-size:12px;font-weight:900;color:var(--muted);}
+    .topbar .close{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#333;border:none;background:none;font-size:24px;}
+    .topbar .close:hover{background:#fafafa;border:1px solid rgba(0,0,0,.10);}
+
+    /* content */
+    .content{padding:18px 16px 10px;}
+    .sec-title{font-size:14.5px;font-weight:900;letter-spacing:-.2px;margin-bottom:8px;}
+    .sec-title .req{color:var(--danger);margin-left:2px;font-size:13px;}
+    .desc-list{list-style:none;padding:0;margin-bottom:16px;}
+    .desc-list li{font-size:13px;color:#444;line-height:1.7;padding-left:14px;position:relative;}
+    .desc-list li::before{content:'-';position:absolute;left:0;}
+
+    /* field */
+    .field{margin-bottom:20px;}
+    .field label{display:block;font-size:13.5px;font-weight:900;margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+    .field label .tooltip{width:18px;height:18px;border-radius:999px;border:1.5px solid #bbb;background:#fff;font-size:11px;color:#888;font-weight:900;display:inline-flex;align-items:center;justify-content:center;cursor:pointer;flex:0 0 auto;}
+    select{width:100%;height:48px;border:1px solid rgba(0,0,0,.18);border-radius:10px;padding:0 36px 0 12px;font-size:14px;font-family:inherit;color:var(--text);background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' stroke='%23666' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center;appearance:none;outline:none;}
+    select:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,115,232,.1);}
+    .field-notice{font-size:12px;color:var(--muted);margin-top:7px;line-height:1.6;padding-left:14px;position:relative;}
+    .field-notice::before{content:'※';position:absolute;left:0;}
+    .divider{height:1px;background:var(--line);margin:20px 0;}
+
+    /* pdf / link */
+    .pdf-row{display:flex;align-items:center;justify-content:space-between;padding:13px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:10px;}
+    .pdf-row .pdf-lbl{font-size:14px;font-weight:700;}
+    .pdf-btn{display:flex;align-items:center;gap:5px;padding:7px 12px;border:1px solid rgba(0,0,0,.18);border-radius:8px;font-size:13px;font-weight:700;background:#fff;cursor:pointer;font-family:inherit;}
+    .pdf-btn:hover{background:#f5f5f5;}
+    .link-row{display:flex;align-items:center;justify-content:space-between;padding:15px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:14px;cursor:pointer;background:#fff;}
+    .link-row:hover{background:#fafafa;}
+    .link-row span{font-size:14px;font-weight:700;}
+    .link-row .arr{font-size:18px;color:#bbb;}
+
+    /* confirm area */
+    .confirm-area{background:#f5f5f5;border-radius:10px;padding:14px 16px;display:flex;align-items:flex-start;gap:12px;margin-top:4px;}
+    .confirm-area.active{background:#fffef0;border:1.5px solid rgba(242,184,0,.5);}
+    .confirm-area input[type=checkbox]{width:20px;height:20px;flex:0 0 auto;margin-top:2px;cursor:pointer;accent-color:#111;}
+    .confirm-area p{font-size:13px;color:#555;line-height:1.65;}
+    .confirm-area.active p{color:#333;}
+
+    /* bottom cta */
+    .bottom-cta{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:min(520px,100vw);background:#fff;border-top:1px solid rgba(0,0,0,.08);padding:10px 16px;z-index:30;}
+    .cta-btn{width:100%;height:54px;border-radius:12px;border:none;background:var(--kb-yellow);font-weight:900;font-size:16px;cursor:pointer;letter-spacing:-.2px;font-family:inherit;}
+    .cta-btn:hover{background:var(--kb-yellow-dark);}
+    .cta-btn:active{transform:translateY(1px);}
+    .cta-btn:disabled{background:#e0e0e0;color:#aaa;cursor:not-allowed;}
+
+    /* toast */
+    .toast{position:fixed;left:50%;bottom:74px;transform:translateX(-50%);background:rgba(0,0,0,.86);color:#fff;padding:10px 14px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .18s ease;max-width:min(480px,calc(100vw - 24px));text-align:center;z-index:60;}
+    .toast.show{opacity:1;}
+
+    /* ? btn */
+    .req-qmark{position:fixed;right:14px;bottom:88px;width:44px;height:44px;border-radius:999px;border:1px solid rgba(0,0,0,.18);background:var(--kb-yellow);color:#111;font-weight:900;font-size:22px;cursor:pointer;box-shadow:0 10px 22px rgba(0,0,0,.14);opacity:.82;transition:opacity .15s ease;z-index:1000;display:flex;align-items:center;justify-content:center;}
+    .req-qmark:hover{opacity:1;background:var(--kb-yellow-dark);}
+    .req-qmark:active{transform:translateY(1px);}
+
+    /* ────────────────────────────────────────
+       적합성 진단 확인서 모달 (z-index: 800)
+    ──────────────────────────────────────── */
+    .diag-root{
+      position:fixed;inset:0;
+      background:var(--overlay);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px 18px;
+      z-index:800;
+    }
+    .diag-root.show{display:flex;}
+    .diag-box{
+      width:min(400px,100%);
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 24px 64px rgba(0,0,0,.28);
+      border:1px solid rgba(0,0,0,.10);
+      overflow:hidden;
+      animation:diagIn .22s ease;
+    }
+    @keyframes diagIn{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
+
+    .diag-body{padding:24px 20px 0;}
+    .diag-ttl{font-size:16px;font-weight:900;letter-spacing:-.3px;margin-bottom:6px;}
+    .diag-result{font-size:13.5px;color:#444;padding-bottom:16px;border-bottom:1px solid var(--line);}
+    .diag-result b{color:#111;font-weight:900;}
+
+    .diag-rows{margin-top:0;}
+    .diag-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--line);}
+    .diag-row:last-child{border-bottom:none;}
+    .diag-row .dr-lbl{font-size:14px;color:#555;}
+    .diag-row .dr-val{font-size:14px;font-weight:700;color:#111;text-align:right;max-width:55%;}
+
+    .diag-notice{
+      text-align:center;
+      padding:18px 20px 16px;
+      font-size:13.5px;
+      color:#444;
+      font-weight:700;
+      border-top:1px solid var(--line);
+      background:#fafafa;
+    }
+    .diag-foot{
+      padding:14px 20px 20px;
+      background:#fafafa;
+    }
+    .diag-foot .cta-btn{margin:0;}
+    .diag-sub{
+      margin-top:10px;
+      font-size:11.5px;
+      color:var(--muted);
+      text-align:center;
+      line-height:1.65;
+    }
+
+    /* spec modal (z-index: 1200) */
+    .spec-modal-root{position:fixed;inset:0;background:var(--overlay);display:none;align-items:center;justify-content:center;padding:18px;z-index:1200;}
+    .spec-modal-root.show{display:flex;}
+    .spec-modal{width:min(980px,100%);max-height:min(86vh,900px);overflow:auto;background:#fff;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,.25);border:1px solid rgba(0,0,0,.15);}
+    .spec-modal__head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-bottom:1px solid var(--modal-line);position:sticky;top:0;background:#fff;}
+    .spec-modal__title{font-size:16px;font-weight:900;letter-spacing:-.2px;}
+    .spec-modal__close{border:1px solid rgba(0,0,0,.18);background:#fff;border-radius:8px;padding:8px 10px;cursor:pointer;font-weight:900;font-family:inherit;}
+    .spec-modal__body{padding:14px 16px 18px;}
+    .kv{display:grid;grid-template-columns:170px 1fr;border:1px solid var(--modal-line);border-radius:10px;overflow:hidden;margin-bottom:12px;}
+    .kv .k,.kv .v{padding:10px 12px;border-bottom:1px solid var(--modal-line);font-size:13px;line-height:1.5;}
+    .kv .k{background:#fafafa;font-weight:900;color:#333;border-right:1px solid var(--modal-line);}
+    .kv .v{color:#222;}
+    .kv .k:last-child,.kv .v:last-child{border-bottom:none;}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+    .chip{font-size:12px;border:1px solid rgba(0,0,0,.12);background:#fafafa;padding:6px 10px;border-radius:999px;font-family:var(--mono);}
+    .section{margin-top:12px;padding:12px;border:1px solid var(--modal-line);border-radius:10px;background:#fff;}
+    .section__title{font-weight:900;font-size:13px;margin:0 0 8px;}
+    .section ul{margin:0;padding-left:18px;color:#222;font-size:13px;line-height:1.6;}
+    .code{margin-top:10px;padding:10px 12px;border-radius:10px;background:#0b0b0d;color:#e9e9ef;font-family:var(--mono);font-size:12px;line-height:1.55;overflow:auto;white-space:pre;}
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+<body>
+<div class="wrap" role="application" aria-label="필수확인사항 (0062)">
+
+  <div class="topbar" role="banner">
+    <div class="title">필수확인사항 <small>(0062)</small></div>
+    <button class="close" id="closeBtn" aria-label="닫기" type="button">×</button>
+  </div>
+
+  <div class="content">
+
+    <div class="sec-title">적합성판단확인<span class="req">(필수)</span></div>
+    <ul class="desc-list">
+      <li>금융소비자보호법 제 17조(적합성 원칙)에 2항에 따라, 신용카드상품이 고객님께 적합한지 여부를 파악합니다.</li>
+      <li>고객님의 상황에 가장 부합하거나 가까운 항목을 체크해 주시기 바랍니다.</li>
+    </ul>
+
+    <div class="field">
+      <label for="annualIncome">연간소득</label>
+      <select id="annualIncome">
+        <option value="">선택해주세요</option>
+        <option value="1">1천만원 이하</option>
+        <option value="2">1천만원 초과~2천만원 이하</option>
+        <option value="3">2천만원 초과~4천만원 이하</option>
+        <option value="4">4천만원 초과~6천만원 이하</option>
+        <option value="5" selected>6백만원 초과~5천만원 이하</option>
+        <option value="6">5천만원 초과~1억원 이하</option>
+        <option value="7">1억원 초과</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="creditScore">신용점수</label>
+      <select id="creditScore">
+        <option value="">선택해주세요</option>
+        <option value="1">500점 이하</option>
+        <option value="2" selected>500점 초과</option>
+        <option value="3">600점 초과</option>
+        <option value="4">700점 초과</option>
+        <option value="5">800점 초과</option>
+        <option value="6">900점 초과</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="payDay">
+        결제일
+        <span class="tooltip" id="payDayTooltip" aria-label="결제일 안내">?</span>
+      </label>
+      <select id="payDay">
+        <option value="01" selected>01일</option>
+        <option value="05">05일</option>
+        <option value="10">10일</option>
+        <option value="14">14일</option>
+        <option value="15">15일</option>
+        <option value="20">20일</option>
+        <option value="25">25일</option>
+      </select>
+      <div class="field-notice">기업회원의 결제일 부서별로 관리되며, 결제일은 카드관리 &gt; 정보관리 &gt; 결제정보 메뉴에서 변경 가능합니다. 단, 총괄관리자 및 부서별 관리자 권한 로그인 시 가능.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="sec-title">상품설명서 및 신용카드 설명서(주요거래조건 안내)<span class="req">(필수)</span></div>
+    <ul class="desc-list" style="margin-bottom:14px;">
+      <li>금융소비자 보호법 제 19조(설명의무)에 따라 금융회사는 금융소비자에게 상품설명서를 제공해야 합니다.</li>
+      <li>카드신청 전 아래의 서류를 다운로드 하시고 해당 내용을 충분히 확인해 주시기 바랍니다.</li>
+    </ul>
+
+    <div class="pdf-row">
+      <span class="pdf-lbl">상품설명서</span>
+      <button class="pdf-btn" id="pdfBtn" type="button">📄 PDF</button>
+    </div>
+
+    <div class="link-row" id="cardDescLink" role="button" tabindex="0">
+      <span>신용카드 설명서 확인하기</span>
+      <span class="arr">›</span>
+    </div>
+
+    <div class="confirm-area" id="confirmArea">
+      <input type="checkbox" id="confirmChk" aria-label="내용 확인 동의"/>
+      <p>본인은 상품설명서, 신용카드설명서(기업회원 주요거래조건안내)를 충분히 확인하고 이해하였으며, 적합성 판단 결과에 따라 카드를 신청합니다.</p>
+    </div>
+
+  </div>
+</div>
+
+<!-- 하단 CTA -->
+<div class="bottom-cta">
+  <button class="cta-btn" id="confirmBtn" type="button" disabled>확인</button>
+</div>
+
+<!-- 토스트 -->
+
+
+<!-- ? 버튼 -->
+<button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+<!-- ══════════════════════════════════════════
+     적합성 진단 확인서 모달 (z-index: 800)
+══════════════════════════════════════════ -->
+<div id="diagRoot" class="diag-root" role="dialog" aria-modal="true" aria-label="적합성 진단 확인서" aria-hidden="true">
+  <div class="diag-box">
+    <div class="diag-body">
+      <div class="diag-ttl">적합성 진단 확인서</div>
+      <div class="diag-result">적합성 여부 확인 결과 : <b>적합</b></div>
+      <div class="diag-rows">
+        <div class="diag-row">
+          <span class="dr-lbl">연소득 정보</span>
+          <span class="dr-val" id="diagIncome">-</span>
+        </div>
+        <div class="diag-row">
+          <span class="dr-lbl">신용점수</span>
+          <span class="dr-val" id="diagCredit">-</span>
+        </div>
+        <div class="diag-row">
+          <span class="dr-lbl">결제일</span>
+          <span class="dr-val" id="diagPayDay">-</span>
+        </div>
+      </div>
+    </div>
+    <div class="diag-notice">고객님께서 입력한 내용을 확인해주세요.</div>
+    <div class="diag-foot">
+      <button class="cta-btn" id="diagConfirmBtn" type="button">확인</button>
+      <div class="diag-sub">고객 주요거래조건 안내를 충분히 확인하고 이해하였으며,<br>적합성 판단 결과에 따라 카드를 신청합니다.</div>
+    </div>
+  </div>
+</div>
+
+<!-- 요구사항 모달 (z-index: 1200) -->
+<div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="spec-modal">
+    <div class="spec-modal__head">
+      <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0062)</div>
+      <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+    </div>
+    <div id="specModalBody" class="spec-modal__body"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0062";
+(function(){
+  const SCREEN_ID   = "0062";
+  const SCREEN_NAME = "필수확인사항(개사자전용)";
+  const CHANNEL     = "mobile web (개사자)";
+
+  const $ = id => document.getElementById(id);
+  const toast = $("toast");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=> toast.classList.remove("show"), 1800);
+  }
+
+  function escapeHtml(s){
+    return String(s)
+      .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+      .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+  }
+
+  // ── 입력 요소 ──
+  const annualIncome = $("annualIncome");
+  const creditScore  = $("creditScore");
+  const payDay       = $("payDay");
+  const confirmChk   = $("confirmChk");
+  const confirmArea  = $("confirmArea");
+  const confirmBtn   = $("confirmBtn");
+
+  function validate(){
+    const ok = annualIncome.value !== "" && creditScore.value !== "" &&
+               payDay.value !== "" && confirmChk.checked;
+    confirmBtn.disabled = !ok;
+    confirmArea.classList.toggle("active", confirmChk.checked);
+  }
+
+  [annualIncome, creditScore, payDay].forEach(el => el.addEventListener("change", validate));
+  confirmChk.addEventListener("change", validate);
+  validate();
+
+  // ── 기본 이벤트 ──
+  $("closeBtn").addEventListener("click", ()=> showToast("닫기(모의): 이전 화면 유지"));
+  $("payDayTooltip").addEventListener("click", ()=> showToast("결제일은 카드관리 > 정보관리 > 결제정보에서 변경 가능합니다."));
+  $("pdfBtn").addEventListener("click", ()=> showToast("상품설명서 PDF 다운로드(모의)"));
+  $("cardDescLink").addEventListener("click", ()=> showToast("신용카드 설명서 페이지 이동(모의)"));
+  $("cardDescLink").addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" ") $("cardDescLink").click(); });
+
+  // ── 확인 버튼 → 적합성 진단 확인서 모달 열기 ──
+  const diagRoot       = $("diagRoot");
+  const diagConfirmBtn = $("diagConfirmBtn");
+  const diagIncome     = $("diagIncome");
+  const diagCredit     = $("diagCredit");
+  const diagPayDay     = $("diagPayDay");
+
+  function openDiag(){
+    // 선택된 값을 모달에 반영
+    diagIncome.textContent  = annualIncome.options[annualIncome.selectedIndex].text;
+    diagCredit.textContent  = creditScore.options[creditScore.selectedIndex].text;
+    diagPayDay.textContent  = payDay.options[payDay.selectedIndex].text + "일";
+    diagRoot.classList.add("show");
+    diagRoot.setAttribute("aria-hidden","false");
+  }
+
+  function closeDiag(){
+    diagRoot.classList.remove("show");
+    diagRoot.setAttribute("aria-hidden","true");
+  }
+
+  confirmBtn.addEventListener("click", openDiag);
+
+  // 배경 클릭 닫기
+  diagRoot.addEventListener("click", e=>{ if(e.target === diagRoot) closeDiag(); });
+
+  // 모달 내 최종 확인
+  diagConfirmBtn.addEventListener("click", ()=>{
+    closeDiag();
+    showToast("적합성 확인 완료(모의) → 카드정보 입력 화면으로 이동");
+    setTimeout(()=>{ location.hash = "#/0063"; }, 900);
+    console.log("[0062] 최종확인:", {
+      income: annualIncome.options[annualIncome.selectedIndex].text,
+      credit: creditScore.options[creditScore.selectedIndex].text,
+      payDay: payDay.value
+    });
+  });
+
+  // ESC 로 모달 닫기
+  document.addEventListener("keydown", e=>{
+    if(e.key==="Escape"){
+      if(diagRoot.classList.contains("show")){ closeDiag(); return; }
+      if(specModalRoot.classList.contains("show")){ closeSpec(); }
+    }
+  });
+
+  // ── 요구사항 모달 ──
+  
+
+  const reqBtn        = $("reqBtn");
+  const specModalRoot = $("specModalRoot");
+  const specModalClose= $("specModalClose");
+  const specModalTitle= $("specModalTitle");
+  const specModalBody = $("specModalBody");
+
+  function renderSpec(spec){
+    specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+    const chips = [`ID:${spec.screen_id}`,`Action:${spec.action}`,`Channel:${spec.channel}`,`Persona:개사자`];
+    specModalBody.innerHTML = `
+      <div class="kv">
+        <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+        <div class="k">기능명</div><div class="v"><b>${escapeHtml(spec.screen_name)}</b></div>
+        <div class="k">채널</div><div class="v">${escapeHtml(spec.channel)}</div>
+        <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+        <div class="k">목적</div><div class="v">${escapeHtml(spec.purpose)}</div>
+      </div>
+      <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+      <div class="section"><div class="section__title">제어 규칙</div><ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+      <div class="section"><div class="section__title">감사/로그 포인트</div><ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+      <div class="section"><div class="section__title">주석 (개발/QA 포인트)</div><ul>${(spec.notes||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul></div>
+      <div class="section"><div class="section__title">REQ_SPEC 원문 (JSON)</div><div class="code">${escapeHtml(JSON.stringify(spec,null,2))}</div></div>
+    `;
+  }
+
+  function openSpec(){ renderSpec(REQ_SPEC); specModalRoot.classList.add("show"); specModalRoot.setAttribute("aria-hidden","false"); }
+  function closeSpec(){ specModalRoot.classList.remove("show"); specModalRoot.setAttribute("aria-hidden","true"); }
+
+  reqBtn.addEventListener("click", openSpec);
+  specModalClose.addEventListener("click", closeSpec);
+  specModalRoot.addEventListener("click", e=>{ if(e.target===specModalRoot) closeSpec(); });
+
+})();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0062"></script>
+</body>
+</html>

@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KB국민카드 | 사업자정보(확인용) (0030)</title>
+
+  <style>
+    /* --- 디자인 시스템 변수 정의 --- */
+    :root {
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #e6b800;
+      --kb-gray-dark: #4b4b4b;
+      --kb-gray-light: #f4f4f4;
+      --text-main: #222;
+      --text-muted: #666;
+      --line-color: #eee;
+      --white: #ffffff;
+      --modal-overlay: rgba(0, 0, 0, 0.5);
+      --transition: all 0.2s ease-in-out;
+      --mono: ui-monospace, SFMono-Regular, "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0; /* 배경색 대비를 위해 설정 */
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", sans-serif;
+      line-height: 1.6;
+      color: var(--text-main);
+    }
+
+    /* --- 중앙 팝업 레이아웃 --- */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-overlay);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 1000;
+      backdrop-filter: blur(2px);
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .dialog {
+      width: 100%;
+      max-width: 600px;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .overlay.active .dialog {
+      transform: translateY(0);
+    }
+
+    /* --- 헤더 섹션 --- */
+    .dialog-header {
+      padding: 20px 24px;
+      background-color: var(--white);
+      border-bottom: 2px solid var(--kb-yellow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .dialog-title {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--kb-gray-dark);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .screen-id {
+      font-size: 14px;
+      font-weight: normal;
+      color: var(--text-muted);
+      background: var(--kb-gray-light);
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .btn-close-x {
+      width: 32px;
+      height: 32px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      transition: var(--transition);
+    }
+
+    .btn-close-x:hover {
+      background: var(--kb-gray-light);
+    }
+
+    .btn-close-x::before, .btn-close-x::after {
+      content: '';
+      position: absolute;
+      width: 16px;
+      height: 2px;
+      background-color: var(--kb-gray-dark);
+      border-radius: 2px;
+    }
+
+    .btn-close-x::before { transform: rotate(45deg); }
+    .btn-close-x::after { transform: rotate(-45deg); }
+
+    /* --- 바디 섹션 (테이블) --- */
+    .dialog-body {
+      padding: 24px;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 15px;
+    }
+
+    .info-table tr th {
+      text-align: left;
+      width: 140px;
+      padding: 14px 12px;
+      background-color: #fafafa;
+      color: var(--text-muted);
+      font-weight: 600;
+      border-bottom: 1px solid var(--line-color);
+    }
+
+    .info-table tr td {
+      padding: 14px 12px;
+      color: var(--text-main);
+      font-weight: 500;
+      border-bottom: 1px solid var(--line-color);
+    }
+
+    /* --- 푸터 섹션 (버튼) --- */
+    .dialog-footer {
+      padding: 16px 24px 24px;
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      height: 52px;
+      background-color: var(--kb-yellow);
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--kb-gray-dark);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+
+    /* --- 요구사항 플로팅 버튼 (개발용) --- */
+    .fab-spec {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      width: 48px;
+      height: 48px;
+      background: var(--kb-gray-dark);
+      color: var(--kb-yellow);
+      border: none;
+      border-radius: 50%;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 2000;
+    }
+
+    /* --- 요구사항 모달 --- */
+    .spec-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 3000;
+      padding: 20px;
+      overflow-y: auto;
+      align-items: flex-start;
+      justify-content: center;
+    }
+
+    .spec-modal-overlay.show { display: flex; }
+
+    .spec-content {
+      background: white;
+      width: 100%;
+      max-width: 800px;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 40px 0;
+    }
+
+    .spec-header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--kb-gray-light);
+      padding-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .spec-table th, .spec-table td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .spec-table th { background: #f9f9f9; width: 120px; }
+
+    .json-view {
+      background: #272822;
+      color: #f8f8f2;
+      padding: 15px;
+      border-radius: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      margin-top: 15px;
+    }
+
+    /* --- 반응형 처리 --- */
+    @media (max-width: 480px) {
+      .info-table tr {
+        display: flex;
+        flex-direction: column;
+        border-bottom: 1px solid var(--line-color);
+      }
+      .info-table tr th {
+        width: 100%;
+        padding-bottom: 2px;
+        background: transparent;
+        border-bottom: none;
+      }
+      .info-table tr td {
+        width: 100%;
+        padding-top: 2px;
+        border-bottom: none;
+      }
+      .dialog-header { padding: 16px; }
+      .dialog-body { padding: 16px; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+<body>
+
+<!-- 메인 컨텐츠 확인용 배경 (실제 앱에서는 필요 없음) -->
+<div style="padding: 20px; text-align: center;">
+  <button onclick="toggleMainPopup(true)" style="padding: 12px 24px; cursor: pointer; border-radius: 8px; border: 1px solid #ccc; background: white;">팝업 다시 열기</button>
+</div>
+
+<!-- 메인 사업자 정보 팝업 -->
+<div class="overlay active" id="mainPopup" role="dialog" aria-labelledby="dialogTitle">
+  <div class="dialog">
+    <header class="dialog-header">
+      <h1 class="dialog-title" id="dialogTitle">
+        사업자 정보 <span class="screen-id">0030</span>
+      </h1>
+      <button class="btn-close-x" onclick="toggleMainPopup(false)" aria-label="닫기"></button>
+    </header>
+
+    <main class="dialog-body">
+      <table class="info-table">
+        <tbody>
+          <tr>
+            <th>사업자등록번호</th>
+            <td id="bizNo">105-82-87555</td>
+          </tr>
+          <tr>
+            <th>법인등록번호</th>
+            <td id="corpNo">105828-7555***</td>
+          </tr>
+          <tr>
+            <th>업체명</th>
+            <td>김두나락 댕경서 길준범</td>
+          </tr>
+          <tr>
+            <th>영문업체명</th>
+            <td>JDNHLXCAJW</td>
+          </tr>
+          <tr>
+            <th>사업장주소</th>
+            <td>인천 미추홀구 참의전로 268 폴로리 357-4</td>
+          </tr>
+          <tr>
+            <th>사업장전화번호</th>
+            <td>032-2335-8101</td>
+          </tr>
+          <tr>
+            <th>설립일</th>
+            <td>2024.04.09</td>
+          </tr>
+        </tbody>
+      </table>
+    </main>
+
+    <footer class="dialog-footer">
+      <button class="btn-primary" onclick="toggleMainPopup(false)">확인</button>
+    </footer>
+  </div>
+</div>
+
+<!-- 개발용 요구사항 FAB -->
+<button class="fab-spec" title="기능요구서" onclick="toggleSpecModal(true)">?</button>
+
+<!-- 요구사항 모달 -->
+<div class="spec-modal-overlay" id="specModal">
+  <div class="spec-content">
+    <div class="spec-header">
+      <h2>화면 설계서 및 QA 가이드 (0030)</h2>
+      <button onclick="toggleSpecModal(false)" style="cursor:pointer; padding: 5px 15px;">닫기</button>
+    </div>
+    <div id="specContentBody"></div>
+  </div>
+</div>
+
+<script>
+    const SCREEN_ID = "0030";
+  /**
+   * 화면 스펙 데이터
+   */
+  const SCREEN_SPEC = {
+    id: "0030",
+    name: "사업자정보(확인용)",
+    desc: "이전 단계(0015/0016)에서 입력된 정보의 유효성을 최종 확인하는 팝업",
+    features: [
+      "회원 원장 정보를 실시간으로 조회하여 출력",
+      "민감 정보(법인번호 뒷자리 등)는 별표(*) 마스킹 처리 준수",
+      "확인 버튼 클릭 시 이전 입력 단계로 복귀 또는 세션 유지"
+    ],
+    qa_points: [
+      "사업자등록번호 하이픈(-) 표기 규격 확인",
+      "주소지가 긴 경우 멀티라인 처리 및 가독성 확인",
+      "ESC 키 입력 시 팝업 닫힘 동작 여부",
+      "모바일 세로 모드에서 텍스트 겹침 현상 여부"
+    ]
+  };
+
+  /**
+   * 메인 팝업 토글 함수
+   */
+  function toggleMainPopup(show) {
+    const popup = document.getElementById('mainPopup');
+    if (show) {
+      popup.classList.add('active');
+    } else {
+      popup.classList.remove('active');
+    }
+  }
+
+  /**
+   * 요구사항 모달 토글 및 렌더링
+   */
+  function toggleSpecModal(show) {
+    const modal = document.getElementById('specModal');
+    if (show) {
+      renderSpec();
+      modal.classList.add('show');
+    } else {
+      modal.classList.remove('show');
+    }
+  }
+
+  function renderSpec() {
+    const container = document.getElementById('specContentBody');
+    container.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${SCREEN_SPEC.id}</td></tr>
+        <tr><th>화면명</th><td>${SCREEN_SPEC.name}</td></tr>
+        <tr><th>설명</th><td>${SCREEN_SPEC.desc}</td></tr>
+      </table>
+      
+      <h3>주요 기능</h3>
+      <ul>${SCREEN_SPEC.features.map(f => `<li>${f}</li>`).join('')}</ul>
+      
+      <h3>QA 체크리스트</h3>
+      <ul>${SCREEN_SPEC.qa_points.map(q => `<li>${q}</li>`).join('')}</ul>
+
+      <h3>Data Structure (JSON)</h3>
+      <div class="json-view">${JSON.stringify(SCREEN_SPEC, null, 2)}</div>
+    `;
+  }
+
+  // 데이터 마스킹 예시 로직 (실제 데이터 로드 시 적용 가능)
+  function applyMasking() {
+    const corpNoElem = document.getElementById('corpNo');
+    const originalValue = corpNoElem.innerText;
+    if(originalValue.length > 10) {
+      // 끝 3자리를 마스킹 처리 예시
+      corpNoElem.innerText = originalValue.substring(0, originalValue.length - 3) + "***";
+    }
+  }
+
+  // 초기 실행 및 이벤트 리스너
+  window.onload = () => {
+    applyMasking();
+
+    // 배경 클릭 시 팝업 닫기 (사용자 편의성)
+    document.getElementById('mainPopup').addEventListener('click', (e) => {
+      if (e.target.id === 'mainPopup') toggleMainPopup(false);
+    });
+
+    // ESC 키로 팝업 닫기
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        toggleMainPopup(false);
+        toggleSpecModal(false);
+      }
+    });
+  };
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0030"></script>
+</body>
+</html>

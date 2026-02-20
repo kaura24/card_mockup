@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 준비사항 (0004)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --panel: #f4f6f9;
+      --req: #d64545;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+      --white: #fff;
+
+      --modal-bg: rgba(0, 0, 0, .6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 24px 90px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .header-group {
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .screen-id {
+      font-size: .78em;
+      font-weight: 900;
+      color: #666;
+      letter-spacing: -.2px;
+      white-space: nowrap;
+    }
+
+    .subnote {
+      margin: 8px 0 0;
+      color: #555;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    /* Content card (screenshot-like) */
+    .content-area {
+      margin-top: 18px;
+    }
+
+    .info-card {
+      border: 1px solid #e1e1e1;
+      border-radius: 12px;
+      padding: 22px 22px;
+      background: #fff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, .04);
+    }
+
+    .prep-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .prep-item {
+      font-size: 16px;
+      font-weight: 750;
+      color: #444;
+      line-height: 1.55;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .dash {
+      display: inline-block;
+      min-width: 14px;
+      color: #777;
+      font-weight: 900;
+      transform: translateY(2px);
+    }
+
+    /* bottom buttons */
+    .btn-area {
+      margin-top: 34px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .btn-secondary {
+      width: 180px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #fff;
+      color: #333;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #fafafa;
+    }
+
+    .btn-secondary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      width: 260px;
+      height: 56px;
+      border: none;
+      border-radius: 10px;
+      background: var(--kb-yellow);
+      color: #222;
+      font-size: 18px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(33, 33, 33, .92);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .28s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #222;
+      color: var(--kb-yellow);
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      z-index: 2900;
+      transition: transform .2s;
+    }
+
+    .req-trigger:hover {
+      transform: rotate(15deg) scale(1.08);
+    }
+
+    .req-trigger:active {
+      transform: scale(.98);
+    }
+
+    /* ===== Spec modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 4000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, .4);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #eee;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      background: #f9f9f9;
+      width: 160px;
+      font-weight: 850;
+    }
+
+    .spec-section {
+      margin-top: 24px;
+    }
+
+    .spec-section h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--kb-yellow);
+      padding-left: 10px;
+      font-weight: 900;
+    }
+
+    .spec-section ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    /* Responsive */
+    @media (max-width: 860px) {
+      .btn-area {
+        flex-direction: column;
+      }
+
+      .btn-secondary,
+      .btn-primary {
+        width: 100%;
+      }
+
+      .title {
+        font-size: 26px;
+      }
+
+      .info-card {
+        padding: 18px 16px;
+      }
+
+      .prep-item {
+        font-size: 15px;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆에 화면번호 실제 렌더 + 탭 타이틀도 JS에서 SSOT로 동기화 -->
+      <h1 id="page-title" class="title">
+        <span id="title-text">준비사항</span>
+        <span id="title-id" class="screen-id">(0004)</span>
+      </h1>
+      <p class="subnote">원활한 진행을 위해 아래 항목을 미리 준비해 주세요.</p>
+    </div>
+
+    <div class="content-area">
+      <div class="info-card" role="note" aria-label="준비사항 안내">
+        <ul id="prep-list" class="prep-list">
+          <!-- JS 렌더 -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary">다음</button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCREEN_ID = "0004";
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0004
+     * 준비사항(단순 안내)
+     *
+     * 템플릿(0033) 적용 포인트
+     * 1) 타이틀/화면번호/탭타이틀: SSOT(META) 기반으로 1회 정의 후 동기화
+     * 2) 요구사항/주석: ? FAB 버튼 → 모달 표시(요건정의서 + JSON)
+     * 3) 본 화면은 단순안내(INFO)로 입력/처리계 호출 없음
+     */
+    (function () {
+      // =========================
+      // 0) SSOT: 화면 메타
+      // =========================
+      const META = {
+        id: "0004",
+        title: "준비사항",
+        name: "준비사항",
+        // 0004는 신규/추가 공용으로 쓰이므로 prev는 시나리오에 따라 달라질 수 있음
+        // - 신규 흐름: 0002 → 0004
+        // - 추가 흐름: 0003 → 0004
+        prevTarget: "0003",
+        nextTarget: "0005"
+      };
+
+      // 탭/제목 동기화
+      document.title = `KB국민카드 | ${META.title} (${META.id})`;
+      document.getElementById("title-text").textContent = META.title;
+      document.getElementById("title-id").textContent = `(${META.id})`;
+
+      // =========================
+      // 1) 콘텐츠(스크린샷 기반)
+      // =========================
+      const PREP_ITEMS = [
+        "사업자용 공동인증서",
+        "결제계좌번호",
+        "신청인 본인명의 휴대폰 및 신청인의 신분증 (주민등록증 또는 운전면허증)"
+      ];
+
+      // =========================
+      // 2) DOM
+      // =========================
+      const toast = document.getElementById("toast");
+      const listEl = document.getElementById("prep-list");
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      const specBtn = document.getElementById("btn-spec");
+      const modal = document.getElementById("modal-spec");
+      const modalClose = document.getElementById("btn-modal-close");
+
+      // =========================
+      // 3) Utils
+      // =========================
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2500);
+      };
+
+      const goTo = (id) => { location.hash = `#/${id}`; };
+
+      // =========================
+      // 4) Render
+      // =========================
+      const render = () => {
+        listEl.innerHTML = PREP_ITEMS.map(t => `
+      <li class="prep-item"><span class="dash" aria-hidden="true">-</span><span>${t}</span></li>
+    `).join("");
+      };
+
+      // =========================
+      // 5) Navigation (mock)
+      // =========================
+      btnPrev.addEventListener("click", () => {
+        showToast("이전 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          if (window.ScenarioNav) {
+            ScenarioNav.goPrev();
+          } else {
+            setTimeout(() => goTo(META.prevTarget), 250);
+          }
+        }
+      });
+
+      btnNext.addEventListener("click", () => {
+        showToast("다음 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+        ScenarioNav.goNext();
+      } else {
+        setTimeout(() => {
+          const nb = document.getElementById('_sc-next-btn');
+          if (nb) nb.click();
+          else goTo(META.nextTarget);
+        }, 250);
+      }
+      });
+
+      // =========================
+      // 6) Spec modal (요건정의서/주석)
+      // =========================
+      // 네가 준 "화면기능목록" 원문을 0004에 맞춰 반영
+      const REQ_SPEC = {
+        screen_id: META.id,
+        screen_name: META.name,
+        title: META.title,
+        segment: { corp: true, sole_prop: false },
+        action_type: "INFO", // 단순안내
+        inputs: [],
+        calls: [],
+        purpose: "고객에게 진행 전 준비사항을 단순 안내한다",
+        ui_contents: PREP_ITEMS,
+        navigation: {
+          prev: "0002 또는 0003(시나리오에 따라 상이) - 현재 목업은 0003",
+          next: `${META.nextTarget}(목업) - 실제 플로우에 맞게 교체`
+        },
+        notes: [
+          "화면기능목록 ID:0004는 '단순안내'로 정의됨(처리계 거래 없음).",
+          "0004는 신규/추가 공용 화면이므로 이전 화면(Prev)은 시나리오에 따라 달라질 수 있음."
+        ],
+        qa_points: [
+          "스크린샷과 동일한 제목/문구/불릿(-) 스타일인지",
+          "PC/모바일에서 카드 박스 여백/줄바꿈이 자연스러운지",
+          "이전/다음 버튼 노출 정책이 확정되면 라벨/유무 조정",
+          "접근성: 목록이 읽기 순서대로 낭독되는지"
+        ],
+        data_spec: {
+          ssot_meta: META,
+          page_type: "info_page",
+          items: PREP_ITEMS
+        },
+        business_rule_source: "화면기능목록 ID:0004 (준비사항)"
+      };
+
+      const renderSpec = () => {
+        const body = document.getElementById("modal-body");
+        const title = document.getElementById("modal-title");
+        if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+        body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action_type}</td></tr>
+        <tr><th>대상</th><td>법인사업자: ${REQ_SPEC.segment.corp ? "Y" : "N"} / 개인사업자: ${REQ_SPEC.segment.sole_prop ? "Y" : "N"}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>화면 내용</h3>
+        <ul>${REQ_SPEC.ui_contents.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>네비게이션</h3>
+        <ul>
+          <li>이전: ${REQ_SPEC.navigation.prev}</li>
+          <li>다음: ${REQ_SPEC.navigation.next}</li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>비고</h3>
+        <ul>${REQ_SPEC.notes.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+      };
+
+      const openModal = () => {
+        renderSpec();
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+        document.body.style.overflow = "hidden";
+        modalClose.focus();
+      };
+
+      const closeModal = () => {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+        document.body.style.overflow = "";
+        specBtn.focus();
+      };
+
+      specBtn.addEventListener("click", openModal);
+      modalClose.addEventListener("click", closeModal);
+      modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+      // ESC: 스펙 모달 우선 닫기
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (modal.classList.contains("show")) closeModal();
+      });
+
+      // init
+      render();
+    })();
+  </script>
+  <script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0004"></script>
+</body>
+
+</html>

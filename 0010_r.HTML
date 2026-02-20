@@ -1,0 +1,1003 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 신청인정보 (0010)</title>
+
+  <style>
+    :root {
+      --text: #111;
+      --muted: #666;
+      --line: #d9d9d9;
+      --panel: #f4f6f9;
+      --req: #d64545;
+      --kb-yellow: #ffcc00;
+      --kb-yellow-dark: #f2b800;
+      --white: #fff;
+
+      --modal-bg: rgba(0, 0, 0, .6);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+      --focus: #0055ff;
+      --danger-bg: #fff6f6;
+      --danger-line: #f2b6b6;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", "Apple SD Gothic Neo", Arial, sans-serif;
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 34px 24px 90px;
+    }
+
+    /* Header */
+    .header-group {
+      margin-bottom: 18px;
+    }
+
+    .title {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .screen-id {
+      font-size: .78em;
+      font-weight: 900;
+      color: #666;
+      letter-spacing: -.2px;
+      white-space: nowrap;
+    }
+
+    .subnote {
+      margin: 8px 0 0;
+      color: #555;
+      font-size: 14px;
+      font-weight: 650;
+    }
+
+    /* ===== Form ===== */
+    .form-container {
+      border-top: 2px solid #333;
+      margin-top: 18px;
+    }
+
+    .required-info {
+      text-align: right;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 8px;
+    }
+
+    .required-info .star {
+      color: var(--req);
+      margin-right: 4px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      border-bottom: 1px solid var(--line);
+      align-items: stretch;
+    }
+
+    .form-label {
+      background: #fafafa;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #333;
+    }
+
+    .form-label .l {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .form-label .star {
+      color: var(--req);
+    }
+
+    .form-content {
+      padding: 16px 24px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field .hint {
+      font-size: 13px;
+      color: #777;
+      font-weight: 650;
+      line-height: 1.45;
+    }
+
+    .input {
+      width: 360px;
+      max-width: 100%;
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 14px;
+      font-size: 14px;
+      font-weight: 750;
+      outline: none;
+      background: #fff;
+      transition: .12s ease;
+    }
+
+    .input:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(0, 85, 255, .12);
+    }
+
+    .input::placeholder {
+      color: #aaa;
+      font-weight: 650;
+    }
+
+    .input.is-invalid {
+      border-color: var(--req);
+      background: var(--danger-bg);
+      box-shadow: none;
+    }
+
+    .inline {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .sep {
+      color: #999;
+      font-weight: 900;
+    }
+
+    .select {
+      height: 46px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 0 12px;
+      font-size: 14px;
+      font-weight: 800;
+      background: #fff;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select:focus {
+      border-color: var(--focus);
+      box-shadow: 0 0 0 3px rgba(0, 85, 255, .12);
+    }
+
+    .checkline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      font-weight: 800;
+      color: #333;
+      user-select: none;
+    }
+
+    .chk {
+      width: 18px;
+      height: 18px;
+      accent-color: #222;
+      cursor: pointer;
+    }
+
+    .icon-btn {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      transition: .15s ease;
+      color: #555;
+      font-weight: 950;
+    }
+
+    .icon-btn:hover {
+      background: #fafafa;
+    }
+
+    .icon-btn:active {
+      transform: scale(.98);
+    }
+
+    .msg {
+      font-size: 13px;
+      color: var(--req);
+      font-weight: 800;
+      display: none;
+    }
+
+    .msg.show {
+      display: block;
+    }
+
+    /* bottom buttons */
+    .btn-area {
+      margin-top: 42px;
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .btn-secondary {
+      width: 180px;
+      height: 56px;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #fff;
+      color: #333;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: .15s ease;
+    }
+
+    .btn-secondary:hover {
+      background: #fafafa;
+    }
+
+    .btn-secondary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary {
+      width: 260px;
+      height: 56px;
+      border: none;
+      border-radius: 10px;
+      background: var(--kb-yellow);
+      color: #222;
+      font-size: 18px;
+      font-weight: 950;
+      cursor: pointer;
+      transition: .15s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .btn-primary:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-primary:active {
+      transform: scale(.98);
+    }
+
+    .btn-primary:disabled {
+      background: #eee;
+      color: #aaa;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .spinner {
+      width: 18px;
+      height: 18px;
+      border: 3px solid rgba(0, 0, 0, 0.12);
+      border-top-color: #333;
+      border-radius: 50%;
+      animation: spin .8s linear infinite;
+      display: none;
+    }
+
+    .btn-primary.is-loading .spinner {
+      display: block;
+    }
+
+    .btn-primary.is-loading .btn-text {
+      display: none;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 40px;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(33, 33, 33, .92);
+      color: #fff;
+      padding: 12px 22px;
+      border-radius: 30px;
+      font-size: 14px;
+      font-weight: 650;
+      opacity: 0;
+      pointer-events: none;
+      transition: all .28s cubic-bezier(.175, .885, .32, 1.275);
+      z-index: 3000;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+      max-width: calc(100vw - 40px);
+      text-align: center;
+      line-height: 1.35;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger {
+      position: fixed;
+      right: 24px;
+      bottom: 24px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #222;
+      color: var(--kb-yellow);
+      border: none;
+      font-size: 26px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, .3);
+      z-index: 2900;
+      transition: transform .2s;
+    }
+
+    .req-trigger:hover {
+      transform: rotate(15deg) scale(1.08);
+    }
+
+    .req-trigger:active {
+      transform: scale(.98);
+    }
+
+    /* ===== Spec modal ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 4000;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-overlay.show {
+      display: flex;
+    }
+
+    .modal-content {
+      width: 100%;
+      max-width: 900px;
+      background: #fff;
+      border-radius: 16px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, .4);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .modal-close {
+      background: #f5f5f5;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 850;
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 20px;
+      font-size: 14px;
+    }
+
+    .spec-table th,
+    .spec-table td {
+      border: 1px solid #eee;
+      padding: 12px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .spec-table th {
+      background: #f9f9f9;
+      width: 160px;
+      font-weight: 850;
+    }
+
+    .spec-section {
+      margin-top: 24px;
+    }
+
+    .spec-section h3 {
+      font-size: 15px;
+      margin-bottom: 12px;
+      border-left: 4px solid var(--kb-yellow);
+      padding-left: 10px;
+      font-weight: 900;
+    }
+
+    .spec-section ul {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .json-code {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 16px;
+      border-radius: 8px;
+      font-family: var(--mono);
+      font-size: 12px;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 860px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+
+      .form-label {
+        padding: 12px 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .form-content {
+        padding: 16px 20px;
+      }
+
+      .btn-area {
+        flex-direction: column;
+      }
+
+      .btn-secondary,
+      .btn-primary {
+        width: 100%;
+      }
+
+      .input {
+        width: 100%;
+      }
+    }
+  </style>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <h1 id="page-title" class="title">
+        <span id="title-text">신청인정보</span>
+        <span id="title-id" class="screen-id">(0010)</span>
+      </h1>
+      <p class="subnote">대표자 여부 및 신청인 기본 정보를 입력해 주세요.</p>
+    </div>
+
+    <div class="required-info">
+      <span class="star" aria-hidden="true">*</span>필수입력항목
+    </div>
+
+    <div class="form-container">
+      <!-- 대표자 여부 -->
+      <section class="form-row">
+        <div class="form-label">
+          <span class="l">대표자 여부</span>
+        </div>
+        <div class="form-content">
+          <label class="checkline">
+            <input id="chk-is-rep" class="chk" type="checkbox" />
+            <span>신청인과 대표자가 동일한 경우</span>
+          </label>
+          <div class="field">
+            <div class="hint">※ 체크 시 이후 단계(대표자 정보)에서 기본값 자동 세팅 가능(목업)</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 신청인 성명 -->
+      <section class="form-row">
+        <div class="form-label">
+          <span class="l">신청인 성명 <span class="star" aria-hidden="true">*</span></span>
+        </div>
+        <div class="form-content">
+          <div class="field">
+            <input id="inp-name" class="input" type="text" placeholder="한글로 입력해주세요" autocomplete="off" />
+            <div id="err-name" class="msg">신청인 성명을 입력해 주세요.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 주민등록번호 -->
+      <section class="form-row">
+        <div class="form-label">
+          <span class="l">주민등록번호 <span class="star" aria-hidden="true">*</span></span>
+        </div>
+        <div class="form-content">
+          <div class="field">
+            <div class="inline">
+              <input id="inp-rrn1" class="input" inputmode="numeric" maxlength="6" placeholder="앞 6자리"
+                style="width:160px" />
+              <span class="sep">-</span>
+              <input id="inp-rrn2" class="input" inputmode="numeric" maxlength="7" placeholder="뒤 7자리"
+                style="width:180px" />
+              <button type="button" id="btn-rrn-help" class="icon-btn" title="입력 안내"
+                aria-label="주민등록번호 입력 안내">i</button>
+            </div>
+            <div id="err-rrn" class="msg">주민등록번호를 정확히 입력해 주세요.</div>
+            <div class="hint">※ 실제 서비스에서는 마스킹/암호화 전송/키패드 등 보안 입력 적용 필요</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 휴대폰 번호 -->
+      <section class="form-row">
+        <div class="form-label">
+          <span class="l">휴대폰번호 <span class="star" aria-hidden="true">*</span></span>
+        </div>
+        <div class="form-content">
+          <div class="field">
+            <div class="inline">
+              <select id="sel-tel1" class="select" aria-label="휴대폰 앞자리">
+                <option value="010" selected>010</option>
+                <option value="011">011</option>
+                <option value="016">016</option>
+                <option value="017">017</option>
+                <option value="018">018</option>
+                <option value="019">019</option>
+              </select>
+              <span class="sep">-</span>
+              <input id="inp-tel2" class="input" inputmode="numeric" maxlength="4" placeholder="0000"
+                style="width:140px" />
+              <span class="sep">-</span>
+              <input id="inp-tel3" class="input" inputmode="numeric" maxlength="4" placeholder="0000"
+                style="width:140px" />
+            </div>
+            <div id="err-tel" class="msg">휴대폰번호를 정확히 입력해 주세요.</div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary" disabled>
+        <span class="spinner" aria-hidden="true"></span>
+        <span class="btn-text">다음</span>
+      </button>
+    </div>
+  </div>
+
+
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true"
+    aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+  <script>
+    const SCREEN_ID = "0010";
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0010
+     * 신청인정보 화면
+     *
+     * 컨텍스트(사용자 제공 기능목록) 핵심
+     * - 화면기능목록 ID:0010 신청인정보
+     * - Action: 정보입력
+     * - 입력값 형태:
+     *   ㅇ 대표자 여부
+     *   ㅇ 신청인 성명
+     *   ㅇ 주민번호
+     *   ㅇ 휴대폰 번호
+     * - 처리계 거래/목적:
+     *   ㅇ "회원원장"에서 대표자 정보(성명/주민번호/휴대폰) SET
+     *   ㅇ 원장에 없으면 고객 입력
+     *
+     * 구현 메모(목업)
+     * - 본 파일은 UI 샘플이며, 실제 구현 시:
+     *   1) 회원원장 조회 결과로 필드 prefill + disable 정책 확정
+     *   2) 주민번호/휴대폰 등 민감정보 입력 보안(마스킹/암호화/보안키패드) 적용
+     *   3) 입력값 유효성 실패 시 Next 비활성 + 에러 표출 표준화
+     */
+    (function () {
+      // =========================
+      // 0) SSOT: 화면 메타
+      // =========================
+      const META = {
+        id: "0010",
+        title: "신청인정보",
+        name: "신청인정보",
+        prevTarget: "0009",
+        nextTarget: "0011"
+      };
+
+      // 탭/제목 동기화
+      document.title = `KB국민카드 | ${META.title} (${META.id})`;
+      document.getElementById("title-text").textContent = META.title;
+      document.getElementById("title-id").textContent = `(${META.id})`;
+
+      // =========================
+      // 1) DOM
+      // =========================
+      const toast = document.getElementById("toast");
+
+      const chkIsRep = document.getElementById("chk-is-rep");
+
+      const inpName = document.getElementById("inp-name");
+      const inpRrn1 = document.getElementById("inp-rrn1");
+      const inpRrn2 = document.getElementById("inp-rrn2");
+      const btnRrnHelp = document.getElementById("btn-rrn-help");
+
+      const selTel1 = document.getElementById("sel-tel1");
+      const inpTel2 = document.getElementById("inp-tel2");
+      const inpTel3 = document.getElementById("inp-tel3");
+
+      const errName = document.getElementById("err-name");
+      const errRrn = document.getElementById("err-rrn");
+      const errTel = document.getElementById("err-tel");
+
+      const btnPrev = document.getElementById("btn-prev");
+      const btnNext = document.getElementById("btn-next");
+
+      // Spec modal
+      const specBtn = document.getElementById("btn-spec");
+      const modal = document.getElementById("modal-spec");
+      const modalClose = document.getElementById("btn-modal-close");
+
+      // =========================
+      // 2) Utils
+      // =========================
+      const showToast = (message) => {
+        toast.textContent = message;
+        toast.classList.add("show");
+        setTimeout(() => toast.classList.remove("show"), 2200);
+      };
+
+      const setLoading = (isLoading) => {
+        btnNext.disabled = isLoading || !canProceed();
+        btnNext.classList.toggle("is-loading", isLoading);
+      };
+
+      const goTo = (id) => { location.hash = `#/${id}`; };
+
+      const onlyDigits = (s) => (s || "").replaceAll(/[^0-9]/g, "");
+
+      const setInvalid = (el, msgEl, on) => {
+        el.classList.toggle("is-invalid", !!on);
+        msgEl.classList.toggle("show", !!on);
+      };
+
+      // =========================
+      // 3) Validation
+      // =========================
+      const validateName = () => {
+        const v = (inpName.value || "").trim();
+        // 한글 이름만 강제하지 않고, 최소 길이만 체크(정책 확정 전)
+        const ok = v.length >= 2;
+        setInvalid(inpName, errName, !ok);
+        return ok;
+      };
+
+      const validateRRN = () => {
+        const a = onlyDigits(inpRrn1.value);
+        const b = onlyDigits(inpRrn2.value);
+        // 최소 형식 체크(6 + 7). 실제 주민번호 체크디지트는 정책/보안 이슈로 서버 검증 권장
+        const ok = (a.length === 6 && b.length === 7);
+        setInvalid(inpRrn1, errRrn, !ok);
+        setInvalid(inpRrn2, errRrn, !ok);
+        return ok;
+      };
+
+      const validateTel = () => {
+        const b = onlyDigits(inpTel2.value);
+        const c = onlyDigits(inpTel3.value);
+        const ok = (selTel1.value.length === 3 && b.length === 4 && c.length === 4);
+        setInvalid(inpTel2, errTel, !ok);
+        setInvalid(inpTel3, errTel, !ok);
+        return ok;
+      };
+
+      const canProceed = () => {
+        return validateName() && validateRRN() && validateTel();
+      };
+
+      const updateNextState = () => {
+        if (btnNext.classList.contains("is-loading")) return;
+        btnNext.disabled = !canProceed();
+      };
+
+      const markFirstMissing = () => {
+        if (!validateName()) return inpName.focus();
+        if (!validateRRN()) return inpRrn1.focus();
+        if (!validateTel()) return inpTel2.focus();
+      };
+
+      // =========================
+      // 4) Input handling
+      // =========================
+      const bindDigits = (el, maxLen) => {
+        el.addEventListener("input", () => {
+          const v = onlyDigits(el.value).slice(0, maxLen);
+          el.value = v;
+          updateNextState();
+        });
+      };
+
+      inpName.addEventListener("input", updateNextState);
+      bindDigits(inpRrn1, 6);
+      bindDigits(inpRrn2, 7);
+      bindDigits(inpTel2, 4);
+      bindDigits(inpTel3, 4);
+      selTel1.addEventListener("change", updateNextState);
+
+      btnRrnHelp.addEventListener("click", () => {
+        showToast("주민등록번호는 숫자만 입력해 주세요. (목업)");
+      });
+
+      chkIsRep.addEventListener("change", () => {
+        showToast(chkIsRep.checked ? "대표자 동일 체크됨(목업)" : "대표자 동일 해제됨(목업)");
+      });
+
+      // =========================
+      // 5) Navigation (mock)
+      // =========================
+      btnPrev.addEventListener("click", () => {
+        showToast("이전 단계로 이동합니다.");
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          if (window.ScenarioNav) {
+            ScenarioNav.goPrev();
+          } else {
+            if (window.ScenarioNav) {
+              ScenarioNav.goPrev();
+            } else {
+              setTimeout(() => goTo(META.prevTarget), 200);
+            }
+          }
+        }
+      });
+
+      btnNext.addEventListener("click", async () => {
+        if (btnNext.classList.contains("is-loading")) return;
+
+        if (!canProceed()) {
+          showToast("필수 항목을 확인해 주세요.");
+          markFirstMissing();
+          return;
+        }
+
+        setLoading(true);
+        showToast("입력값 확인 중입니다...");
+
+        try {
+          // 실제 서비스: 회원원장 세팅/저장/검증 API 호출
+          if (window.SessionDB && window._KB_SESSION) {
+            SessionDB.save(META.id, {
+              isRepSame: chkIsRep.checked,
+              name: inpName.value,
+              rrn: inpRrn1.value + inpRrn2.value,
+              phone: selTel1.value + inpTel2.value + inpTel3.value
+            }, window._KB_SESSION);
+          }
+
+          await new Promise(res => setTimeout(res, 500));
+          showToast("확인 완료. 다음 단계로 이동합니다.");
+          if (window.ScenarioNav) {
+            ScenarioNav.log('NEXT_CLICK', { msg: '0010 Confirmation success' });
+            ScenarioNav.goNext();
+          } else {
+            setTimeout(() => goTo(META.nextTarget), 300);
+          }
+        }
+        } finally {
+        setLoading(false);
+      }
+    });
+
+    // =========================
+    // 6) Spec modal (요건정의서/주석)
+    // =========================
+    const REQ_SPEC = {
+      screen_id: META.id,
+      screen_name: META.name,
+      purpose: "신청인 기본 정보(대표자 여부/성명/주민번호/휴대폰) 수집 및 회원원장 정보 세팅(있으면 조회/없으면 입력)",
+      business_rule_source: "화면기능목록 ID:0010 (신청인정보)",
+      action: "정보입력",
+      host: {
+        system: "회원원장",
+        intent: "회원원장에서 대표자 정보(신청인 성명/주민등록번호/휴대폰) SET, 없으면 고객 입력"
+      },
+      required_fields: [
+        { key: "is_representative_same", label: "대표자 여부(신청인=대표자 체크)", required: false },
+        { key: "applicant_name", label: "신청인 성명", required: true },
+        { key: "rrn", label: "주민등록번호(6-7)", required: true },
+        { key: "mobile", label: "휴대폰번호(010-0000-0000)", required: true }
+      ],
+      rules: [
+        "필수값 미입력/형식 오류 시 다음 단계 진행 불가",
+        "회원원장에 값이 있으면 prefill 가능(Disable 정책은 플랫폼/업무요건 확정 필요)",
+        "민감정보(주민번호 등) 입력은 마스킹/암호화/보안키패드 등 보안요건 적용 필요"
+      ],
+      flow: { prev: META.prevTarget, next: META.nextTarget },
+      qa_points: [
+        "숫자 필드에 숫자 외 입력 시 자동 제거 동작",
+        "주민번호 6/7자리 미충족 시 에러 표시 + Next 비활성",
+        "휴대폰 3-4-4 자리 미충족 시 에러 표시 + Next 비활성",
+        "모바일 레이아웃에서 2열 → 1열 전환 시 UI 깨짐 여부",
+        "회원원장 값 prefill 시(가정) 수정 가능/불가 정책에 따른 UX 확인"
+      ],
+      data_spec: {
+        state_shape: "{ isRepSame:boolean, name:string, rrn:{a6:string,b7:string}, mobile:{p3:string,p4:string,p4b:string} }"
+      }
+    };
+
+    const renderSpec = () => {
+      const body = document.getElementById("modal-body");
+      const title = document.getElementById("modal-title");
+      if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+      body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action}</td></tr>
+        <tr><th>처리계</th><td>${REQ_SPEC.host.system} / ${escapeHtml(REQ_SPEC.host.intent)}</td></tr>
+        <tr><th>목적</th><td>${escapeHtml(REQ_SPEC.purpose)}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+        <tr><th>플로우</th><td>이전: ${REQ_SPEC.flow.prev} / 다음: ${REQ_SPEC.flow.next}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>필수 입력</h3>
+        <ul>${REQ_SPEC.required_fields.map(x => `<li>${escapeHtml(x.label)}${x.required ? " (필수)" : ""}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${escapeHtml(JSON.stringify(추가보완REQ(REQ_SPEC), null, 2))}</div>
+      </div>
+    `;
+    };
+
+    // JSON에 추가 설명을 “코드 밖”이 아니라 JSON 안에 넣고 싶을 때만 사용
+    function 추가보완REQ(spec) {
+      return {
+        ...spec,
+        note: "목업: 서버/회원원장 연동은 구현 대상. 주민번호 체크디지트 등 강한 검증은 서버 검증 권장."
+      };
+    }
+
+    const escapeHtml = (s) => String(s)
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+
+    const openModal = () => {
+      renderSpec();
+      modal.classList.add("show");
+      modal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      modalClose.focus();
+    };
+
+    const closeModal = () => {
+      modal.classList.remove("show");
+      modal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+      specBtn.focus();
+    };
+
+    specBtn.addEventListener("click", openModal);
+    modalClose.addEventListener("click", closeModal);
+    modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+    // ESC: 스펙 모달 닫기
+    document.addEventListener("keydown", (e) => {
+      if (e.key !== "Escape") return;
+      if (modal.classList.contains("show")) closeModal();
+    });
+
+    // init
+    updateNextState();
+    }) ();
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0010"></script>
+</body>
+
+</html>

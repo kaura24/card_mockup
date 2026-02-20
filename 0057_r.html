@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>카드신청 기본_CDD (0057)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#e6e6e6;
+      --bg:#f7f8fa;
+
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+
+      --overlay: rgba(0,0,0,.55);
+      --modal-line: #e6e6e6;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+
+      --card:#fff;
+      --panel:#fafafa;
+      --danger:#e53935;
+
+      --field-bg:#fff;
+      --field-line:#d9d9d9;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: "Malgun Gothic", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    /* ====== 풀페이지(모바일) ====== */
+    .wrap{
+      max-width: 520px;
+      margin: 0 auto;
+      min-height: 100vh;
+      background:#fff;
+      padding-bottom: 86px; /* 하단 버튼 */
+      border-left: 1px solid rgba(0,0,0,.06);
+      border-right: 1px solid rgba(0,0,0,.06);
+    }
+
+    /* ====== 상단바(모바일) ====== */
+    .topbar{
+      height: 56px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position: sticky;
+      top: 0;
+      background:#fff;
+      z-index: 20;
+      border-bottom: 1px solid rgba(0,0,0,.08);
+      padding: 0 14px;
+    }
+    .topbar .title{
+      font-weight: 900;
+      font-size: 16px;
+      letter-spacing: -.2px;
+      display:flex;
+      align-items:baseline;
+      gap:6px;
+    }
+    .topbar .title small{
+      font-size: 12px;
+      font-weight: 900;
+      color: var(--muted);
+    }
+    .topbar .close{
+      position:absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      color:#333;
+      user-select:none;
+    }
+    .topbar .close:hover{
+      background:#fafafa;
+      border: 1px solid rgba(0,0,0,.10);
+    }
+
+    .content{ padding: 12px 16px 12px; }
+
+    /* ====== 헤더(섹션 + 진행도) ====== */
+    .subhead{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 10px 0 8px;
+    }
+    .subhead .label{
+      font-weight: 900;
+      font-size: 15px;
+      letter-spacing: -.2px;
+    }
+    .steps{
+      display:flex;
+      gap: 8px;
+      align-items:center;
+    }
+    .step{
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:#f0f2f4;
+      color:#666;
+      user-select:none;
+    }
+    .step.done{
+      background:#e9ecef;
+      color:#666;
+    }
+    .step.current{
+      background:#4f7cff;
+      border-color: rgba(0,0,0,.06);
+      color:#fff;
+    }
+
+    /* ====== 히어로 배너(이미지 영역 대체) ====== */
+    .hero{
+      margin-top: 6px;
+      border-radius: 12px;
+      background: #eef1f3;
+      border: 1px solid rgba(0,0,0,.08);
+      padding: 14px 12px;
+      position: relative;
+      overflow:hidden;
+    }
+    .hero .img{
+      width: 86px;
+      height: 54px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,.10);
+      background:
+        linear-gradient(135deg, rgba(255,255,255,.9), rgba(255,255,255,.35));
+      box-shadow: 0 8px 18px rgba(0,0,0,.08);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight: 900;
+      color:#666;
+      font-size: 12px;
+    }
+    .hero .row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .hero .t1{
+      font-size: 14px;
+      font-weight: 900;
+      color:#333;
+      margin-bottom: 6px;
+    }
+    .hero .t2{
+      font-size: 26px;
+      font-weight: 900;
+      letter-spacing: -.6px;
+      line-height: 1.1;
+      color:#111;
+    }
+    .hero .t2 small{
+      font-size: 16px;
+      font-weight: 900;
+      color:#333;
+    }
+
+    /* ====== 섹션 ====== */
+    .section{
+      margin-top: 14px;
+      border: 1px solid rgba(0,0,0,.10);
+      border-radius: 12px;
+      overflow:hidden;
+      background:#fff;
+    }
+    .section-title{
+      padding: 12px 12px;
+      font-weight: 900;
+      font-size: 14px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .reqstar{ color: var(--danger); font-weight: 900; margin-left: 4px; }
+
+    /* ====== 테이블 입력 ====== */
+    .table{
+      width:100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+    }
+    .table tr{ border-bottom: 1px solid var(--line); }
+    .table tr:last-child{ border-bottom: none; }
+    .th, .td{
+      padding: 12px 10px;
+      vertical-align: middle;
+    }
+    .th{
+      width: 42%;
+      color:#222;
+      font-weight: 900;
+      background:#fafafa;
+      border-right: 1px solid var(--line);
+    }
+    .td{
+      background:#fff;
+    }
+
+    .field{
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--field-line);
+      border-radius: 10px;
+      padding: 0 12px;
+      background: var(--field-bg);
+      outline: none;
+      font-size: 14px;
+    }
+    .field:focus{
+      border-color: rgba(0,0,0,.35);
+      box-shadow: 0 0 0 3px rgba(255,204,0,.18);
+    }
+    .field[readonly]{
+      background: #f3f4f6;
+      color:#444;
+    }
+
+    .select{
+      width: 100%;
+      height: 44px;
+      border: 1px solid var(--field-line);
+      border-radius: 10px;
+      padding: 0 40px 0 12px;
+      background: var(--field-bg);
+      font-size: 14px;
+      font-weight: 800;
+      cursor:pointer;
+      appearance:none;
+      background-image:
+        linear-gradient(45deg, transparent 50%, #555 50%),
+        linear-gradient(135deg, #555 50%, transparent 50%),
+        linear-gradient(to right, transparent, transparent);
+      background-position:
+        calc(100% - 18px) 18px,
+        calc(100% - 13px) 18px,
+        0 0;
+      background-size:
+        5px 5px,
+        5px 5px,
+        100% 100%;
+      background-repeat:no-repeat;
+    }
+    .select:focus{
+      outline:none;
+      box-shadow: 0 0 0 3px rgba(255,204,0,.18);
+      border-color: rgba(0,0,0,.35);
+    }
+
+    /* ====== 체크(실제소유확인) ====== */
+    .checkrow{
+      padding: 12px 12px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      border-top: 1px solid var(--line);
+      background:#fff;
+    }
+    .chk{
+      width: 22px;
+      height: 22px;
+      accent-color: var(--kb-yellow-dark);
+    }
+    .checkrow label{
+      font-weight: 900;
+      font-size: 13.5px;
+      color:#222;
+      cursor:pointer;
+      user-select:none;
+    }
+
+    .legal{
+      padding: 0 12px 12px;
+      font-size: 12.5px;
+      color: var(--muted);
+      line-height: 1.55;
+      background:#fff;
+    }
+
+    /* ===== 하단 버튼(다음) ===== */
+    .bottom{
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0;
+      width: min(520px, 100vw);
+      border-top: 1px solid rgba(0,0,0,.08);
+      background:#fff;
+      z-index: 30;
+      padding: 10px 12px;
+    }
+    .next{
+      width: 100%;
+      height: 56px;
+      border: none;
+      border-radius: 12px;
+      background: var(--kb-yellow);
+      color:#111;
+      font-weight: 900;
+      font-size: 16px;
+      cursor:pointer;
+      letter-spacing: -.2px;
+    }
+    .next:hover{ background: var(--kb-yellow-dark); }
+    .next:active{ transform: translateY(1px); }
+
+    /* ===== 토스트 ===== */
+    .toast{
+      position: fixed;
+      left: 50%;
+      bottom: 86px;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,.86);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      opacity: 0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+      max-width: min(480px, calc(100vw - 24px));
+      text-align:center;
+      z-index: 60;
+    }
+    .toast.show{ opacity: 1; }
+
+    /* ====== (공통) 우하단 히든 버튼: 컬러 + 물음표 ====== */
+    .req-qmark{
+      position: fixed;
+      right: 14px;
+      bottom: 94px;
+      width: 44px;
+      height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: var(--kb-yellow);
+      color: #111;
+      font-weight: 900;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(0,0,0,.14);
+      opacity: .82;
+      transition: opacity .15s ease, transform .05s ease, background .15s ease;
+      z-index: 1000;
+    }
+    .req-qmark:hover{ opacity: 1; background: var(--kb-yellow-dark); }
+    .req-qmark:active{ transform: translateY(1px); }
+
+    /* ====== (공통) 요구사항 모달 ====== */
+    .spec-modal-root{
+      position: fixed;
+      inset: 0;
+      background: var(--overlay);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 1200;
+    }
+    .spec-modal-root.show{ display:flex; }
+
+    .spec-modal{
+      width: min(980px, 100%);
+      max-height: min(86vh, 900px);
+      overflow: auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      border: 1px solid rgba(0,0,0,.15);
+    }
+    .spec-modal__head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--modal-line);
+      position: sticky;
+      top: 0;
+      background: #fff;
+    }
+    .spec-modal__title{
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: -.2px;
+    }
+    .spec-modal__close{
+      border: 1px solid rgba(0,0,0,.18);
+      background: #fff;
+      border-radius: 8px;
+      padding: 8px 10px;
+      cursor:pointer;
+      font-weight: 900;
+    }
+    .spec-modal__body{ padding: 14px 16px 18px; }
+
+    .kv{
+      display:grid;
+      grid-template-columns: 170px 1fr;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      overflow:hidden;
+      margin-bottom: 12px;
+    }
+    .kv .k, .kv .v{
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--modal-line);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .kv .k{
+      background: #fafafa;
+      font-weight: 900;
+      color:#333;
+      border-right: 1px solid var(--modal-line);
+    }
+    .kv .v{ color:#222; }
+    .kv .k:last-child, .kv .v:last-child{ border-bottom:none; }
+
+    .chips{ display:flex; flex-wrap:wrap; gap:8px; margin-bottom: 10px; }
+    .chip{
+      font-size: 12px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: #fafafa;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-family: var(--mono);
+    }
+    .section2{
+      margin-top: 12px;
+      padding: 12px 12px;
+      border: 1px solid var(--modal-line);
+      border-radius: 10px;
+      background: #fff;
+    }
+    .section2__title{
+      font-weight: 900;
+      font-size: 13px;
+      margin: 0 0 8px;
+    }
+    .section2 ul{
+      margin: 0;
+      padding-left: 18px;
+      color:#222;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    .code{
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: #0b0b0d;
+      color: #e9e9ef;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1.55;
+      overflow:auto;
+      white-space: pre;
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap" role="application" aria-label="카드신청 기본_CDD (0057)">
+
+    <div class="topbar" role="banner">
+      <div class="title">카드신청 <small>(0057)</small></div>
+      <div class="close" id="closeBtn" aria-label="닫기">×</div>
+    </div>
+
+    <div class="content">
+      <div class="subhead">
+        <div class="label">본인확인</div>
+        <div class="steps" aria-label="진행 단계">
+          <div class="step done" aria-label="1단계 완료">✓</div>
+          <div class="step current" aria-label="2단계 현재">2</div>
+          <div class="step" aria-label="3단계">3</div>
+          <div class="step" aria-label="4단계">4</div>
+        </div>
+      </div>
+
+      <div class="hero" aria-label="안내 배너">
+        <div class="row">
+          <div class="img">CARD</div>
+          <div>
+            <div class="t1">5분만에 간편하게 신청하세요!</div>
+            <div class="t2">ONE KB국민 <small>global</small><br/>기업카드</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 정보입력 -->
+      <div class="section" aria-label="정보입력">
+        <div class="section-title">
+          정보입력
+          <span style="font-size:12px; font-weight:900; color:var(--muted);">필수 항목 입력</span>
+        </div>
+
+        <table class="table" aria-label="기본정보 입력 테이블">
+          <tr>
+            <td class="th">대표자 성명 <span class="reqstar">*</span></td>
+            <td class="td"><input id="ownerName" class="field" type="text" placeholder="성명 입력" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td class="th">주민등록번호 <span class="reqstar">*</span></td>
+            <td class="td"><input id="rrn" class="field" type="text" inputmode="numeric" placeholder="‘-’를 제외하고 입력" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td class="th">휴대폰번호 <span class="reqstar">*</span></td>
+            <td class="td"><input id="phone" class="field" type="tel" inputmode="numeric" placeholder="‘-’를 제외하고 입력" autocomplete="off" /></td>
+          </tr>
+          <tr>
+            <td class="th">사업자등록번호</td>
+            <td class="td"><input id="bizNo" class="field" type="text" value="401-39-89057" readonly /></td>
+          </tr>
+        </table>
+
+        <div class="checkrow" aria-label="실제소유확인">
+          <input id="realOwner" class="chk" type="checkbox" />
+          <label for="realOwner">카드의 실제 소유자입니다. <span class="reqstar">*</span></label>
+        </div>
+
+        <div class="section-title" style="border-top:1px solid var(--line);">
+          직업구분 상세 분류 <span class="reqstar">*</span>
+        </div>
+        <div style="padding:12px 12px;">
+          <select id="jobDetail" class="select" aria-label="직업구분 상세 분류">
+            <option value="" selected>선택해 주세요</option>
+            <option value="none">해당사항없음</option>
+            <option value="office">사무직</option>
+            <option value="sales">영업/판매</option>
+            <option value="service">서비스업</option>
+            <option value="professional">전문직</option>
+            <option value="manufacturing">제조/생산</option>
+            <option value="etc">기타</option>
+          </select>
+          <div class="legal">※ [특정 금융거래정보의 보고 및 이용 등에 관한 법률] 제5조2(고객확인의무)에 따른 필수 확인사항입니다.</div>
+        </div>
+
+        <div class="section-title">
+          거래목적 <span class="reqstar">*</span>
+        </div>
+        <div style="padding:12px 12px;">
+          <select id="txnPurpose" class="select" aria-label="거래목적">
+            <option value="" selected>선택해 주세요</option>
+            <option value="purchase">물품구매대금결제</option>
+            <option value="expenses">사업경비결제</option>
+            <option value="tax">세금/공과금</option>
+            <option value="travel">출장/여비</option>
+            <option value="etc">기타</option>
+          </select>
+        </div>
+
+        <div class="section-title">
+          거래자금의 원천 <span class="reqstar">*</span>
+        </div>
+        <div style="padding:12px 12px 14px;">
+          <select id="fundSource" class="select" aria-label="거래자금의 원천">
+            <option value="" selected>선택해 주세요</option>
+            <option value="salary">근로 및 연금소득</option>
+            <option value="business">사업소득</option>
+            <option value="asset">자산/임대소득</option>
+            <option value="loan">대출</option>
+            <option value="etc">기타</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 하단 버튼 -->
+  <div class="bottom" role="contentinfo" aria-label="하단 버튼">
+    <button class="next" id="nextBtn" type="button">다음</button>
+  </div>
+
+  <!-- 토스트 -->
+  
+
+  <!-- (공통) 히든 요구사항 버튼 -->
+  <button id="reqBtn" class="req-qmark" type="button" aria-label="기능요구서 보기">?</button>
+
+  <!-- (공통) 요구사항/주석 모달 -->
+  <div id="specModalRoot" class="spec-modal-root" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="spec-modal" aria-label="업무 정의서 및 주석">
+      <div class="spec-modal__head">
+        <div id="specModalTitle" class="spec-modal__title">업무 정의서 / 주석 (0057)</div>
+        <button id="specModalClose" class="spec-modal__close" type="button">닫기</button>
+      </div>
+      <div id="specModalBody" class="spec-modal__body"></div>
+    </div>
+  </div>
+
+<script>
+  // Generated by GPT
+  (function(){
+    const SCREEN_ID = "0057";
+    const SCREEN_NAME = "카드신청 기본_CDD(개사자전용)";
+    const CHANNEL = "mobile web (개인사업자)";
+
+    const $ = (id) => document.getElementById(id);
+    const toast = $("toast");
+
+    function showToast(msg){
+      toast.textContent = msg;
+      toast.classList.add("show");
+      setTimeout(()=> toast.classList.remove("show"), 1600);
+    }
+
+    function escapeHtml(s){
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    // ===== 입력 정리 유틸 =====
+    const digitsOnly = (s) => String(s || "").replace(/\D/g, "");
+
+    // 자동 정리(하이픈 제거)
+    $("rrn").addEventListener("input", (e)=>{
+      const v = digitsOnly(e.target.value);
+      e.target.value = v.slice(0, 13); // 주민번호 13자리 가정(목업)
+    });
+    $("phone").addEventListener("input", (e)=>{
+      const v = digitsOnly(e.target.value);
+      e.target.value = v.slice(0, 11); // 010XXXXXXXX(11) 가정(목업)
+    });
+
+    // ===== 닫기(목업) =====
+    $("closeBtn").addEventListener("click", ()=> showToast("닫기(모의): 이전 화면 유지"));
+
+    function validate(){
+      const name = $("ownerName").value.trim();
+      const rrn  = digitsOnly($("rrn").value);
+      const ph   = digitsOnly($("phone").value);
+
+      if(!name){
+        showToast("대표자 성명을 입력해 주세요.");
+        $("ownerName").focus();
+        return false;
+      }
+      if(!rrn || rrn.length !== 13){
+        showToast("주민등록번호를 확인해 주세요. (’-’ 제외 13자리)");
+        $("rrn").focus();
+        return false;
+      }
+      if(!ph || !/^01\d{8,9}$/.test(ph)){
+        showToast("휴대폰번호를 확인해 주세요. (’-’ 제외)");
+        $("phone").focus();
+        return false;
+      }
+      if(!$("realOwner").checked){
+        showToast("실제 소유자 확인에 체크해 주세요.");
+        return false;
+      }
+      if(!$("jobDetail").value){
+        showToast("직업구분 상세 분류를 선택해 주세요.");
+        $("jobDetail").focus();
+        return false;
+      }
+      if(!$("txnPurpose").value){
+        showToast("거래목적을 선택해 주세요.");
+        $("txnPurpose").focus();
+        return false;
+      }
+      if(!$("fundSource").value){
+        showToast("거래자금의 원천을 선택해 주세요.");
+        $("fundSource").focus();
+        return false;
+      }
+      return true;
+    }
+
+    $("nextBtn").addEventListener("click", ()=>{
+      if(!validate()) return;
+      showToast("다음(모의): 본인인증 단계로 이동");
+      // 다음: 0058(3종 본인인증) 가정
+      if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+            location.hash = "#/0058";
+          }
+        }
+      }
+    });
+
+    // ====== (공통) 요구사항/주석 모달 ======
+    
+
+    const reqBtn = $("reqBtn");
+    const specModalRoot = $("specModalRoot");
+    const specModalClose = $("specModalClose");
+    const specModalTitle = $("specModalTitle");
+    const specModalBody = $("specModalBody");
+
+    function renderSpec(spec){
+      document.title = `${spec.screen_name} (${spec.screen_id})`;
+      specModalTitle.textContent = `업무 정의서 / 주석 (${spec.screen_id}) · ${spec.screen_name}`;
+
+      const chips = [
+        `ID:${spec.screen_id}`,
+        `Action:${spec.action}`,
+        `Channel:${spec.channel}`
+      ];
+
+      specModalBody.innerHTML = `
+        <div class="kv">
+          <div class="k">기능 ID</div><div class="v"><b>${escapeHtml(spec.screen_id)}</b></div>
+          <div class="k">기능명</div><div class="v"><b>${escapeHtml(spec.screen_name)}</b></div>
+          <div class="k">채널</div><div class="v">${escapeHtml(spec.channel)}</div>
+          <div class="k">Action</div><div class="v">${escapeHtml(spec.action)}</div>
+          <div class="k">목적</div><div class="v">${escapeHtml(spec.purpose)}</div>
+        </div>
+
+        <div class="chips">${chips.map(c=>`<span class="chip">${escapeHtml(c)}</span>`).join("")}</div>
+
+        <div class="section2">
+          <div class="section2__title">입력 필드</div>
+          <ul>${(spec.fields||[]).map(f=>`<li><b>${escapeHtml(f.key)}</b> · ${f.required ? "필수" : "선택"} · ${escapeHtml(f.type)}${f.note ? ` (${escapeHtml(f.note)})` : ""}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">제어 규칙</div>
+          <ul>${(spec.control_rules||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">감사/로그 포인트</div>
+          <ul>${(spec.audit_log_points||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">주석(개발/QA 포인트)</div>
+          <ul>${(spec.notes||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+
+        <div class="section2">
+          <div class="section2__title">REQ_SPEC 원문(JSON)</div>
+          <div class="code">${escapeHtml(JSON.stringify(spec, null, 2))}</div>
+        </div>
+      `;
+    }
+
+    function openSpec(){
+      renderSpec(REQ_SPEC);
+      specModalRoot.classList.add("show");
+      specModalRoot.setAttribute("aria-hidden", "false");
+    }
+    function closeSpec(){
+      specModalRoot.classList.remove("show");
+      specModalRoot.setAttribute("aria-hidden", "true");
+    }
+
+    reqBtn.addEventListener("click", openSpec);
+    specModalClose.addEventListener("click", closeSpec);
+    specModalRoot.addEventListener("click", (e)=>{ if(e.target === specModalRoot) closeSpec(); });
+
+    document.addEventListener("keydown", (e)=>{
+      if(e.key === "Escape" && specModalRoot.classList.contains("show")) closeSpec();
+      if(e.ctrlKey && e.altKey && (e.key === "r" || e.key === "R")){
+        if(specModalRoot.classList.contains("show")) closeSpec();
+        else openSpec();
+      }
+    });
+  })();
+</script>
+
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0057"></script>
+</body>
+</html>

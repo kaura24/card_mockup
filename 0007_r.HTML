@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 유의사항 (0007)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#d9d9d9;
+      --panel:#f4f6f9;
+      --req:#d64545;
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+      --white:#fff;
+
+      --modal-bg:rgba(0,0,0,.6);
+      --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+      color:var(--text);
+      background:var(--white);
+      line-height:1.5;
+    }
+
+    /* ===== Page ===== */
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:34px 24px 90px;
+    }
+
+    /* Header */
+    .header-group{margin-bottom:18px;}
+    .title{
+      margin:0;
+      font-size:30px;
+      font-weight:900;
+      letter-spacing:-.7px;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .screen-id{
+      font-size:.78em;
+      font-weight:900;
+      color:#666;
+      letter-spacing:-.2px;
+      white-space:nowrap;
+    }
+    .subnote{
+      margin:8px 0 0;
+      color:#555;
+      font-size:14px;
+      font-weight:650;
+    }
+
+    /* Notice panel */
+    .notice-card{
+      margin-top:18px;
+      border:1px solid #e6e6e6;
+      border-radius:14px;
+      overflow:hidden;
+      background:#fff;
+      box-shadow:0 10px 26px rgba(0,0,0,.06);
+    }
+    .notice-head{
+      padding:16px 18px;
+      border-bottom:1px solid #efefef;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:950;
+      color:#222;
+      background:#fff;
+    }
+    .badge-icon{
+      width:26px;height:26px;
+      border-radius:8px;
+      background:#f5f5f5;
+      border:1px solid #ededed;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      color:#444;
+      user-select:none;
+    }
+    .notice-body{
+      padding:18px 20px 16px;
+    }
+    .notice-list{
+      margin:0;
+      padding-left:20px;
+      color:#333;
+      font-size:14.5px;
+      font-weight:750;
+      line-height:1.75;
+    }
+    .notice-list li{margin:8px 0;}
+    .notice-list .hl{font-weight:950;color:#222;}
+
+    /* bottom buttons */
+    .btn-area{
+      margin-top:34px;
+      display:flex;
+      justify-content:center;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    .btn-secondary{
+      width:180px;height:56px;
+      border-radius:10px;
+      border:1px solid #cfcfcf;
+      background:#fff;
+      color:#333;
+      font-size:17px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+    .btn-secondary:hover{background:#fafafa;}
+    .btn-secondary:active{transform:scale(.98);}
+
+    .btn-primary{
+      width:260px;height:56px;
+      border:none;
+      border-radius:10px;
+      background:var(--kb-yellow);
+      color:#222;
+      font-size:18px;
+      font-weight:950;
+      cursor:pointer;
+      transition:.15s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn-primary:hover{background:var(--kb-yellow-dark);}
+    .btn-primary:active{transform:scale(.98);}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:40px;
+      transform:translateX(-50%) translateY(20px);
+      background:rgba(33,33,33,.92);
+      color:#fff;
+      padding:12px 22px;
+      border-radius:30px;
+      font-size:14px;
+      font-weight:650;
+      opacity:0;
+      pointer-events:none;
+      transition:all .28s cubic-bezier(.175,.885,.32,1.275);
+      z-index:3000;
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      max-width:calc(100vw - 40px);
+      text-align:center;
+      line-height:1.35;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      width:56px;height:56px;
+      border-radius:50%;
+      background:#222;
+      color:var(--kb-yellow);
+      border:none;
+      font-size:26px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+      z-index:2900;
+      transition:transform .2s;
+    }
+    .req-trigger:hover{transform:rotate(15deg) scale(1.08);}
+    .req-trigger:active{transform:scale(.98);}
+
+    /* ===== Spec modal ===== */
+    .modal-overlay{
+      position:fixed;
+      inset:0;
+      background:var(--modal-bg);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:4000;
+      backdrop-filter:blur(4px);
+    }
+    .modal-overlay.show{display:flex;}
+    .modal-content{
+      width:100%;
+      max-width:900px;
+      background:#fff;
+      border-radius:16px;
+      max-height:90vh;
+      overflow-y:auto;
+      box-shadow:0 24px 48px rgba(0,0,0,.4);
+    }
+    .modal-header{
+      padding:20px 24px;
+      border-bottom:1px solid #eee;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      background:#fff;
+    }
+    .modal-header h2{margin:0;font-size:18px;font-weight:900;}
+    .modal-close{
+      background:#f5f5f5;
+      border:none;
+      padding:8px 16px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:850;
+    }
+    .modal-body{padding:24px;}
+    .spec-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;}
+    .spec-table th,.spec-table td{border:1px solid #eee;padding:12px;text-align:left;vertical-align:top;}
+    .spec-table th{background:#f9f9f9;width:160px;font-weight:850;}
+    .spec-section{margin-top:24px;}
+    .spec-section h3{font-size:15px;margin-bottom:12px;border-left:4px solid var(--kb-yellow);padding-left:10px;font-weight:900;}
+    .spec-section ul{margin:0;padding-left:20px;font-size:14px;line-height:1.6;}
+    .json-code{
+      background:#1e1e1e;color:#d4d4d4;
+      padding:16px;border-radius:8px;
+      font-family:var(--mono);
+      font-size:12px;overflow-x:auto;margin-top:12px;
+    }
+
+    @media (max-width: 860px){
+      .btn-area{flex-direction:column;}
+      .btn-secondary,.btn-primary{width:100%;}
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="header-group">
+      <!-- ✅ 제목 옆 화면번호 실제 렌더 + 탭 타이틀 SSOT 동기화 -->
+      <h1 id="page-title" class="title">
+        <span id="title-text">유의사항</span>
+        <span id="title-id" class="screen-id">(0007)</span>
+      </h1>
+      <p class="subnote">신청 전 반드시 확인해 주세요.</p>
+    </div>
+
+    <section class="notice-card" aria-label="유의사항 내용">
+      <div class="notice-head">
+        <span class="badge-icon" aria-hidden="true">▦</span>
+        <span>유의사항</span>
+      </div>
+
+      <div class="notice-body">
+        <ul class="notice-list">
+          <li>
+            「특정 금융거래정보의 보고 및 이용 등에 관한 법률」, 제5조의2(고객확인의무)에 따라
+            법인의 카드발급 신청 시 신청인에 대한 고객확인의무 이행을 위해
+            <span class="hl">신분증 정보 등의 확인</span>을 요청할 수 있습니다.
+          </li>
+          <li>결제계좌는 <span class="hl">사업자명의 계좌만</span> 신청가능(개인계좌 사용 불가)합니다.</li>
+          <li>
+            마이너스 통장을 결제계좌로 지정할 경우, 예금잔액 부족 시 마이너스 대출로 카드결제금액이 지급되고
+            이에 따른 대출이자가 발생할 수 있으므로 유의바랍니다.
+          </li>
+          <li>입금이 제한되는 계좌인 경우 캐시백(매출취소 환급) 발생 시, 입금이 거절될 수 있으니 유의바랍니다.</li>
+          <li>입력한 정보와 제출 서류가 다른 경우 또는 대표자 및 업체 신용평가 결과 등에 따라 카드발급이 거절될 수 있습니다.</li>
+          <li>공동대표, 지정사업자, 외국법인, 대표자가 외국인 사업자는 비대면(홈페이지, KB국민카드앱) 신청이 불가합니다.</li>
+          <li>대리인에 의한 카드 신청의 경우, ‘이용약관 및 필수동의사항’의 동의절차를 포함합니다.</li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="btn-area">
+      <button type="button" id="btn-prev" class="btn-secondary">이전</button>
+      <button type="button" id="btn-next" class="btn-primary">다음</button>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="modal-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modal-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-modal-close" class="modal-close">닫기</button>
+      </div>
+      <div id="modal-body" class="modal-body"></div>
+    </div>
+  </div>
+
+<script>
+    const SCREEN_ID = "0007";
+/**
+ * KB국민카드 기업카드 신청 프로세스 - Step 0007
+ * 유의사항(단순안내) 화면
+ *
+ * 컨텍스트 매핑(사용자 제공 기능목록)
+ * - 화면기능목록 ID:0007 유의사항
+ * - Action: 단순안내
+ * - 입력값: N
+ * - 처리계 거래: N
+ */
+(function(){
+  // =========================
+  // 0) SSOT: 화면 메타
+  // =========================
+  const META = {
+    id: "0007",
+    title: "유의사항",
+    name: "유의사항",
+    prevTarget: "0006", // 직전: 서류자동제출서비스
+    nextTarget: "0008"  // 다음: 법인 공동인증서(기업용)이용안내
+  };
+
+  // 탭/제목 동기화
+  document.title = `KB국민카드 | ${META.title} (${META.id})`;
+  document.getElementById("title-text").textContent = META.title;
+  document.getElementById("title-id").textContent = `(${META.id})`;
+
+  // =========================
+  // 1) DOM
+  // =========================
+  const toast = document.getElementById("toast");
+  const btnPrev = document.getElementById("btn-prev");
+  const btnNext = document.getElementById("btn-next");
+
+  const specBtn = document.getElementById("btn-spec");
+  const modal = document.getElementById("modal-spec");
+  const modalClose = document.getElementById("btn-modal-close");
+
+  // =========================
+  // 2) Utils
+  // =========================
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2300);
+  };
+
+  // Mock navigation
+  const goTo = (id) => { location.hash = `#/${id}`; };
+
+  // =========================
+  // 3) Navigation
+  // =========================
+  btnPrev.addEventListener("click", () => {
+    showToast("이전 단계로 이동합니다.");
+    if (window.ScenarioNav) {
+      ScenarioNav.goPrev();
+    } else {
+      if (window.ScenarioNav) {
+        ScenarioNav.goPrev();
+      } else {
+        if (window.ScenarioNav) {
+          ScenarioNav.goPrev();
+        } else {
+          setTimeout(() => goTo(META.prevTarget), 200);
+        }
+      }
+    }
+  });
+
+  btnNext.addEventListener("click", () => {
+    showToast("다음 단계로 이동합니다.");
+    if (window.ScenarioNav) {
+ScenarioNav.goNext();
+      } else {
+          setTimeout(() => goTo(META.nextTarget), 200);
+        }
+      }
+    }
+  });
+
+  // =========================
+  // 4) Spec modal (요건정의서/주석)
+  // =========================
+  const REQ_SPEC = {
+    screen_id: META.id,
+    screen_name: META.name,
+    purpose: "카드발급 신청 관련 주요 유의사항(법/계좌/신청제한/거절조건 등) 고객 안내",
+    business_rule_source: "화면기능목록 ID:0007 (유의사항)",
+    action: "단순안내",
+    input: "N",
+    host_processing: "N",
+    rules: [
+      "고객확인의무(특금법) 관련 신분증 등 확인 요청 가능",
+      "결제계좌는 사업자명의 계좌만 가능(개인계좌 불가)",
+      "마이너스통장 지정 시 대출이자 발생 가능",
+      "입금 제한 계좌는 캐시백(매출취소 환급) 입금 거절 가능",
+      "입력정보/제출서류 불일치 또는 신용평가 결과에 따라 발급 거절 가능",
+      "공동대표/지정사업자/외국법인/대표자 외국인 사업자는 비대면 신청 불가",
+      "대리인 신청 시 이용약관 및 필수동의사항 동의 절차 포함"
+    ],
+    flow: {
+      prev: META.prevTarget,
+      next: META.nextTarget
+    },
+    qa_points: [
+      "문구 줄바꿈/가독성(모바일 포함) 확인",
+      "긴 문구에서 스크롤/레이아웃 깨짐 여부",
+      "이전/다음 버튼 터치 영역(56px) 유지 여부",
+      "안내성 화면이므로 불필요한 입력/검증 로직이 없는지"
+    ],
+    data_spec: {
+      ssot_meta: META
+    }
+  };
+
+  const renderSpec = () => {
+    const body = document.getElementById("modal-body");
+    const title = document.getElementById("modal-title");
+    if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+    body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action}</td></tr>
+        <tr><th>입력</th><td>${REQ_SPEC.input}</td></tr>
+        <tr><th>처리계</th><td>${REQ_SPEC.host_processing}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+        <tr><th>플로우</th><td>이전: ${REQ_SPEC.flow.prev} / 다음: ${REQ_SPEC.flow.next}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+  };
+
+  const openModal = () => {
+    renderSpec();
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    modalClose.focus();
+  };
+
+  const closeModal = () => {
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    specBtn.focus();
+  };
+
+  specBtn.addEventListener("click", openModal);
+  modalClose.addEventListener("click", closeModal);
+  modal.addEventListener("click", (e) => { if (e.target === modal) closeModal(); });
+
+  // ESC: 스펙 모달 우선 닫기
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (modal.classList.contains("show")) closeModal();
+  });
+})();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0007"></script>
+</body>
+</html>

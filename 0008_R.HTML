@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KB국민카드 | 법인 공동인증서(기업용) 이용 안내 (0008)</title>
+
+  <style>
+    :root{
+      --text:#111;
+      --muted:#666;
+      --line:#d9d9d9;
+      --panel:#f4f6f9;
+      --req:#d64545;
+      --kb-yellow:#ffcc00;
+      --kb-yellow-dark:#f2b800;
+      --white:#fff;
+
+      --modal-bg:rgba(0,0,0,.6);
+      --mono: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    }
+    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR","Apple SD Gothic Neo",Arial,sans-serif;
+      color:var(--text);
+      background:#fff;
+      line-height:1.5;
+    }
+
+    /* ===== Overlay / Modal ===== */
+    .overlay{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:28px 18px;
+      background:rgba(0,0,0,.35);
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff;
+      border-radius:14px;
+      box-shadow:0 18px 48px rgba(0,0,0,.35);
+      overflow:hidden;
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .modal-head{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 20px;
+      border-bottom:1px solid #eee;
+      background:#fff;
+    }
+    .modal-title{
+      margin:0;
+      font-size:20px;
+      font-weight:950;
+      letter-spacing:-.4px;
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .screen-id{
+      font-size:.78em;
+      font-weight:900;
+      color:#666;
+      white-space:nowrap;
+    }
+    .btn-close{
+      width:38px;height:38px;
+      border:none;
+      border-radius:10px;
+      background:#f3f3f3;
+      font-size:20px;
+      font-weight:900;
+      cursor:pointer;
+      transition:.15s ease;
+      display:grid;
+      place-items:center;
+      color:#444;
+    }
+    .btn-close:hover{background:#ececec;}
+    .btn-close:active{transform:scale(.98);}
+
+    .modal-body{
+      padding:26px 22px 18px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
+      align-items:center;
+      text-align:center;
+    }
+
+    /* Icon area */
+    .icon-wrap{
+      width:96px;height:96px;
+      border-radius:22px;
+      background:#f7f7f7;
+      border:1px solid #efefef;
+      display:grid;
+      place-items:center;
+    }
+    .icon-card{
+      width:54px;height:38px;
+      border-radius:8px;
+      border:2px solid #333;
+      position:relative;
+      background:#fff;
+    }
+    .icon-card:before{
+      content:"";
+      position:absolute;
+      left:0;top:9px;
+      width:100%;height:6px;
+      background:#333;
+      opacity:.08;
+    }
+    .icon-check{
+      position:absolute;
+      right:-10px;bottom:-10px;
+      width:26px;height:26px;
+      border-radius:50%;
+      background:var(--kb-yellow);
+      border:2px solid #fff;
+      display:grid;
+      place-items:center;
+      font-weight:950;
+      color:#222;
+      box-shadow:0 6px 14px rgba(0,0,0,.16);
+    }
+
+    /* Text */
+    .lead{
+      font-size:17px;
+      font-weight:900;
+      letter-spacing:-.2px;
+      color:#222;
+      margin:0;
+    }
+    .lead .hl{
+      color:#6a63ff; /* 이미지에서 파란/보라 강조 느낌 */
+      font-weight:950;
+    }
+    .desc{
+      margin:0;
+      color:#444;
+      font-size:14.5px;
+      font-weight:800;
+      line-height:1.65;
+    }
+    .foot{
+      margin:0;
+      color:#666;
+      font-size:13px;
+      font-weight:750;
+      line-height:1.6;
+    }
+
+    /* Buttons row */
+    .btn-row{
+      width:100%;
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      flex-wrap:wrap;
+      padding:4px 0 10px;
+    }
+    .btn-primary{
+      height:52px;
+      padding:0 20px;
+      border:none;
+      border-radius:10px;
+      background:var(--kb-yellow);
+      color:#222;
+      font-size:16.5px;
+      font-weight:950;
+      cursor:pointer;
+      transition:.15s ease;
+      min-width:220px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .btn-primary:hover{background:var(--kb-yellow-dark);}
+    .btn-primary:active{transform:scale(.98);}
+
+    /* Toast */
+    .toast{
+      position:fixed;
+      left:50%;
+      bottom:40px;
+      transform:translateX(-50%) translateY(20px);
+      background:rgba(33,33,33,.92);
+      color:#fff;
+      padding:12px 22px;
+      border-radius:30px;
+      font-size:14px;
+      font-weight:650;
+      opacity:0;
+      pointer-events:none;
+      transition:all .28s cubic-bezier(.175,.885,.32,1.275);
+      z-index:3000;
+      box-shadow:0 8px 24px rgba(0,0,0,.2);
+      max-width:calc(100vw - 40px);
+      text-align:center;
+      line-height:1.35;
+    }
+    .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+    /* ===== 요구사항 버튼(물음표 아이콘 / 컬러) ===== */
+    .req-trigger{
+      position:fixed;
+      right:24px;
+      bottom:24px;
+      width:56px;height:56px;
+      border-radius:50%;
+      background:#222;
+      color:var(--kb-yellow);
+      border:none;
+      font-size:26px;
+      font-weight:900;
+      cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.3);
+      z-index:2900;
+      transition:transform .2s;
+    }
+    .req-trigger:hover{transform:rotate(15deg) scale(1.08);}
+    .req-trigger:active{transform:scale(.98);}
+
+    /* ===== Spec modal ===== */
+    .spec-overlay{
+      position:fixed;
+      inset:0;
+      background:var(--modal-bg);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      z-index:4000;
+      backdrop-filter:blur(4px);
+    }
+    .spec-overlay.show{display:flex;}
+    .spec-content{
+      width:100%;
+      max-width:900px;
+      background:#fff;
+      border-radius:16px;
+      max-height:90vh;
+      overflow-y:auto;
+      box-shadow:0 24px 48px rgba(0,0,0,.4);
+    }
+    .spec-head{
+      padding:20px 24px;
+      border-bottom:1px solid #eee;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      position:sticky;
+      top:0;
+      background:#fff;
+    }
+    .spec-head h2{margin:0;font-size:18px;font-weight:900;}
+    .spec-close{
+      background:#f5f5f5;
+      border:none;
+      padding:8px 16px;
+      border-radius:6px;
+      cursor:pointer;
+      font-weight:850;
+    }
+    .spec-body{padding:24px;}
+    .spec-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:14px;}
+    .spec-table th,.spec-table td{border:1px solid #eee;padding:12px;text-align:left;vertical-align:top;}
+    .spec-table th{background:#f9f9f9;width:160px;font-weight:850;}
+    .spec-section{margin-top:24px;}
+    .spec-section h3{font-size:15px;margin-bottom:12px;border-left:4px solid var(--kb-yellow);padding-left:10px;font-weight:900;}
+    .spec-section ul{margin:0;padding-left:20px;font-size:14px;line-height:1.6;}
+    .json-code{
+      background:#1e1e1e;color:#d4d4d4;
+      padding:16px;border-radius:8px;
+      font-family:var(--mono);
+      font-size:12px;overflow-x:auto;margin-top:12px;
+    }
+
+    @media (max-width: 560px){
+      .btn-primary{min-width:100%;}
+      .modal-body{padding:22px 18px 14px;}
+      .modal-title{font-size:18px;}
+    }
+  </style>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
+  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet" href="css/common.css" />
+</head>
+
+<body>
+  <div class="overlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="page-title">
+      <div class="modal-head">
+        <h1 id="page-title" class="modal-title">
+          <span id="title-text">법인 공동인증서(기업용) 이용 안내</span>
+          <span id="title-id" class="screen-id">(0008)</span>
+        </h1>
+        <button type="button" id="btn-close" class="btn-close" aria-label="닫기">×</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="icon-wrap" aria-hidden="true">
+          <div class="icon-card">
+            <div class="icon-check">✓</div>
+          </div>
+        </div>
+
+        <p class="lead">
+          카드발급 신청을 위해서는<br />
+          <span class="hl">공동인증서(기업용) 인증</span>이 필수입니다.<br />
+          공동인증서(기업용)을 준비 후 이용해 주세요.
+        </p>
+
+        <p class="foot">
+          * 공동인증서(기업용) 발급방법은<br />
+          고객센터 &gt; 인증센터 &gt; ‘인증서 안내’를 참고하시기 바랍니다.
+        </p>
+
+        <div class="btn-row" aria-label="신청 유형 선택">
+          <button type="button" id="btn-shared" class="btn-primary">공용카드 신청</button>
+          <button type="button" id="btn-individual" class="btn-primary">임직원 명의 개별카드 신청</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <!-- ✅ 요구사항 보기 버튼(물음표 아이콘 / 컬러) -->
+  <button type="button" id="btn-spec" class="req-trigger" title="기능요구서 확인" aria-label="기능요구서 및 주석 보기">?</button>
+
+  <!-- 요구사항 모달 -->
+  <div id="modal-spec" class="spec-overlay" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="spec-title">
+    <div class="spec-content">
+      <div class="spec-head">
+        <h2 id="spec-title">기능요구서 및 주석</h2>
+        <button type="button" id="btn-spec-close" class="spec-close">닫기</button>
+      </div>
+      <div id="spec-body" class="spec-body"></div>
+    </div>
+  </div>
+
+<script>
+    const SCREEN_ID = "0008";
+/**
+ * KB국민카드 기업카드 신청 프로세스 - Step 0008
+ * 법인 공동인증서(기업용) 이용안내 화면
+ *
+ * 컨텍스트 매핑(사용자 제공 기능목록)
+ * - 화면기능목록 ID:0008
+ * - Action: 거래분개(공용/개별 선택)
+ * - 입력값: 공용/개별 선택
+ * - 처리계 거래: N(명시 없음) / 분개 발생(플로우 분기)
+ */
+(function(){
+  // =========================
+  // 0) SSOT: 화면 메타
+  // =========================
+  const META = {
+    id: "0008",
+    title: "법인 공동인증서(기업용) 이용 안내",
+    name: "법인 공동인증서(기업용)이용안내",
+    // 분개 타겟(목업): 실제 플로우 확정 시 교체
+    branchTargets: {
+      shared:  "0009", // 공용카드 신청 → 약관동의로 진입(예시)
+      individual: "0009" // 개별카드 신청 → 약관동의로 진입(예시)
+    }
+  };
+
+  // 탭/제목 동기화
+  document.title = `KB국민카드 | ${META.title} (${META.id})`;
+  document.getElementById("title-text").textContent = META.title;
+  document.getElementById("title-id").textContent = `(${META.id})`;
+
+  // =========================
+  // 1) DOM
+  // =========================
+  const toast = document.getElementById("toast");
+  const btnClose = document.getElementById("btn-close");
+  const btnShared = document.getElementById("btn-shared");
+  const btnIndividual = document.getElementById("btn-individual");
+
+  const specBtn = document.getElementById("btn-spec");
+  const specModal = document.getElementById("modal-spec");
+  const specClose = document.getElementById("btn-spec-close");
+
+  // =========================
+  // 2) Utils
+  // =========================
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2300);
+  };
+
+  const goTo = (id) => { location.hash = `#/${id}`; };
+
+  // =========================
+  // 3) Events
+  // =========================
+  btnClose.addEventListener("click", () => {
+    showToast("닫기");
+    // 실제 서비스: 이전 화면으로 닫기/복귀
+    setTimeout(() => history.back(), 150);
+  });
+
+  btnShared.addEventListener("click", () => {
+    // 요건: 공용/개별 선택 시 분개 발생
+    showToast("공용카드 분기로 이동합니다.");
+    if (window.ScenarioNav) {
+      ScenarioNav.log('BRANCH_SELECT', { branch: 'shared' }); ScenarioNav.goNext();
+    } else {
+      if (window.ScenarioNav) {
+        ScenarioNav.log('BRANCH_SELECT', { branch: 'shared' }); ScenarioNav.goNext();
+      } else {
+        setTimeout(() => goTo(META.branchTargets.shared), 220);
+      }
+    }
+  });
+
+  btnIndividual.addEventListener("click", () => {
+    showToast("개별카드 분기로 이동합니다.");
+    if (window.ScenarioNav) {
+      ScenarioNav.log('BRANCH_SELECT', { branch: 'individual' }); ScenarioNav.goNext();
+    } else {
+      if (window.ScenarioNav) {
+        ScenarioNav.log('BRANCH_SELECT', { branch: 'individual' }); ScenarioNav.goNext();
+      } else {
+        setTimeout(() => goTo(META.branchTargets.individual), 220);
+      }
+    }
+  });
+
+  // =========================
+  // 4) Spec modal (요건정의서/주석)
+  // =========================
+  const REQ_SPEC = {
+    screen_id: META.id,
+    screen_name: META.name,
+    title: META.title,
+    segment: { corp: true, sole_prop: false },
+    action: "거래분개",
+    input: "공용/개별 선택",
+    purpose: "카드발급 신청 전 공동인증서(기업용) 인증 필수 안내 및 공용/개별 신청 분기",
+    business_rule_source: "화면기능목록 ID:0008 (법인 공동인증서(기업용)이용안내)",
+    rules: [
+      "공동인증서(기업용) 인증이 필수임을 명시",
+      "공용카드/개별카드 선택에 따라 분개가 발생한다",
+      "고객센터 > 인증센터 > '인증서 안내' 경로를 안내한다"
+    ],
+    branch: {
+      shared: `${META.branchTargets.shared}(목업)`,
+      individual: `${META.branchTargets.individual}(목업)`
+    },
+    qa_points: [
+      "닫기(X) 버튼 동작: 모달 종료/이전 화면 복귀 동작 일관성",
+      "공용/개별 버튼 클릭 시 분기(분개) 로그 기록 지점 확인",
+      "모바일에서 버튼 2개가 줄바꿈될 때 터치 영역 확보",
+      "강조 문구(공동인증서(기업용) 인증 필수) 시각적 위계 확인"
+    ],
+    data_spec: {
+      ssot_meta: META,
+      branch_targets_shape: "{ shared: string, individual: string }"
+    }
+  };
+
+  const renderSpec = () => {
+    const body = document.getElementById("spec-body");
+    const title = document.getElementById("spec-title");
+    if (title) title.textContent = `기능요구서 및 주석 (${META.id})`;
+
+    body.innerHTML = `
+      <table class="spec-table">
+        <tr><th>화면 ID</th><td>${REQ_SPEC.screen_id}</td></tr>
+        <tr><th>화면명</th><td>${REQ_SPEC.screen_name}</td></tr>
+        <tr><th>Action</th><td>${REQ_SPEC.action}</td></tr>
+        <tr><th>입력</th><td>${REQ_SPEC.input}</td></tr>
+        <tr><th>대상</th><td>법인사업자: ${REQ_SPEC.segment.corp ? "Y" : "N"} / 개인사업자: ${REQ_SPEC.segment.sole_prop ? "Y" : "N"}</td></tr>
+        <tr><th>목적</th><td>${REQ_SPEC.purpose}</td></tr>
+        <tr><th>근거</th><td>${REQ_SPEC.business_rule_source}</td></tr>
+      </table>
+
+      <div class="spec-section">
+        <h3>규칙</h3>
+        <ul>${REQ_SPEC.rules.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>분기(목업)</h3>
+        <ul>
+          <li>공용카드 신청 → ${REQ_SPEC.branch.shared}</li>
+          <li>개별카드 신청 → ${REQ_SPEC.branch.individual}</li>
+        </ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>QA / 개발 체크리스트</h3>
+        <ul>${REQ_SPEC.qa_points.map(x => `<li>${x}</li>`).join("")}</ul>
+      </div>
+
+      <div class="spec-section">
+        <h3>데이터 스펙 (JSON)</h3>
+        <div class="json-code">${JSON.stringify(REQ_SPEC, null, 2)}</div>
+      </div>
+    `;
+  };
+
+  const openSpec = () => {
+    renderSpec();
+    specModal.classList.add("show");
+    specModal.setAttribute("aria-hidden","false");
+    document.body.style.overflow = "hidden";
+    specClose.focus();
+  };
+
+  const closeSpec = () => {
+    specModal.classList.remove("show");
+    specModal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = "";
+    specBtn.focus();
+  };
+
+  specBtn.addEventListener("click", openSpec);
+  specClose.addEventListener("click", closeSpec);
+  specModal.addEventListener("click", (e) => { if (e.target === specModal) closeSpec(); });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    if (specModal.classList.contains("show")) closeSpec();
+  });
+})();
+</script>
+<script src="js/common.js"></script>
+<script src="js/session-db.js"></script>
+<script src="js/scenario-nav.js"></script>
+<script src="js/spec-viewer.js" data-screen-id="0008"></script>
+</body>
+</html>
