@@ -462,20 +462,15 @@
 
       $("confirmBtn").addEventListener("click", () => {
         showToast("확인: 카드신청 프로세스 진입");
-        if (window.ScenarioNav) {
+        if (window.ScenarioNav && !document.body.classList.contains('no-scenario')) {
           ScenarioNav.log('CONFIRM', { msg: 'User clicked Confirm button' });
           setTimeout(() => {
             ScenarioNav.goNext();
           }, 400);
         } else {
-          // Fallback if Nav not loaded
+          // Fallback if Nav not loaded or in "no-scenario" mode
           setTimeout(() => {
-            if (window.ScenarioNav) {
-ScenarioNav.goNext();
-      } else {
-                location.hash = "#/0004";
-              }
-            }
+            window.location.href = "0004_r.HTML";
           }, 400);
         }
       });

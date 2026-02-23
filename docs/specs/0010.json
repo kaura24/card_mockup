@@ -1,0 +1,52 @@
+{
+  "screen_id": "META.id",
+  "screen_name": "META.name",
+  "purpose": "신청인 기본 정보(대표자 여부/성명/주민번호/휴대폰) 수집 및 회원원장 정보 세팅(있으면 조회/없으면 입력)",
+  "business_rule_source": "화면기능목록 ID:0010 (신청인정보)",
+  "action": "정보입력",
+  "host": {
+    "system": "회원원장",
+    "intent": "회원원장에서 대표자 정보(신청인 성명/주민등록번호/휴대폰) SET, 없으면 고객 입력"
+  },
+  "required_fields": [
+    {
+      "key": "is_representative_same",
+      "label": "대표자 여부(신청인=대표자 체크)",
+      "required": false
+    },
+    {
+      "key": "applicant_name",
+      "label": "신청인 성명",
+      "required": true
+    },
+    {
+      "key": "rrn",
+      "label": "주민등록번호(6-7)",
+      "required": true
+    },
+    {
+      "key": "mobile",
+      "label": "휴대폰번호(010-0000-0000)",
+      "required": true
+    }
+  ],
+  "rules": [
+    "필수값 미입력/형식 오류 시 다음 단계 진행 불가",
+    "회원원장에 값이 있으면 prefill 가능(Disable 정책은 플랫폼/업무요건 확정 필요)",
+    "민감정보(주민번호 등) 입력은 마스킹/암호화/보안키패드 등 보안요건 적용 필요"
+  ],
+  "flow": {
+    "prev": "META.prevTarget",
+    "next": "META.nextTarget"
+  },
+  "qa_points": [
+    "숫자 필드에 숫자 외 입력 시 자동 제거 동작",
+    "주민번호 6/7자리 미충족 시 에러 표시 + Next 비활성",
+    "휴대폰 3-4-4 자리 미충족 시 에러 표시 + Next 비활성",
+    "모바일 레이아웃에서 2열 → 1열 전환 시 UI 깨짐 여부",
+    "회원원장 값 prefill 시(가정) 수정 가능/불가 정책에 따른 UX 확인"
+  ],
+  "data_spec": {
+    "state_shape": "{ isRepSame:boolean, name:string, rrn:{a6:string,b7:string}, mobile:{p3:string,p4:string,p4b:string} }"
+  }
+}

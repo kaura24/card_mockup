@@ -718,56 +718,68 @@
           // "추가" -> "신규"
           currentKey = currentKey.replace('추가', '신규');
           // 신규는 부서 옵션(_부서내, _부서추)이 없음 -> 제거
-          currentKey = currentKey.replace('_부서내', '').replace('_부서추', '');
+          currentKey = currentKey.replace(' | 부서내추가', '').replace(' | 부서추가', '');
         } else if (changes.issuance === 'ADD') {
           // "신규" -> "추가"
           currentKey = currentKey.replace('신규', '추가');
           // 법인(공용/개별)의 경우 "추가"는 부서 옵션이 필수 (키 구조상)
           // 개사자는 부서 옵션 없음 ("개_신_추가")
-          // 따라서, 변경된 키가 존재하는지 확인 후, 없으면 기본값(_부서내) 추가
-          if (!SCENARIOS[currentKey] && !currentKey.includes('개_')) {
-            currentKey += '_부서내';
+          if (!SCENARIOS[currentKey] && !currentKey.includes('개사자')) {
+            currentKey += ' | 부서내추가';
           }
         }
       }
 
       // 2. 부서구분 변경 (부서내 <-> 부서추)
       if (changes.dept) {
-        // changes.dept: '부서내' or '부서추' (한글 키워드 기준)
-        // 기존 _부서내, _부서추 제거
-        currentKey = currentKey.replace('_부서내', '').replace('_부서추', '');
-        // 새 옵션 붙이기
-        currentKey += `_${changes.dept}`;
+        // changes.dept: '부서내추가' or '부서추가'
+        currentKey = currentKey.replace(' | 부서내추가', '').replace(' | 부서추가', '');
+        currentKey += ` | ${changes.dept}`;
       }
 
-      console.log(`[ScenarioNav] Target key candidate: ${currentKey}`);
+      // 키로 시나리오 코드 찾기 (역참조)
+      let targetCode = Object.keys(SCENARIOS).find(code => SCENARIOS[code].label === currentKey);
+
+      // 혹시 못 찾았다면, 값 자체가 코드인 경우 처리 (Fallback)
+      if (!targetCode && SCENARIOS[currentKey]) {
+        targetCode = currentKey;
+      }
+
+      console.log(`[ScenarioNav] Target label candidate: ${currentKey}, Resolved Code: ${targetCode}`);
 
       // 3. 유효성 검사 및 Fallback
-      if (!SCENARIOS[currentKey]) {
-        console.warn(`[ScenarioNav] Target key ${currentKey} not found. Trying fallbacks...`);
-        // 혹시 _부서내를 붙여본다?
-        if (SCENARIOS[currentKey + '_부서내']) currentKey += '_부서내';
-        else {
-          console.error(`[ScenarioNav] Failed to switch scenario. Target ${currentKey} invalid.`);
-          alert(`시나리오 전환 실패: ${currentKey} 정보를 찾을 수 없습니다.`);
+      if (!targetCode || !SCENARIOS[targetCode]) {
+        console.warn(`[ScenarioNav] Target code ${targetCode} not found for label ${currentKey}.`);
+        console.error(`[ScenarioNav] Failed to switch scenario. Target invalid.`);
+
+        // 0001 화면에서 실패할 경우 다음은 무조건 0002 또는 0003
+        const fallbackNext = changes.issuance === 'NEW' ? '0002' : '0003';
+        const fallbackStep = SCENARIOS[scenario].screens.indexOf(fallbackNext);
+        if (fallbackStep !== -1) {
+          const fallbackFile = screenFile(fallbackNext);
+          window.location.replace(`${fallbackFile}?session=${session}&scenario=${scenario}&step=${fallbackStep}`);
           return;
         }
+
+        alert(`시나리오 전환 실패: 정보를 찾을 수 없습니다.`);
+        return;
       }
 
       // 4. 리다이렉트
-      const sc = SCENARIOS[currentKey];
+      const sc = SCENARIOS[targetCode];
       const currentScreenId = screenIdFromUrl();
       let nextStep = 0;
 
-      // 현재 화면이 새 시나리오에 있는지 확인
-      const idx = sc.screens.indexOf(currentScreenId);
+      // 새 시나리오에서 다음 화면(0002 또는 0003)의 인덱스를 찾음
+      const nextScreenId = changes.issuance === 'NEW' ? '0002' : '0003';
+      const idx = sc.screens.indexOf(nextScreenId);
+
       if (idx !== -1) {
-        // 현재 화면 다음으로 이동
-        nextStep = idx + 1;
+        nextStep = idx; // Found exact next screen
       } else {
-        // 현재 화면이 새 시나리오에 없다면? (거의 없음)
-        console.warn(`[ScenarioNav] Current screen ${currentScreenId} not found in ${currentKey}. Going to step 0.`);
-        nextStep = 0;
+        const currIdx = sc.screens.indexOf(currentScreenId);
+        if (currIdx !== -1) nextStep = currIdx + 1;
+        else nextStep = 0;
       }
 
       const nextFile = screenFile(sc.screens[nextStep]);
@@ -776,7 +788,7 @@
         return;
       }
 
-      const nextUrl = `${nextFile}?session=${session}&scenario=${currentKey}&step=${nextStep}`;
+      const nextUrl = `${nextFile}?session=${session}&scenario=${targetCode}&step=${nextStep}`;
       console.log(`[ScenarioNav] Redirecting to ${nextUrl}`);
       // 히스토리 남기지 않고 교체 (뒤로가기 시 꼬임 방지)
       window.location.replace(nextUrl);

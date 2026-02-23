@@ -1,0 +1,57 @@
+{
+  "screen_id": "[Dynamic META.id]",
+  "screen_name": "[Dynamic META.name]",
+  "purpose": "개별카드 사용자의 개인명의 결제계좌 등록 여부를 확인하고, 등록 시 LMS를 발송하여 계좌 등록 프로세스(별도)를 시작한다.",
+  "business_rule_source": "화면기능목록 ID:0036 (개별카드 사용자 개인명의계좌 등록-개별)",
+  "target": {
+    "corp": true,
+    "sole": false
+  },
+  "action": "고객동의",
+  "inputs": {
+    "agree_check": {
+      "id": "chk-agree",
+      "label": "안내 내용을 확인했습니다.",
+      "required": true
+    },
+    "register_choice": {
+      "name": "reg",
+      "values": [
+        "Y(등록)",
+        "N(비등록)"
+      ],
+      "required": true
+    },
+    "phone_when_register": {
+      "id": "phone",
+      "required_if": "reg=Y",
+      "format": "010-1234-5678",
+      "validate": "/^01[0-9]-\\d{3,4}-\\d{4}$/"
+    }
+  },
+  "processing": {
+    "integration": true,
+    "domain": "회원",
+    "purpose": "개별카드 개인명의 계좌 등록 프로세스 시작",
+    "description": "reg=Y 선택 시 LMS 실시간 발송(유효기간 3일) → 고객이 별도 링크로 계좌 인증/등록 진행. reg=N이면 스킵.",
+    "events": [
+      "LMS_SENT",
+      "SKIPPED"
+    ]
+  },
+  "rules": [
+    "‘안내 확인’ 체크 전까지 다음 비활성",
+    "등록 여부 선택 필수",
+    "reg=Y인 경우 휴대폰 번호 유효성(국내 10~11자리 하이픈 포맷) 충족 필수",
+    "LMS 링크 유효기간: 발송일 포함 3일 (만료 안내/재발송 정책 별도)"
+  ],
+  "qa_points": [
+    "라디오 전환 시 보조 폼(휴대폰) show/hide",
+    "휴대폰 포맷 자동화 및 커서 보정",
+    "LMS 발송 실패/지연 시 재시도 및 사용자 안내",
+    "뒤로가기 재진입 시 선택/입력값 보존 정책"
+  ],
+  "next": {
+    "success": "0037 (개별카드 발급 대상 고객 정보-개별)"
+  }
+}

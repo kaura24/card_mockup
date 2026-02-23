@@ -185,7 +185,7 @@
         </div>
         <div id="_sv-tabs">
           <button class="sv-tab active" data-tab="spec">📄 스펙</button>
-          <button class="sv-tab"        data-tab="logic">⚙ 로직·QA</button>
+          <button class="sv-tab"        data-tab="logic">⚙ 요건·로직·주석</button>
           <button class="sv-tab"        data-tab="fields">🗂 데이터 필드</button>
           <button class="sv-tab"        data-tab="raw">{ } JSON</button>
         </div>
@@ -304,12 +304,27 @@
           </table></div>` : ''}`;
 
     /* ── 로직·QA 탭 ── */
-    const logic = spec.logic || spec.rules || [];
-    const qa = spec.qa_points || [];
-    document.getElementById('_sv-p-logic').innerHTML =
-      (logic.length ? `<div class="sv-sec"><h3>주요 로직 / 규칙</h3><ul>${li(logic)}</ul></div>` : '') +
-      (qa.length ? `<div class="sv-sec"><h3>QA / 개발 체크리스트</h3><ul>${li(qa)}</ul></div>` : '') +
-      (!logic.length && !qa.length ? '<p class="sv-empty">로직·QA 정보 없음</p>' : '');
+    let logicHtml = '';
+    const ignoreKeys = ['screen_id', 'screen_name', 'target', 'backend', 'action', 'scenarios', 'purpose', 'business_rule_source', 'host', 'flow', 'required_fields', 'data_fields', 'applies_to'];
+    const keyLabels = { logic: '주요 로직', rules: '주요 로직 / 규칙', qa_points: 'QA / 개발 체크리스트', entry_condition: '진입 조건', ui_nature: 'UI 성격', control_rules: '제어 규칙', audit_log_points: '감사/로그 포인트', notes: '주석 (개발/QA 포인트)' };
+
+    for (const [k, v] of Object.entries(spec)) {
+      if (ignoreKeys.includes(k)) continue;
+      const label = keyLabels[k] || k;
+      if (Array.isArray(v) && v.length) {
+        logicHtml += `<div class="sv-sec"><h3>${esc(label)}</h3><ul>${li(v)}</ul></div>`;
+      } else if (typeof v === 'string' || typeof v === 'number') {
+        logicHtml += `<div class="sv-sec"><h3>${esc(label)}</h3><p style="margin:4px 0 0;font-size:14px;color:#444">${esc(v)}</p></div>`;
+      } else if (v && typeof v === 'object' && !Array.isArray(v)) {
+        logicHtml += `<div class="sv-sec"><h3>${esc(label)}</h3><ul>`;
+        for (const [sk, sv] of Object.entries(v)) {
+          logicHtml += `<li><strong>${esc(sk)}</strong>: ${esc(sv)}</li>`;
+        }
+        logicHtml += `</ul></div>`;
+      }
+    }
+
+    document.getElementById('_sv-p-logic').innerHTML = logicHtml || '<p class="sv-empty">요건·로직 정보 없음</p>';
 
     /* ── 데이터 필드 탭 ── */
     const df = spec.data_fields || null;
@@ -349,7 +364,21 @@
     return m ? m[1] : null;
   }
 
+  async function loadSpecsDb() {
+    return new Promise(resolve => {
+      if (window.ALL_SPECS) return resolve();
+      const s = document.createElement('script');
+      s.src = 'js/specs-db.js';
+      s.onload = resolve;
+      s.onerror = resolve; // ignore error, fallback to fetch
+      document.head.appendChild(s);
+    });
+  }
+
   async function fetchJson(screenId) {
+    if (window.ALL_SPECS && window.ALL_SPECS[screenId]) {
+      return window.ALL_SPECS[screenId];
+    }
     try {
       const res = await fetch(`docs/specs/${screenId}.json`);
       if (!res.ok) throw new Error(res.status);
@@ -359,6 +388,7 @@
 
   /* ── 초기화 ─────────────────────────────────────────────────────────────── */
   async function init() {
+    await loadSpecsDb();
     injectOverlay();
     connectTriggers();
 

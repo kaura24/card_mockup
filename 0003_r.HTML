@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -9,7 +10,7 @@
     meta 태그로 ID를 명시적으로 선언합니다. (로직 변경 없음)
   -->
   <meta name="screen-id" content="0003" />
-  
+
   <title>KB국민카드 | 추가 발급 대상 안내 (0003)</title>
 
   <style>
@@ -20,22 +21,26 @@
       --text-muted: #666;
       --bg-panel: #f4f6f9;
       --white: #fff;
-      --shadow-lg: 0 14px 36px rgba(0,0,0,0.15);
-      --shadow-sm: 0 4px 12px rgba(0,0,0,0.1);
+      --shadow-lg: 0 14px 36px rgba(0, 0, 0, 0.15);
+      --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
       --radius-lg: 16px;
       --radius-md: 10px;
       --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     }
 
-    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-    
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif;
       color: var(--text-main);
       background: #f8f9fa;
       line-height: 1.6;
-      overflow: hidden; /* 배경 스크롤 방지 (팝업 중심) */
+      overflow: hidden;
+      /* 배경 스크롤 방지 (팝업 중심) */
     }
 
     /* ===== Background Content (Placeholder) ===== */
@@ -74,8 +79,15 @@
     }
 
     @keyframes modalFadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .modal-header {
@@ -112,7 +124,10 @@
       display: flex;
       transition: background 0.2s;
     }
-    .btn-close-icon:hover { background: #f5f5f5; }
+
+    .btn-close-icon:hover {
+      background: #f5f5f5;
+    }
 
     .modal-body {
       padding: 32px 24px 40px;
@@ -146,8 +161,14 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-confirm:hover { background: var(--kb-yellow-dark); }
-    .btn-confirm:active { transform: scale(0.98); }
+
+    .btn-confirm:hover {
+      background: var(--kb-yellow-dark);
+    }
+
+    .btn-confirm:active {
+      transform: scale(0.98);
+    }
 
     /* ===== Toast Notification ===== */
     .toast {
@@ -166,7 +187,11 @@
       transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       z-index: 3000;
     }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     /* ===== FAB & Spec Modal ===== */
     .fab-spec {
@@ -186,19 +211,25 @@
       z-index: 2000;
       transition: transform 0.2s;
     }
-    .fab-spec:hover { transform: scale(1.1); }
+
+    .fab-spec:hover {
+      transform: scale(1.1);
+    }
 
     .spec-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.7);
+      background: rgba(0, 0, 0, 0.7);
       display: none;
       align-items: center;
       justify-content: center;
       padding: 20px;
       z-index: 4000;
     }
-    .spec-overlay.show { display: flex; }
+
+    .spec-overlay.show {
+      display: flex;
+    }
 
     .spec-content {
       width: 100%;
@@ -218,11 +249,31 @@
       padding-bottom: 12px;
       margin-bottom: 20px;
     }
-    .spec-header h2 { margin: 0; font-size: 18px; }
 
-    .spec-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
-    .spec-table th { background: #f8f9fa; width: 120px; padding: 10px; border: 1px solid #eee; text-align: left; }
-    .spec-table td { padding: 10px; border: 1px solid #eee; }
+    .spec-header h2 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .spec-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+
+    .spec-table th {
+      background: #f8f9fa;
+      width: 120px;
+      padding: 10px;
+      border: 1px solid #eee;
+      text-align: left;
+    }
+
+    .spec-table td {
+      padding: 10px;
+      border: 1px solid #eee;
+    }
 
     .json-pre {
       background: #222;
@@ -236,20 +287,29 @@
 
     /* Mobile Adapt */
     @media (max-width: 480px) {
-      .modal-card { max-width: none; border-radius: var(--radius-lg) var(--radius-lg) 0 0; align-self: flex-end; }
-      .overlay { padding: 0; }
+      .modal-card {
+        max-width: none;
+        border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        align-self: flex-end;
+      }
+
+      .overlay {
+        padding: 0;
+      }
     }
   </style>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"/>
-  <link rel="stylesheet" href="css/kb-theme.css"/>
+  <link rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <link rel="stylesheet" href="css/kb-theme.css" />
   <link rel="stylesheet" href="css/common.css" />
 </head>
+
 <body>
 
   <div class="bg-content" aria-hidden="true">
     <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="#eee" stroke-width="1">
-      <rect x="2" y="5" width="20" height="14" rx="2"/>
-      <line x1="2" y1="10" x2="22" y2="10"/>
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
     </svg>
     <p>배경 화면 콘텐츠</p>
   </div>
@@ -264,8 +324,10 @@
           <span class="screen-id" id="meta-id">0003</span>
         </h1>
         <button type="button" class="btn-close-icon" id="btn-close" aria-label="닫기">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
-            <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
           </svg>
         </button>
       </div>
@@ -274,10 +336,11 @@
         <div class="icon-graphic">
           <!-- 카드 발급 완료 컨셉의 SVG -->
           <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
-            <rect x="10" y="20" width="60" height="40" rx="6" fill="#f5f5f5" stroke="#333" stroke-width="2"/>
-            <rect x="10" y="30" width="60" height="8" fill="#333"/>
-            <circle cx="55" cy="55" r="15" fill="var(--kb-yellow)" stroke="#333" stroke-width="2"/>
-            <path d="M50 55L53.5 58.5L60 51.5" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="10" y="20" width="60" height="40" rx="6" fill="#f5f5f5" stroke="#333" stroke-width="2" />
+            <rect x="10" y="30" width="60" height="8" fill="#333" />
+            <circle cx="55" cy="55" r="15" fill="var(--kb-yellow)" stroke="#333" stroke-width="2" />
+            <path d="M50 55L53.5 58.5L60 51.5" stroke="#333" stroke-width="2.5" stroke-linecap="round"
+              stroke-linejoin="round" />
           </svg>
         </div>
 
@@ -292,7 +355,7 @@
   </div>
 
   <!-- 공통 요소 -->
-  
+
   <button type="button" id="btn-spec" class="fab-spec" title="기능 명세서">?</button>
 
   <!-- 명세서 모달 -->
@@ -300,84 +363,95 @@
     <div class="spec-content">
       <div class="spec-header">
         <h2>기능 요구 정의서 (ID: 0003)</h2>
-        <button type="button" id="btn-spec-close" style="border:none; background:#eee; padding:5px 10px; border-radius:4px; cursor:pointer;">닫기</button>
+        <button type="button" id="btn-spec-close"
+          style="border:none; background:#eee; padding:5px 10px; border-radius:4px; cursor:pointer;">닫기</button>
       </div>
       <div id="spec-body"></div>
     </div>
   </div>
 
-<script>
+  <script>
     const SCREEN_ID = "0003";
-/**
- * KB국민카드 기업카드 신청 프로세스 - Step 0003
- * 추가 대상 통합 발급 안내 팝업 리팩토링 버전
- */
-(function() {
-  // 1. Single Source of Truth: 화면 메타 데이터
-  const META = {
-    screenId: "0003",
-    screenName: "추가 대상 통합 발급 안내",
-    uiTitle: "추가 발급 대상 안내",
-    targetRoute: "login",
-    prevRoute: "0001",
-    message: "법인카드 추가 발급 대상입니다.\n로그인 화면으로 이동 합니다."
-  };
+    /**
+     * KB국민카드 기업카드 신청 프로세스 - Step 0003
+     * 추가 대상 통합 발급 안내 팝업 리팩토링 버전
+     */
+    (function () {
+      // 1. Single Source of Truth: 화면 메타 데이터
+      const META = {
+        screenId: "0003",
+        screenName: "추가 대상 통합 발급 안내",
+        uiTitle: "추가 발급 대상 안내",
+        targetRoute: "login",
+        prevRoute: "0001",
+        message: "법인카드 추가 발급 대상입니다.\n로그인 화면으로 이동 합니다."
+      };
 
-  // 2. DOM 요소 초기화
-  const el = {
-    overlay: document.getElementById('main-overlay'),
-    confirmBtn: document.getElementById('btn-confirm'),
-    closeBtn: document.getElementById('btn-close'),
-    toast: document.getElementById('toast'),
-    specBtn: document.getElementById('btn-spec'),
-    specOverlay: document.getElementById('spec-overlay'),
-    specCloseBtn: document.getElementById('btn-spec-close'),
-    specBody: document.getElementById('spec-body')
-  };
+      // 2. DOM 요소 초기화
+      const el = {
+        overlay: document.getElementById('main-overlay'),
+        confirmBtn: document.getElementById('btn-confirm'),
+        closeBtn: document.getElementById('btn-close'),
+        toast: document.getElementById('toast'),
+        specBtn: document.getElementById('btn-spec'),
+        specOverlay: document.getElementById('spec-overlay'),
+        specCloseBtn: document.getElementById('btn-spec-close'),
+        specBody: document.getElementById('spec-body')
+      };
 
-  // 3. 기능 구현
-  const showToast = (msg) => {
-    el.toast.textContent = msg;
-    el.toast.classList.add('show');
-    setTimeout(() => el.toast.classList.remove('show'), 2500);
-  };
+      // 3. 기능 구현
+      const showToast = (msg) => {
+        el.toast.textContent = msg;
+        el.toast.classList.add('show');
+        setTimeout(() => el.toast.classList.remove('show'), 2500);
+      };
 
-  const navigateTo = (path) => {
-    showToast(`${path} 화면으로 이동합니다.`);
-    // 실제 환경에서는 router.push(path) 또는 location.href 사용
-    console.log(`Navigation to: ${path}`);
-  };
+      const navigateTo = (path) => {
+        showToast(`${path} 화면으로 이동합니다.`);
+        // 실제 환경에서는 router.push(path) 또는 location.href 사용
+        console.log(`Navigation to: ${path}`);
+      };
 
-  // 4. 이벤트 바인딩
-  el.confirmBtn.addEventListener('click', () => {
-    navigateTo(META.targetRoute);
-  });
+      // 4. 이벤트 바인딩
+      el.confirmBtn.addEventListener('click', () => {
+        if (window.ScenarioNav && !document.body.classList.contains('no-scenario')) {
+          ScenarioNav.log('CONFIRM', { msg: 'User clicked Confirm button' });
+          setTimeout(() => {
+            ScenarioNav.goNext();
+          }, 400);
+        } else {
+          // Fallback if Nav not loaded or in "no-scenario" mode
+          setTimeout(() => {
+            window.location.href = "0004_r.HTML";
+          }, 400);
+        }
+      });
 
-  el.closeBtn.addEventListener('click', () => {
-    navigateTo(META.prevRoute);
-  });
+      el.closeBtn.addEventListener('click', () => {
+        navigateTo(META.prevRoute);
+      });
 
-  // 5. 기능 요구서 (Spec) 데이터 및 렌더링
-  const SPEC_DATA = {
-    info: {
-      "화면ID": META.screenId,
-      "화면명": META.screenName,
-      "비즈니스 로직": "처리계 조회 결과 '추가 발급 대상'인 경우 노출되는 안내 팝업",
-      "주요 액션": "확인 클릭 시 기업카드 로그인 페이지로 리다이렉션"
-    },
-    rules: [
-      "팝업 진입 시 배경 스크롤을 제어해야 함 (body overflow: hidden)",
-      "접근성을 위해 팝업 오픈 시 '확인' 버튼 또는 '닫기' 버튼에 초점 이동 권장",
-      "문구 내 '로그인 화면으로 이동 합니다'에서 '합니다' 앞 공백은 디자인 가이드 준수",
-      "모바일 웹 브라우저 뒤로가기 버튼 클릭 시 팝업 닫힘 처리 필요"
-    ],
-    api: [
-      { name: "추가 발급 대상 조회", system: "회원 시스템", desc: "사업자번호 기반 기회원 여부 및 발급 유형 판단" }
-    ]
-  };
+      // 5. 기능 요구서 (Spec) 데이터 및 렌더링
+      const SPEC_DATA = {
+        info: {
+          "화면ID": META.screenId,
+          "화면명": META.screenName,
+          "비즈니스 로직": "처리계 조회 결과 '추가 발급 대상'인 경우 노출되는 안내 팝업",
+          "주요 액션": "확인 클릭 시 기업카드 로그인 페이지로 리다이렉션"
+        },
+        rules: [
+          "팝업 진입 시 배경 스크롤을 제어해야 함 (body overflow: hidden)",
+          "접근성을 위해 팝업 오픈 시 '확인' 버튼 또는 '닫기' 버튼에 초점 이동 권장",
+          "문구 내 '로그인 화면으로 이동 합니다'에서 '합니다' 앞 공백은 디자인 가이드 준수",
+          "모바일 웹 브라우저 뒤로가기 버튼 클릭 시 팝업 닫힘 처리 필요"
+        ],
+        api: [
+          { name: "추가 발급 대상 조회", system: "회원 시스템", desc: "사업자번호 기반 기회원 여부 및 발급 유형 판단" }
+        ]
+      };
 
-  const renderSpec = () => {
-    let html = `
+      const renderSpec = () => {
+        let html = `
       <table class="spec-table">
         ${Object.entries(SPEC_DATA.info).map(([k, v]) => `<tr><th>${k}</th><td>${v}</td></tr>`).join('')}
       </table>
@@ -390,43 +464,44 @@
         ${SPEC_DATA.api.map(a => `<li>[${a.system}] ${a.name}: ${a.desc}</li>`).join('')}
       </ul>
       <h4 style="margin:15px 0 8px">JSON 데이터</h4>
-      <pre class="json-pre">${JSON.stringify({META, SPEC_DATA}, null, 2)}</pre>
+      <pre class="json-pre">${JSON.stringify({ META, SPEC_DATA }, null, 2)}</pre>
     `;
-    el.specBody.innerHTML = html;
-  };
+        el.specBody.innerHTML = html;
+      };
 
-  el.specBtn.addEventListener('click', () => {
-    renderSpec();
-    el.specOverlay.classList.add('show');
-    el.specOverlay.setAttribute('aria-hidden', 'false');
-  });
+      el.specBtn.addEventListener('click', () => {
+        renderSpec();
+        el.specOverlay.classList.add('show');
+        el.specOverlay.setAttribute('aria-hidden', 'false');
+      });
 
-  el.specCloseBtn.addEventListener('click', () => {
-    el.specOverlay.classList.remove('show');
-    el.specOverlay.setAttribute('aria-hidden', 'true');
-  });
+      el.specCloseBtn.addEventListener('click', () => {
+        el.specOverlay.classList.remove('show');
+        el.specOverlay.setAttribute('aria-hidden', 'true');
+      });
 
-  // 키보드 제어 (Esc)
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-      if (el.specOverlay.classList.contains('show')) {
-        el.specCloseBtn.click();
-      } else {
-        el.closeBtn.click();
-      }
-    }
-  });
+      // 키보드 제어 (Esc)
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          if (el.specOverlay.classList.contains('show')) {
+            el.specCloseBtn.click();
+          } else {
+            el.closeBtn.click();
+          }
+        }
+      });
 
-  // 초기화 시 텍스트 동기화 (SSOT)
-  document.getElementById('meta-title').textContent = META.uiTitle;
-  document.getElementById('meta-id').textContent = META.screenId;
-  document.getElementById('main-message').textContent = META.message;
+      // 초기화 시 텍스트 동기화 (SSOT)
+      document.getElementById('meta-title').textContent = META.uiTitle;
+      document.getElementById('meta-id').textContent = META.screenId;
+      document.getElementById('main-message').textContent = META.message;
 
-})();
-</script>
-<script src="js/common.js"></script>
-<script src="js/session-db.js"></script>
-<script src="js/scenario-nav.js"></script>
-<script src="js/spec-viewer.js" data-screen-id="0003"></script>
+    })();
+  </script>
+  <script src="js/common.js"></script>
+  <script src="js/session-db.js"></script>
+  <script src="js/scenario-nav.js"></script>
+  <script src="js/spec-viewer.js" data-screen-id="0003"></script>
 </body>
+
 </html>

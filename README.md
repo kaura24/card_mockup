@@ -1,6 +1,8 @@
-# KB 기업카드 비대면 신청 목업 (card_mockup)
+# 기업카드 비대면 신청 목업 (card_mockup)
 
-> KB국민카드 기업카드(신용/체크) × 법인/개인사업자 비대면 신청 프로세스 HTML 목업 모음  
+> 기업카드(신용/체크) × 법인/개인사업자 비대면 신청 프로세스 HTML 목업 모음
+>
+> **⚠ Entry Point 안내:** 이 목업의 시작점은 **`index.html`**입니다. 모든 통합 흐름 제어 및 초기 테스트 진입은 이 파일을 기준으로 진행해주세요. (`integrated_flow.html`은 내부 동작 참조용입니다.)
 > **프로토타입 시연용 전체 개발 가이드**
 
 ---
@@ -26,6 +28,8 @@ card_mockup/
 │   └── spec-viewer.js               ← 요건정의서 뷰어
 ├── mock_db/                         ← 가상 백엔드 JSON 데이터
 ├── docs/
+│   ├── ARCHITECTURE.md        ← 시스템 설계 및 아키텍처 설명서
+│   ├── COMPARISON_GUIDE.md    ← 시나리오별 주요 차이점 비교 (신규)
 │   ├── scenarios/                   ← 4가지 시나리오 정의
 │   ├── branches/                    ← 분기별 세부 흐름
 │   └── screens/                     ← 화면별 요건정의 (73개)
@@ -199,31 +203,43 @@ AS-IS 24개 시나리오를 **4단계 트리 구조**로 통합한 흐름입니�
 > **이 프로젝트의 현재 방식:** `ScenarioNav` API와 `SessionDB`를 연동한 **세션 기반 이동 및 로깅**.  
 > `localStorage`에 세션 데이터가 실시간으로 누적되며, 중단 시 복구 기능을 지원합니다.
 
-### Mock 백엔드 설계 (3개 원장 DB)
+### Mock 백엔드 설계 (3개 원장 DB 및 폼 데이터 구조)
+
+> **업무 요건 변경(2023-10):** 화면의 임의 세팅값을 모두 비우며, 실제 사용자의 입력을 받아 데이터베이스화하도록 기준이 변경되었습니다. 아래 스키마는 각 영문 컬럼에 대한 화면 내 한글 항목(주석) 매핑을 포함합니다.
 
 ```
 Mock API 구조 (JSON 파일 또는 인메모리 객체)
 │
-├── 신청서접수원장DB
-│   ├── application_id (신청 ID)
-│   ├── product_type (신용/체크)
-│   ├── applicant_type (법사자/개사자)
-│   ├── status (접수중/완료/반려)
-│   └── screens_data[] (각 화면 입력값 누적)
+├── 신청서접수원장DB (Application DB)
+│   ├── application_id       // 신청 ID
+│   ├── product_type         // 상품 종류 (신용/체크)
+│   ├── applicant_type       // 신청자 유형 (법사자/개사자)
+│   ├── status               // 진행 상태 (접수중/완료/반려)
+│   ├── company_name         // 직장(사업장)명 [화면: 업체(부서)정보]
+│   ├── biz_address          // 사업장 주소 [화면: 업체(부서)정보]
+│   ├── biz_phone            // 사업장 전화번호 [화면: 업체(부서)정보]
+│   ├── est_date             // 설립년월일 [화면: 설립년월일_업종분류]
+│   ├── biz_category         // 업종분류 [화면: 설립년월일_업종분류]
+│   ├── req_limit            // 요청한도 [화면: 부서별한도]
+│   └── screens_data[]       // 각 화면별 전체 입력값 누적 JSON
 │
-├── 회원원장DB
-│   ├── biz_no (사업자번호) ← Key
-│   ├── corp_no (법인등록번호)
-│   ├── existing_cards[] (기존 카드 목록)
-│   ├── payment_account (결제계좌)
-│   └── is_new_or_additional (신규/추가 여부)
+├── 회원원장DB (Member DB)
+│   ├── biz_no               // 사업자번호 (Key) [화면: 사업자번호 입력]
+│   ├── corp_no              // 법인등록번호 [화면: 법인 정보]
+│   ├── existing_cards[]     // 기존 소유 카드 목록
+│   ├── payment_account      // 결제계좌 [화면: 결제계좌]
+│   ├── billing_address      // 명세서 수령지 [화면: 명세서 받으실 곳]
+│   └── is_new_or_additional // 신규/추가 여부 파라미터
 │
-└── 고객원장DB
-    ├── rrn (주민번호) ← Key
-    ├── name / eng_name
-    ├── address
-    ├── cdd_status (CDD 갱신 필요 여부)
-    └── credit_limit (심사부여한도)
+└── 고객원장DB (Customer DB)
+    ├── rrn                  // 주민번호 (Key) [화면: 신청인 본인인증]
+    ├── name                 // 성명 (한글) [화면: 신청인 본인인증]
+    ├── eng_name             // 영문 성명 [화면: 대표자 정보]
+    ├── id_card_issue_date   // 신분증 발급일자 [화면: 신분증 정보]
+    ├── home_address         // 자택 주소 [화면: 신청인 정보]
+    ├── mobile_no            // 휴대폰 번호 [화면: 신청인 본인인증]
+    ├── cdd_status           // CDD 갱신 필요 여부 (고객확인제도)
+    └── credit_limit         // 심사부여한도 (시스템 계산)
 ```
 
 ### SPA vs 파일링크 방식 비교
@@ -275,4 +291,6 @@ python extract_specs.py
 - [x] 세션 복구(이어가기/새로시작) 기능 구현 완료
 - [x] `css/common.css` 생성 + 전 화면 적용 완료
 - [x] 개발 스크립트 16개 → `scripts/` 폴더로 정리 완료
+- [x] 전 화면(74개) 요구사항 정의서(REQ_SPEC) JSON 자동 추출 (`docs/specs/`) 및 `?` 모달 뷰어(`spec-viewer.js`) 연동 완료
+- [x] 0001 화면 1234567890 입력 시 0002 -> 0004 신규발급 분기 및 네비게이션 디버깅 완료
 - [ ] HTML 파일 확장자 대/소문자 통일  (`.HTML` → `.html`)

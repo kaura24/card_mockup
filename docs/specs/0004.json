@@ -1,0 +1,34 @@
+{
+  "screen_id": "META.id",
+  "screen_name": "META.name",
+  "title": "META.title",
+  "segment": {
+    "corp": true,
+    "sole_prop": false
+  },
+  "action_type": "INFO",
+  "inputs": [],
+  "calls": [],
+  "purpose": "고객에게 진행 전 준비사항을 단순 안내한다",
+  "ui_contents": "PREP_ITEMS",
+  "navigation": {
+    "prev": "0002 또는 0003(시나리오에 따라 상이) - 현재 목업은 0003",
+    "next": "${META.nextTarget}(목업) - 실제 플로우에 맞게 교체"
+  },
+  "notes": [
+    "화면기능목록 ID:0004는 '단순안내'로 정의됨(처리계 거래 없음).",
+    "0004는 신규/추가 공용 화면이므로 이전 화면(Prev)은 시나리오에 따라 달라질 수 있음."
+  ],
+  "qa_points": [
+    "스크린샷과 동일한 제목/문구/불릿(-) 스타일인지",
+    "PC/모바일에서 카드 박스 여백/줄바꿈이 자연스러운지",
+    "이전/다음 버튼 노출 정책이 확정되면 라벨/유무 조정",
+    "접근성: 목록이 읽기 순서대로 낭독되는지"
+  ],
+  "data_spec": {
+    "ssot_meta": "META",
+    "page_type": "info_page",
+    "items": "PREP_ITEMS"
+  },
+  "business_rule_source": "화면기능목록 ID:0004 (준비사항)"
+}

@@ -1,0 +1,36 @@
+{
+  "screen_id": "[Dynamic META.id]",
+  "screen_name": "[Dynamic META.name]",
+  "purpose": "개별카드 발급을 위해 사용자(개별카드 회원)의 필수 동의서 작성 절차 및 유효기간(3일)을 안내하고 확인을 받는다.",
+  "business_rule_source": "화면기능목록 ID:0035 (개별 카드 회원 동의서 작성안내)",
+  "target": {
+    "corp": true,
+    "sole": false
+  },
+  "action": "고객동의",
+  "inputs": {
+    "checkbox": {
+      "id": "chk-agree",
+      "label": "확인했습니다.",
+      "required": true
+    }
+  },
+  "processing": {
+    "integration": false,
+    "domain": "-",
+    "description": "안내 확인 후 다음 단계로 진행. 실제 동의서 작성/수집은 이후 단계(0037, 0038, 0039, 0040 등)에서 수행."
+  },
+  "rules": [
+    "‘확인했습니다’ 체크 전까지 다음 버튼 비활성",
+    "동의서 유효기간은 LMS 발송일 포함 3일",
+    "실제 동의서 작성/재요청/조회는 별도 화면(0037~0040 시퀀스)에서 관리"
+  ],
+  "qa_points": [
+    "체크박스 상태에 따른 버튼 활성/비활성",
+    "뒤로가기 재진입 시 체크 상태 보존 여부(정책 선택)",
+    "접근성: 체크박스 포커스, 설명 연결(aria-describedby), 모달 접근성"
+  ],
+  "next": {
+    "success": "0036 (개별카드 사용자 개인명의계좌 등록-개별)"
+  }
+}

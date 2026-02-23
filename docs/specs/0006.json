@@ -1,0 +1,45 @@
+{
+  "screen_id": "META.id",
+  "screen_name": "META.name",
+  "title": "META.title",
+  "segment": {
+    "corp": true,
+    "sole_prop": false
+  },
+  "action_type": "EXTERNAL_LOOKUP",
+  "input_spec": {
+    "consent_required": true,
+    "consent_field": "agree:boolean"
+  },
+  "external_integration": {
+    "vendor": "한국평가데이터(KoDATA, 구 한국기업데이터)",
+    "type": "web redirect / return",
+    "realtime": false,
+    "note": "배치 작업으로 당사 제공(실시간 아님)"
+  },
+  "purpose": "외부 서비스(KoDATA)로 제출 서류 대행 신청 후 복귀, 완료 상태 확인 후 다음 단계 진행",
+  "rules": [
+    "동의(필수) 없이는 외부 서비스 이동/다음 단계 진행 불가",
+    "서류 자동제출 서비스 완료 후에만 '다음' 버튼 활성(권장: 서버 검증 기반)",
+    "자동 제출 대상 서류: 사업자등록증명, 법인등기사항전부증명서, 표준재무제표증명, 부가가치세과세표준증명원",
+    "주주명부(제출 필수) 및 정관(비영리법인, 임의단체 등)은 자동제출 불가 → 직접 등록 대상"
+  ],
+  "navigation": {
+    "prev": "${META.prevTarget}(목업)",
+    "external": "${META.externalUrl}(목업) - 실제 외부 URL/연동 방식으로 교체",
+    "next": "${META.nextTarget}(목업)"
+  },
+  "qa_points": [
+    "동의 미체크 상태에서 '바로가기' 클릭 시 방어(토스트/포커스) 되는지",
+    "외부 서비스 완료 전 Next 비활성 유지되는지",
+    "복귀 후 완료 상태를 서버 검증으로 판정 가능한지(증빙ID/상태조회)",
+    "배치(비실시간) 특성 안내 문구/가이드가 필요한지",
+    "모바일에서 동의 토글/버튼 영역 터치가 쉬운지"
+  ],
+  "data_spec": {
+    "ssot_meta": "META",
+    "state": "{ agree:boolean, serviceDone:boolean }",
+    "completion_source": "server-verified recommended"
+  },
+  "business_rule_source": "화면기능목록 ID:0006 (서류자동제출서비스)"
+}

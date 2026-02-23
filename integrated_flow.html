@@ -291,7 +291,7 @@
         }
 
         .tag {
-            font-size: 10px;
+            font-size: 9px;
             padding: 2px 6px;
             border-radius: 4px;
             font-weight: 700;
@@ -299,46 +299,65 @@
             border: 1px solid transparent;
         }
 
-        /* Tag Colors */
-        .tag.common {
+        /* Tag Colors (Korean mapping) */
+        .tag[data-tag="공용"] {
             background: #eee;
             color: #555;
+            border-color: #ddd;
         }
 
-        .tag.new {
+        .tag[data-tag="개별"] {
+            background: #e0f2f1;
+            color: #00695c;
+            border-color: #b2dfdb;
+        }
+
+        .tag[data-tag="신규"] {
             background: #e3f2fd;
             color: #1565c0;
             border-color: #bbdefb;
         }
 
-        .tag.add {
+        .tag[data-tag="추가"] {
             background: #fce4ec;
             color: #c2185b;
             border-color: #f8bbd0;
         }
 
-        .tag.credit {
+        .tag[data-tag="신용"] {
             background: #fff3e0;
             color: #ef6c00;
             border-color: #ffe0b2;
         }
 
-        .tag.check {
+        .tag[data-tag="체크"] {
             background: #e8f5e9;
             color: #2e7d32;
             border-color: #c8e6c9;
         }
 
-        .tag.corp {
+        .tag[data-tag="법인"] {
             background: #ede7f6;
             color: #4527a0;
             border-color: #d1c4e9;
         }
 
-        .tag.indiv {
+        .tag[data-tag="개인"] {
             background: #f3e5f5;
             color: #7b1fa2;
             border-color: #e1bee7;
+        }
+
+        .tag[data-tag="부서추가"] {
+            background: #e0f7fa;
+            color: #006064;
+            border-color: #b2ebf2;
+        }
+
+        .tag[data-tag="부서내추가"] {
+            background: #e8eaf6;
+            color: #1a237e;
+            border-color: #c5cae9;
         }
 
         .action-link {
@@ -409,9 +428,11 @@
                         <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
                             onclick="applyTestCase('111-81-11111')">법인(기존)</button>
                         <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
-                            onclick="applyTestCase('123-01-12345')">개인(신규)</button>
+                            onclick="applyTestCase('123-81-12345')">법인(신규)</button>
                         <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
                             onclick="applyTestCase('111-11-11111')">개인(기존)</button>
+                        <button class="nav-btn" style="font-size:11px; padding:4px 8px;"
+                            onclick="applyTestCase('123-01-12345')">개인(신규)</button>
                     </div>
                 </div>
 
@@ -549,97 +570,101 @@
         // Configuration: Unified Super Scenario
         const SCREENS = [
             // --- Intro ---
-            { id: "0001", name: "사업자번호 입력", tags: ["COMMON"], desc: "사업자번호 10자리 입력 → 자동 판별" }, // Always logic start
+            { id: "0001", name: "사업자번호 입력", tags: ["공용", "신규", "추가", "법인", "개인", "신용", "체크"], desc: "사업자번호 입력 → 자동 판별" },
 
             // --- Branch: Issuance Type (New/Add) ---
-            { id: "0002", name: "신규 대상 통합 발급 안내", tags: ["NEW"], cond: s => s.issuance === 'NEW', desc: "판별결과: 신규" },
-            { id: "0003", name: "추가 대상 통합 발급 안내", tags: ["ADD"], cond: s => s.issuance === 'ADD', desc: "판별결과: 추가" },
+            { id: "0002", name: "신규 대상 통합 발급 안내", tags: ["공용", "신규", "법인", "개인", "신용", "체크"], cond: s => s.issuance === 'NEW', desc: "판별결과: 신규" },
+            { id: "0003", name: "추가 대상 통합 발급 안내", tags: ["공용", "추가", "법인", "개인", "신용", "체크"], cond: s => s.issuance === 'ADD', desc: "판별결과: 추가" },
 
             // --- Common Prep ---
-            { id: "0004", name: "준비사항", tags: ["COMMON"] },
-            { id: "0005", name: "제출서류", tags: ["COMMON"] },
-            { id: "0006", name: "서류자동제출서비스", tags: ["COMMON"] },
-            { id: "0007", name: "유의사항", tags: ["COMMON"] },
-            { id: "0008", name: "법인 공동인증서 이용안내", tags: ["COMMON"] },
+            { id: "0004", name: "준비사항", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0005", name: "제출서류", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0006", name: "서류자동제출서비스", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0007", name: "유의사항", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0008", name: "법인 공동인증서 이용안내", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
 
             // --- Branch: Card Type (Credit/Check) ---
-            { id: "0009", name: "신용카드 상품 약관동의", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
-            { id: "0009_1", name: "체크카드 약관동의", tags: ["CHECK"], cond: s => s.card === 'CHECK' },
+            { id: "0009", name: "신용카드 상품 약관동의", tags: ["공용", "신규", "추가", "법인", "신용"], cond: s => s.biz === 'CORP' && s.card === 'CREDIT' },
+            { id: "0009_1", name: "체크카드 약관동의", tags: ["공용", "신규", "추가", "법인", "체크"], cond: s => s.biz === 'CORP' && s.card === 'CHECK' },
 
             // --- Branch: Add & Dept Logic ---
-            { id: "0043", name: "발급 대상 부서 선택", tags: ["ADD", "CORP"], cond: s => s.issuance === 'ADD' && s.biz === 'CORP', desc: "법인+추가 시 부서 선택" },
+            { id: "0043", name: "발급 대상 부서 선택", tags: ["공용", "추가", "법인", "신용", "체크", "부서추가", "부서내추가"], cond: s => s.issuance === 'ADD' && s.biz === 'CORP', desc: "법인+추가 시 부서 선택" },
 
             // --- Core Info ---
-            { id: "0010", name: "신청인 정보(공통)", tags: ["COMMON"] },
-            { id: "0011", name: "신용정보 조회 동의", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
-            { id: "0011_1", name: "체크정보 조회 동의", tags: ["CHECK"], cond: s => s.card === 'CHECK' },
-            { id: "0012", name: "신청인 본인인증", tags: ["COMMON"] },
-            { id: "0013", name: "고객확인(CDD) 조건부", tags: ["COMMON"] },
-            { id: "0014", name: "대표자 정보", tags: ["COMMON"] },
-            { id: "0015", name: "사업자 정보", tags: ["COMMON"] },
-            { id: "0016", name: "법인 정보", tags: ["CORP"], cond: s => s.biz === 'CORP' },
-            { id: "0017", name: "EDD 정보", tags: ["COMMON"] },
-            { id: "0018", name: "필수확인사항 (적합성)", tags: ["COMMON"] },
+            { id: "0010", name: "신청인 정보(공통)", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0011", name: "신용정보 조회 동의", tags: ["공용", "신규", "추가", "법인", "신용"], cond: s => s.biz === 'CORP' && s.card === 'CREDIT' },
+            { id: "0011_1", name: "체크정보 조회 동의", tags: ["공용", "신규", "추가", "법인", "체크"], cond: s => s.biz === 'CORP' && s.card === 'CHECK' },
+            { id: "0012", name: "신청인 본인인증", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0013", name: "고객확인(CDD) 조건부", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0014", name: "대표자 정보", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0015", name: "사업자 정보", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0016", name: "법인 정보", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0017", name: "EDD 정보", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0018", name: "필수확인사항 (적합성)", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0033", name: "추가 서류 제출", tags: ["공용", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.issuance === 'NEW' },
 
-            // --- Branch: Indiv Biz Specific ---
-            { id: "0035", name: "개별카드 회원 동의서 안내", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
-            { id: "0036", name: "개별카드 계좌 등록", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
-            { id: "0037", name: "개별카드 고객 정보", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
-            { id: "0038", name: "개별카드 동의 조회", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
-            { id: "0039", name: "개인신용정보 동의서", tags: ["INDIV", "NEW", "CREDIT"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' && s.card === 'CREDIT' },
-            { id: "0039_1", name: "개인체크정보 동의서", tags: ["INDIV", "NEW", "CHECK"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' && s.card === 'CHECK' },
-            { id: "0040", name: "개별카드 신청하기", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
-            { id: "0041", name: "개별카드", tags: ["INDIV", "NEW"], cond: s => s.biz === 'INDIV' && s.issuance === 'NEW' },
+            // --- Branch: Corporate Individual Card (법인 개별카드) ---
+            { id: "0035", name: "개별카드 회원 동의서 안내", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
+            { id: "0036", name: "개별카드 계좌 등록", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
+            { id: "0037", name: "개별카드 고객 정보", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
+            { id: "0038", name: "개별카드 동의 조회", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
+            { id: "0039", name: "개인신용정보 동의서", tags: ["개별", "신규", "법인", "신용"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' && s.card === 'CREDIT' },
+            { id: "0039_1", name: "개인체크정보 동의서", tags: ["개별", "신규", "법인", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' && s.card === 'CHECK' },
+            { id: "0040", name: "개별카드 신청하기", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
+            { id: "0041", name: "개별카드", tags: ["개별", "신규", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'NEW' },
 
             // --- Branch: Additional Specific ---
-            { id: "0045", name: "기본정보(추가)", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
-            { id: "0046", name: "유의 및 준비사항(추가)", tags: ["ADD", "INDIV"], cond: s => s.issuance === 'ADD' && s.biz === 'INDIV' },
-            { id: "0047", name: "대표자_사업자정보", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
-            { id: "0048", name: "업체(부서)정보", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
-            { id: "0049", name: "기본정보2", tags: ["ADD"], cond: s => s.issuance === 'ADD' },
-            { id: "0050", name: "부서별 한도 설정", tags: ["ADD", "CREDIT"], cond: s => s.issuance === 'ADD' && s.card === 'CREDIT' },
+            { id: "0045", name: "기본정보(추가)", tags: ["공용", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.issuance === 'ADD' },
+            { id: "0046", name: "유의 및 준비사항(추가)", tags: ["공용", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.isIndivCard && s.issuance === 'ADD' },
+            { id: "0047", name: "대표자_사업자정보", tags: ["공용", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.issuance === 'ADD' },
+            { id: "0048", name: "업체(부서)정보", tags: ["공용", "추가", "법인", "신용", "체크", "부서추가"], cond: s => s.biz === 'CORP' && s.issuance === 'ADD' },
+            { id: "0049", name: "기본정보2", tags: ["공용", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' && s.issuance === 'ADD' },
+            { id: "0050", name: "부서별 한도 설정", tags: ["공용", "추가", "법인", "신용", "부서내추가"], cond: s => s.biz === 'CORP' && s.issuance === 'ADD' && s.card === 'CREDIT' },
 
             // --- Branch: Credit Specific ---
-            { id: "0019", name: "이용한도(신용)", tags: ["CREDIT", "NEW"], cond: s => s.card === 'CREDIT' && s.issuance === 'NEW' },
-            { id: "0022", name: "결제일", tags: ["CREDIT"], cond: s => s.card === 'CREDIT' },
+            { id: "0019", name: "이용한도(신용)", tags: ["공용", "신규", "추가", "법인", "신용"], cond: s => s.biz === 'CORP' && s.card === 'CREDIT' && s.issuance === 'NEW' },
+            { id: "0022", name: "결제일", tags: ["공용", "신규", "추가", "법인", "신용"], cond: s => s.biz === 'CORP' && s.card === 'CREDIT' },
 
             // --- Final Steps ---
-            { id: "0020", name: "명세서 수령지", tags: ["COMMON"] },
-            { id: "0021", name: "카드 선택", tags: ["COMMON"] },
-            { id: "0023", name: "결제계좌", tags: ["COMMON"] },
-            { id: "0024", name: "신청매수", tags: ["COMMON"] },
-            { id: "0025", name: "발급확인 및 동의", tags: ["COMMON"] },
-            { id: "0026", name: "카드 수령지", tags: ["COMMON"] },
-            { id: "0027", name: "추천인", tags: ["COMMON"] },
-            { id: "0028", name: "공동인증서 인증", tags: ["COMMON"] },
-            { id: "0029", name: "카드정보(확인용)", tags: ["COMMON"] },
-            { id: "0032", name: "법인인증", tags: ["CORP"], cond: s => s.biz === 'CORP' },
-            { id: "0034", name: "신청 완료", tags: ["COMMON"], cond: s => s.biz === 'CORP' },
+            { id: "0020", name: "명세서 수령지", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0021", name: "카드 선택", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0023", name: "결제계좌", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0024", name: "신청매수", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0025", name: "발급확인 및 동의", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0026", name: "카드 수령지", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0027", name: "추천인", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0028", name: "공동인증서 인증", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0029", name: "카드정보(확인용)", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0030", name: "사업자정보(확인용)", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0031", name: "대표자정보(확인용)", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0032", name: "법인인증", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
+            { id: "0034", name: "신청 완료", tags: ["공용", "신규", "추가", "법인", "신용", "체크"], cond: s => s.biz === 'CORP' },
 
             // --- Individual Business (개사자) - Credit ---
-            { id: "0053", name: "유의 및 준비사항", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0054", name: "추가정보선택", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0055", name: "약관동의", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0057", name: "카드신청 기본_CDD", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0058", name: "3종 본인인증", tags: ["INDIV"], cond: s => s.biz === 'INDIV' },
-            { id: "0059", name: "설립년월일_업종분류", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0060", name: "한도부여결과 조회", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0061", name: "신분증 정보", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0062", name: "필수확인사항", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0063", name: "카드정보", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0064", name: "카드정보수정하기", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
-            { id: "0065", name: "카드신청완료", tags: ["INDIV", "CREDIT"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0053", name: "유의 및 준비사항", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0054", name: "추가정보선택", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0055", name: "약관동의", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0057", name: "카드신청 기본_CDD", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0058", name: "3종 본인인증", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0059", name: "설립년월일_업종분류", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0060", name: "한도부여결과 조회", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0061", name: "신분증 정보", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0062", name: "필수확인사항", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0063", name: "카드정보", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0064", name: "카드정보수정하기", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
+            { id: "0065", name: "카드신청완료", tags: ["개별", "신규", "추가", "개인", "신용"], cond: s => s.biz === 'INDIV' && s.card === 'CREDIT' },
 
             // --- Individual Business (개사자) - Check ---
-            { id: "0066", name: "유의 및 준비사항", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0067", name: "신분증진위확인 선택", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0068", name: "신분증정보 입력", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0069", name: "본인확인", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0070", name: "신청정보_CDD", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0071", name: "신청정보_설립년월", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0072", name: "약관동의", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0073", name: "신청정보_수정하기", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
-            { id: "0074", name: "접수완료", tags: ["INDIV", "CHECK"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' }
+            { id: "0066", name: "유의 및 준비사항", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0067", name: "신분증진위확인 선택", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0068", name: "신분증정보 입력", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0069", name: "본인확인", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0058_1", name: "3종 본인인증", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0070", name: "신청정보_CDD", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0071", name: "신청정보_설립년월", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0072", name: "약관동의", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0073", name: "신청정보_수정하기", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' },
+            { id: "0074", name: "접수완료", tags: ["개별", "신규", "추가", "개인", "체크"], cond: s => s.biz === 'INDIV' && s.card === 'CHECK' }
         ];
 
         // Current State
@@ -708,8 +733,7 @@
 
                 // Tags
                 const tagHTML = (scr.tags || []).map(t => {
-                    let cls = t.toLowerCase();
-                    return `<span class="tag ${cls}">${t}</span>`;
+                    return `<span class="tag" data-tag="${t}">${t}</span>`;
                 }).join('');
 
                 // File path logic

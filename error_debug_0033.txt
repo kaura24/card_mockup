@@ -1,0 +1,15 @@
+{ "screen_id": "[Dynamic META.id]", "screen_name": "[Dynamic META.name]", "purpose": "추가 서류 제출(필수/선택 파일 업로드) 후 다음 단계 진행", "business_rule_source": "화면기능목록 ID:0033 (추가서류제출)", "rules": [
+      "업로드 파일 형식은 PDF, 이미지(jpg, jpeg, png) 허용",
+      "필수 항목: 사업자등록증, 법인등기부, 주주명부 및 정관, 신청인 신분증",
+      "선택 항목: 표준재무제표증명, 부가세과세표준증명원, 기타(2개)",
+      "필수 미제출 또는 확장자 오류 시 다음 진행 불가",
+      "수정하기 버튼 클릭 시 "명세서 받으실 곳(ID:0020)"으로 이동"
+    ], "required_docs": "[Dynamic DOCS.filter]"(d => d.required).map(d => d.name), "optional_docs": "[Dynamic DOCS.filter]"(d => !d.required).map(d => d.name), "next": "[META.nextTarget](목업) - 실제 플로우에 맞게 교체", "qa_points": [
+      "각 행 "찾아보기" 버튼이 해당 file input을 정상 트리거하는지",
+      "허용 확장자 외 업로드 시 invalid 표시 + 토스트 안내",
+      "필수 미충족 시 Next 비활성 + Next 클릭 방어",
+      "모바일 레이아웃(3열 → 1열) 전환 시 UI 깨짐 여부",
+      "파일 재선택/취소 시 state/표시값/Next 활성화 일관성"
+    ], "data_spec": { "accept": ACCEPT, "allowed_ext": "[Dynamic Array.from]"(ALLOWED_EXT), "state_shape": "{ [key]: { "file": File|null, "valid": boolean } }"
+    }
+  }
